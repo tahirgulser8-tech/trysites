@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Antrenman Takvimi (v12 - Grand Final)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS DEĞİŞKENLERİ --- */
+        :root {
+            --bg-body: #09090b;
+            --bg-card: rgba(30, 30, 35, 0.6);
+            --text-main: #e0e0e0;
+            --text-muted: #9CA3AF;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --primary: #bb86fc; /* Varsayılan Renk */
+            --secondary: #03dac6;
+            --danger: #ef4444;
+            --glass-blur: 16px;
+            --shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+            --radius: 24px;
+        }
+
+        body.light-mode {
+            --bg-body: #f3f4f6;
+            --bg-card: rgba(255, 255, 255, 0.8);
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: rgba(0, 0, 0, 0.06);
+            --shadow: 0 10px 40px -10px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg-body); 
+            background-image: 
+                radial-gradient(circle at 10% 10%, var(--primary), transparent 40%),
+                radial-gradient(circle at 90% 90%, var(--secondary), transparent 40%);
+            background-size: 100% 100%;
+            background-attachment: fixed;
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            display: flex; justify-content: center; padding: 20px; min-height: 100vh; 
+            transition: background 0.5s ease, color 0.3s ease;
+        }
+
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-body); opacity: 0.94; z-index: -1;
+        }
+        
+        .container { width: 100%; max-width: 850px; padding-bottom: 40px; position: relative; padding-top: 10px; }
+
+        /* --- MENÜ BUTONU --- */
+        .menu-bar { position: absolute; top: 5px; right: 0; z-index: 200; }
+        .menu-btn {
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid var(--border-color);
+            color: var(--text-main); 
+            font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+        .menu-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); transform: rotate(90deg) scale(1.1); box-shadow: 0 0 15px var(--primary); }
+
+        /* --- HEADER --- */
+        header { text-align: center; margin-bottom: 30px; margin-top: 15px; }
+        .main-title { 
+            font-size: 2.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; 
+            background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            text-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            line-height: 1.1; margin-bottom: 10px;
+        }
+        .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; transition: background 0.3s ease; }
+
+        /* --- NAVİGASYON --- */
+        .navigation-wrapper { margin-bottom: 30px; display: flex; flex-direction: column; gap: 15px; }
+        
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .warmup-hero-btn { 
+            width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+            color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); 
+            padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; 
+            font-weight: 800; text-transform: uppercase; letter-spacing: 1px; 
+            transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 10px;
+            animation: pulse-glow 2s infinite;
+        }
+        .warmup-hero-btn:hover { background: var(--danger); color: white; transform: translateY(-2px); animation: none; }
+        .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); animation: none; border:none;}
+
+        .sub-menu { display: flex; justify-content: space-between; gap: 10px; }
+        .tab-btn { 
+            background-color: transparent; color: var(--text-muted); border: 1px solid var(--border-color); 
+            padding: 15px 10px; border-radius: 16px; cursor: pointer; font-size: 0.95rem; font-weight: 700; 
+            transition: all 0.3s ease; flex: 1; text-align: center;
+        }
+        .tab-btn:hover { border-color: var(--primary); color: var(--text-main); background: rgba(255,255,255,0.02); }
+        .tab-btn.active { background-color: var(--primary); color: #000; border-color: var(--primary); box-shadow: 0 5px 20px -5px var(--primary); transform: translateY(-2px); }
+        body.light-mode .tab-btn.active { color: #fff; }
+
+        /* --- İÇERİK --- */
+        .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
+        .tab-content.active-content { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- KART TASARIMI --- */
+        .day-card { 
+            background-color: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
+            border-radius: var(--radius); margin-bottom: 25px; overflow: hidden; 
+            border: 1px solid var(--border-color); box-shadow: var(--shadow); 
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .day-card:hover { transform: translateY(-3px); border-color: var(--primary); box-shadow: 0 10px 40px -10px var(--primary); }
+
+        .day-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;}
+        .day-header h2 { font-size: 1.2rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
+
+        .h-purple h2 { color: var(--primary); transition: color 0.3s; }
+        .h-red h2 { color: var(--danger); }
+
+        .workout-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+        .workout-table td { padding: 20px 30px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        .workout-table tr:last-child td { border-bottom: none; }
+        .workout-table tr:hover td { background-color: rgba(255,255,255,0.02); }
+
+        .col-name { width: 45%; } .col-stats { width: 25%; } .col-actions { width: 30%; } 
+        .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; line-height: 1.4; display: block; margin-bottom: 4px; }
+        .workout-note { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+        .stats-container { display: flex; flex-direction: column; gap: 6px; }
+        .sets-text { color: var(--text-muted); font-size: 0.8rem; font-family: monospace; letter-spacing: 0.5px; }
+        
+        .weight-badge { 
+            display: inline-block; align-self: flex-start; color: var(--primary); 
+            font-weight: 800; font-size: 0.85rem; 
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); 
+            padding: 4px 10px; border-radius: 8px; transition: all 0.3s;
+        }
+        body.light-mode .weight-badge { background: rgba(0,0,0,0.05); }
+        
+        .video-btn, .timer-btn { 
+            padding: 10px 16px; border-radius: 12px; cursor: pointer; font-size: 0.8rem; 
+            display: flex; justify-content: center; align-items: center; border: none; font-weight: 700; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); gap: 6px;
+        }
+        .video-btn { background-color: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid transparent; }
+        .video-btn:hover { background-color: var(--text-main); color: var(--bg-body); transform: translateY(-2px); }
+        
+        .timer-btn { background-color: rgba(255, 152, 0, 0.1); color: #fbbf24; border: 1px solid rgba(255, 152, 0, 0.2); }
+        .timer-btn:hover { background-color: #fbbf24; color: #000; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+
+        /* --- AYARLAR MENÜSÜ --- */
+        .settings-modal {
+            position: fixed; top: 0; right: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 3000; display: none;
+            justify-content: flex-end; opacity: 0; transition: opacity 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .settings-panel {
+            width: 100%; max-width: 360px; height: 100%;
+            background: var(--bg-body); border-left: 1px solid var(--border-color);
+            display: flex; flex-direction: column;
+            transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            box-shadow: -20px 0 50px rgba(0,0,0,0.5);
+        }
+        .settings-open { display: flex; opacity: 1; }
+        .settings-open .settings-panel { transform: translateX(0); }
+        
+        .settings-header { padding: 25px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .settings-header h3 { font-size: 1.2rem; font-weight: 800; }
+        .settings-content { flex: 1; overflow-y: auto; padding: 25px; }
+        .settings-section { margin-bottom: 35px; }
+        .section-label { margin-bottom: 15px; font-weight: 800; color: var(--text-muted); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; }
+
+        .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .color-btn { 
+            width: 100%; aspect-ratio: 1; border-radius: 50%; border: 2px solid transparent; 
+            cursor: pointer; transition: transform 0.2s; position: relative;
+        }
+        .color-btn:hover { transform: scale(1.1); }
+        .color-btn.active::after {
+            content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: #fff; font-weight: bold; font-size: 1.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .weight-input-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+        .weight-input { width: 70px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1rem; }
+        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 800; cursor: pointer; font-size: 1rem; border-radius: 16px; transition: filter 0.2s; }
+        .btn-save:hover { filter: brightness(1.1); }
+        
+        /* --- VİDEO MODAL (DÜZELTİLDİ) --- */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content { 
+            width: 100%; height: 100%; display: flex; flex-direction: column; position: relative;
+        }
+        
+        /* Floating Close Button (Her zaman görünür) */
+        .floating-close-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+            width: 50px; height: 50px; border-radius: 50%;
+            font-size: 2rem; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 2100; backdrop-filter: blur(5px);
+            line-height: 1;
+        }
+        .floating-close-btn:hover { background: var(--danger); border-color: var(--danger); }
+
+        .integrated-timer-bar {
+            width: 100%; height: 80px; background: #09090b; border-bottom: 1px solid #333;
+            display: none; /* JS ile açılacak */
+            align-items: center; justify-content: space-between; padding: 0 20px; 
+            color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 2005; flex-shrink: 0;
+        }
+        .timer-mini-btn { background: #333; border: 1px solid #444; color: #fff; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; }
+        .video-wrapper { flex-grow: 1; position: relative; background: #000; width: 100%; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        @media (max-width: 600px) {
+            .col-name { width: 50%; } .col-stats { width: 25%; } .col-actions { width: 25%; }
+            .warmup-hero-btn { font-size: 1rem; padding: 16px; }
+            .main-title { font-size: 2rem; }
+            .menu-btn { width: 40px; height: 40px; }
+            .workout-table td { padding: 15px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="menu-bar">
+        <button class="menu-btn" onclick="toggleSettings()">⚙️</button>
+    </div>
+
+    <header>
+        <h1 class="main-title">Spor Planı</h1>
+        <div class="header-line"></div>
+    </header>
+
+    <div class="navigation-wrapper">
+        <button id="btn-warmup" class="warmup-hero-btn active" onclick="openTab('warmup')">
+            <span>🔥</span> ANTRENMANA BAŞLA: ISINMA
+        </button>
+
+        <div class="sub-menu">
+            <button id="btn-day1" class="tab-btn" onclick="openTab('day1')">1. GÜN</button>
+            <button id="btn-day2" class="tab-btn" onclick="openTab('day2')">2. GÜN</button>
+            <button id="btn-day3" class="tab-btn" onclick="openTab('day3')">3. GÜN</button>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="settings-modal" onclick="toggleSettings()">
+        <div class="settings-panel" onclick="event.stopPropagation()">
+            <div class="settings-header">
+                <h3>Ayarlar</h3>
+                <button class="menu-btn" style="width:35px; height:35px; border:none;" onclick="toggleSettings()">×</button>
+            </div>
+            <div class="settings-content">
+                <div class="settings-section">
+                    <div class="section-label">MOD</div>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="setTheme('dark')" class="timer-mini-btn" style="flex:1; background:rgba(255,255,255,0.05);">🌙 Koyu</button>
+                        <button onclick="setTheme('light')" class="timer-mini-btn" style="flex:1; background:rgba(255,255,255,0.05);">☀️ Açık</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="section-label">VURGU RENGİ</div>
+                    <div class="color-grid">
+                        <button onclick="setAccent('#bb86fc')" class="color-btn" style="background:#bb86fc; box-shadow:0 0 10px #bb86fc80"></button>
+                        <button onclick="setAccent('#3b82f6')" class="color-btn" style="background:#3b82f6; box-shadow:0 0 10px #3b82f680"></button>
+                        <button onclick="setAccent('#f59e0b')" class="color-btn" style="background:#f59e0b; box-shadow:0 0 10px #f59e0b80"></button>
+                        <button onclick="setAccent('#10b981')" class="color-btn" style="background:#10b981; box-shadow:0 0 10px #10b98180"></button>
+                        <button onclick="setAccent('#ec4899')" class="color-btn" style="background:#ec4899; box-shadow:0 0 10px #ec489980"></button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="section-label">AĞIRLIKLAR (KG)</div>
+                    <div id="weightSettingsContainer"></div>
+                </div>
+            </div>
+            <div style="padding:20px; border-top:1px solid var(--border-color);">
+                 <button class="btn-save" onclick="saveAllSettings()">KAYDET & KAPAT</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="warmup" class="tab-content active-content">
+        <div class="day-card h-red">
+            <div class="day-header" style="border-left: 4px solid var(--danger);">
+                <h2>ISINMA RUTİNİ</h2>
+                <button class="video-btn" style="background-color: var(--danger); color: #fff; width: auto; padding: 8px 20px;" onclick="openVideo('bOxkisEVC8A')">▶ Tümünü İzle</button>
+            </div>
+            <table class="workout-table">
+                <tbody>
+                    <tr><td class="workout-name">Genel Isınma Hareketleri<span class="workout-note">Eklemleri hazırla, nabzı yükselt</span></td><td><span class="weight-badge" style="background:var(--danger); color:#fff; border:none;">5-10 Dk</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="day1" class="tab-content">
+        <div class="day-card h-purple">
+            <div class="day-header" style="border-left: 4px solid var(--primary);">
+                <h2>1. GÜN: ÇEKME & ARKA OMUZ</h2>
+            </div>
+            <table class="workout-table">
+                <thead><tr><th class="col-name">Hareket</th><th class="col-stats">Set</th><th class="col-actions">Video</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="workout-name">1. One Arm Row<span class="workout-note">Sırt kalınlığı</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d1_1" class="weight-badge" data-label="DB Row" data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('yHqqGd0tXcw')">▶ İzle</button></td>
+                    </tr>
+                    <tr>
+                        <td class="workout-name">2. DB Reverse Fly<span class="workout-note">Duruş düzeltici</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 15</span><span id="w_d1_2" class="weight-badge" data-label="Rev Fly" data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('LsT-bR_zxLo')">▶ İzle</button></td>
+                    </tr>
+                    <tr>
+                        <td class="workout-name">3. DB Shrug<span class="workout-note">Trapezler</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d1_3" class="weight-badge" data-label="Shrug" data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('g6qbq4Lf1FI')">▶ İzle</button></td>
+                    </tr>
+                    <tr>
+                        <td class="workout-name">4. DB Bicep Curl<span class="workout-note">Pazu</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 10</span><span id="w_d1_4" class="weight-badge" data-label="Curl" data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('sAq_ocpRh_I')">▶ İzle</button></td>
+                    </tr>
+                    <tr>
+                        <td class="workout-name">5. Plank<span class="workout-note">Core gücü</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 Set</span><span class="weight-badge">Maks Süre</span></div></td>
+                        <td><button class="timer-btn" onclick="openTimer(60, 'pSHjTRCQxIw')">⏱️ Zamanla</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="day2" class="tab-content">
+        <div class="day-card h-purple">
+            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>2. GÜN: İTME (GÖĞÜS/OMUZ)</h2></div>
+            <table class="workout-table">
+                <thead><tr><th class="col-name">Hareket</th><th class="col-stats">Set</th><th class="col-actions">Video</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="workout-name">1. Floor Press<span class="workout-note">Yerde pres</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d2_1" class="weight-badge" data-label="Floor Press" data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('uUGDRwge4F8')">▶ İzle</button></td>
+                    </tr>
+                    <tr>
+                        <td class="workout-name">2. Shoulder Press<span class="workout-note">Omuz presi</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 10</span><span id="w_d2_2" class="weight-badge" data-label="Shoulder P." data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('qEwK657kfZE')">▶ İzle</button></td>
+                    </tr>
+                    <tr>
+                        <td class="workout-name">3. Lateral Raise<span class="workout-note">Yana açış</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 15</span><span id="w_d2_3" class="weight-badge" data-label="Lat Raise" data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('3VcKaXpzqRo')">▶ İzle</button></td>
+                    </tr>
+                    <tr>
+                        <td class="workout-name">4. Overhead Ext.<span class="workout-note">Arka kol</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d2_4" class="weight-badge" data-label="Triceps" data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('njGVDUmqPQA')">▶ İzle</button></td>
+                    </tr>
+                    <tr>
+                        <td class="workout-name">5. Şınav (Push-up)<span class="workout-note">Tükenişe kadar</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 Set</span><span class="weight-badge">Maks</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('IODxDxX7oi4')">▶ İzle</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div id="day3" class="tab-content">
+        <div class="day-card h-purple">
+            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>3. GÜN: BACAK & ALT SIRT</h2></div>
+            <table class="workout-table">
+                <thead><tr><th class="col-name">Hareket</th><th class="col-stats">Set</th><th class="col-actions">Video</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td class="workout-name">1. Goblet Squat<span class="workout-note">Çömelme</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d3_1" class="weight-badge" data-label="Squat" data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('MeIiIdhvXT4')">▶ İzle</button></td>
+                    </tr>
+                    <tr>
+                        <td class="workout-name">2. Lunges<span class="workout-note">Adımlama</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 10</span><span id="w_d3_2" class="weight-badge" data-label="Lunge" data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('D7KaRcUTQeE')">▶ İzle</button></td>
+                    </tr>
+                    <tr>
+                        <td class="workout-name">3. RDL<span class="workout-note">Arka bacak & Bel</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d3_3" class="weight-badge" data-label="RDL" data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('JCXUYuzwNrM')">▶ İzle</button></td>
+                    </tr>
+                    <tr>
+                        <td class="workout-name">4. Calf Raise<span class="workout-note">Kalf kasları</span></td>
+                        <td><div class="stats-container"><span class="sets-text">3 x 15</span><span id="w_d3_4" class="weight-badge" data-label="Calf" data-unit="kg">5kg</span></div></td>
+                        <td><button class="video-btn" onclick="openVideo('-M4-G8p8fmc')">▶ İzle</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;">
+        <p>PRO ANTRENMAN v12</p>
+    </footer>
+</div>
+
+<div class="modal-overlay" id="videoModal" onclick="closeVideo()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="floating-close-btn" onclick="closeVideo()">×</button>
+
+        <div id="integratedTimerBar" class="integrated-timer-bar">
+            <span id="integratedTimerDisplay">00:00</span>
+            <div style="display:flex; gap:10px;">
+                <button onclick="toggleTimer()" id="btnTimerToggle" class="timer-mini-btn">BAŞLAT</button>
+                <button onclick="resetTimer()" class="timer-mini-btn">↺</button>
+            </div>
+        </div>
+        <div id="playerContainer" class="video-wrapper"></div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => { loadSettings(); generateWeightInputs(); });
+
+    // TAB SİSTEMİ
+    function openTab(tabId) {
+        var contents = document.getElementsByClassName("tab-content");
+        for (var i = 0; i < contents.length; i++) contents[i].classList.remove("active-content");
+        document.getElementById("btn-warmup").classList.remove("active");
+        var dayBtns = document.querySelectorAll(".sub-menu .tab-btn");
+        dayBtns.forEach(btn => btn.classList.remove("active"));
+        document.getElementById(tabId).classList.add("active-content");
+        if(tabId === 'warmup') document.getElementById("btn-warmup").classList.add("active");
+        else { var activeBtn = document.getElementById("btn-" + tabId); if(activeBtn) activeBtn.classList.add("active"); }
+    }
+
+    // AYARLAR
+    function toggleSettings() {
+        const modal = document.getElementById('settingsModal');
+        if(modal.classList.contains('settings-open')) {
+            modal.classList.remove('settings-open');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        } else { modal.style.display = 'flex'; setTimeout(() => { modal.classList.add('settings-open'); }, 10); }
+    }
+
+    function setTheme(mode) {
+        if(mode === 'light') { document.body.classList.add('light-mode'); localStorage.setItem('themeMode', 'light'); } 
+        else { document.body.classList.remove('light-mode'); localStorage.setItem('themeMode', 'dark'); }
+    }
+
+    function setAccent(color) {
+        document.documentElement.style.setProperty('--primary', color);
+        localStorage.setItem('accentColor', color);
+        const btns = document.querySelectorAll('.color-btn');
+        btns.forEach(btn => btn.classList.remove('active'));
+        btns.forEach(btn => { if(btn.getAttribute('onclick').includes(color)) btn.classList.add('active'); });
+    }
+
+    function generateWeightInputs() {
+        const container = document.getElementById('weightSettingsContainer');
+        container.innerHTML = '';
+        const weightElements = document.querySelectorAll('.weight-badge[id]');
+        weightElements.forEach(el => {
+            const unit = el.getAttribute('data-unit');
+            const label = el.getAttribute('data-label');
+            if(unit === 'kg' && label) {
+                const id = el.id;
+                let currentVal = el.innerText.replace('kg', '').replace('Kg', '').trim();
+                container.innerHTML += `<div class="weight-input-group"><span style="color:var(--text-main); font-size:0.9rem; font-weight:600;">${label}</span><div style="display:flex; align-items:center; gap:5px;"><input type="number" id="input_${id}" class="weight-input" value="${currentVal}"><span style="font-size:0.8rem; color:var(--text-muted);">kg</span></div></div>`;
+            }
+        });
+    }
+
+    function saveAllSettings() {
+        const inputs = document.querySelectorAll('.weight-input');
+        const weightsData = {};
+        inputs.forEach(input => {
+            const spanId = input.id.replace('input_', '');
+            let val = input.value; if(!val) val = "5";
+            const spanEl = document.getElementById(spanId);
+            if(spanEl) { spanEl.innerText = val + "kg"; weightsData[spanId] = val + "kg"; }
+        });
+        localStorage.setItem('userWeights', JSON.stringify(weightsData));
+        toggleSettings();
+    }
+
+    function loadSettings() {
+        const savedMode = localStorage.getItem('themeMode');
+        if(savedMode === 'light') document.body.classList.add('light-mode');
+        const savedAccent = localStorage.getItem('accentColor');
+        if(savedAccent) { setAccent(savedAccent); } else { setAccent('#bb86fc'); }
+        const savedWeights = localStorage.getItem('userWeights');
+        if(savedWeights) {
+            const weights = JSON.parse(savedWeights);
+            for (const [id, val] of Object.entries(weights)) { const el = document.getElementById(id); if(el) el.innerText = val; }
+        }
+    }
+
+    // VİDEO VE SAYAÇ
+    let timerInterval, currentSeconds = 0, initialSeconds = 0, isRunning = false;
+
+    // SADECE VİDEO (Sessiz, Loop, Playlist Modu)
+    function openVideo(videoId) {
+        const modal = document.getElementById('videoModal');
+        const container = document.getElementById('playerContainer');
+        document.getElementById('integratedTimerBar').style.display = 'none'; // Timer barı gizle
+        
+        // Playlist param: Mute=1, Loop=1, Playlist=ID
+        container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1&rel=0&iv_load_policy=3" allowfullscreen></iframe>`;
+        modal.style.display = 'flex';
+    }
+
+    // ZAMANLAYICILI VİDEO
+    function openTimer(seconds, videoId) {
+        const modal = document.getElementById('videoModal');
+        const container = document.getElementById('playerContainer');
+        const timerBar = document.getElementById('integratedTimerBar');
+        const display = document.getElementById('integratedTimerDisplay');
+        const btnToggle = document.getElementById('btnTimerToggle');
+        
+        initialSeconds = seconds; currentSeconds = seconds; isRunning = false;
+        
+        timerBar.style.display = 'flex'; // Timer barı göster
+        display.style.color = "#fff"; btnToggle.innerText = "BAŞLAT";
+        updateDisplay(currentSeconds, display);
+        
+        // Timer'da da aynı loop mantığı
+        container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1&rel=0&iv_load_policy=3" allowfullscreen></iframe>`;
+        modal.style.display = 'flex';
+        if(timerInterval) clearInterval(timerInterval);
+    }
+
+    function toggleTimer() {
+        const display = document.getElementById('integratedTimerDisplay');
+        const btnToggle = document.getElementById('btnTimerToggle');
+        if (isRunning) {
+            clearInterval(timerInterval); isRunning = false; btnToggle.innerText = "DEVAM";
+        } else {
+            if(currentSeconds <= 0) return;
+            isRunning = true; btnToggle.innerText = "DURAKLAT";
+            timerInterval = setInterval(() => {
+                currentSeconds--; updateDisplay(currentSeconds, display);
+                if(currentSeconds <= 0) { clearInterval(timerInterval); display.style.color = "#ef4444"; btnToggle.innerText = "BİTTİ"; isRunning = false; }
+            }, 1000);
+        }
+    }
+
+    function resetTimer() {
+        if(timerInterval) clearInterval(timerInterval);
+        isRunning = false; currentSeconds = initialSeconds;
+        updateDisplay(currentSeconds, document.getElementById('integratedTimerDisplay'));
+        document.getElementById('btnTimerToggle').innerText = "BAŞLAT";
+    }
+
+    function updateDisplay(time, displayElement) {
+        const m = Math.floor(time / 60).toString().padStart(2, '0');
+        const s = (time % 60).toString().padStart(2, '0');
+        displayElement.innerText = `${m}:${s}`;
+    }
+
+    function closeVideo() {
+        if(timerInterval) clearInterval(timerInterval);
+        document.getElementById('videoModal').style.display = 'none';
+        document.getElementById('playerContainer').innerHTML = '';
+        isRunning = false;
+    }
+</script>
+</body>
+</html>
