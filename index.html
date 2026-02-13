@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    
-    <title>Pro Antrenman Takvimi (v14 - AutoReset)</title>
+    <meta name="theme-color" content="#bb86fc">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <title>Pro Antrenman Takvimi (v15 - App)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         /* --- CSS DEĞİŞKENLERİ --- */
@@ -489,7 +489,7 @@
     </div>
 
     <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;">
-        <p>PRO ANTRENMAN v14 (AutoReset)</p>
+        <p>PRO ANTRENMAN v15 (App)</p>
     </footer>
 </div>
 
@@ -515,6 +515,13 @@
         generateWeightInputs(); 
         checkDateAndLoadProgress(); 
     });
+
+    // PWA Service Worker Kaydı
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('Uygulama hazır!'))
+        .catch((err) => console.log('Hata:', err));
+    }
 
     // --- GÜNLÜK SIFIRLAMA ---
     function checkDateAndLoadProgress() {
