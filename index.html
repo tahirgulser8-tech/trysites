@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Antrenman Takvimi (v12 - Grand Final)</title>
+    <title>Pro Antrenman Takvimi (v12 - Final)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         /* --- CSS DEĞİŞKENLERİ --- */
@@ -13,7 +13,7 @@
             --text-main: #e0e0e0;
             --text-muted: #9CA3AF;
             --border-color: rgba(255, 255, 255, 0.08);
-            --primary: #bb86fc; /* Varsayılan Renk */
+            --primary: #bb86fc;
             --secondary: #03dac6;
             --danger: #ef4444;
             --glass-blur: 16px;
@@ -132,8 +132,19 @@
         .workout-table tr:hover td { background-color: rgba(255,255,255,0.02); }
 
         .col-name { width: 45%; } .col-stats { width: 25%; } .col-actions { width: 30%; } 
-        .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; line-height: 1.4; display: block; margin-bottom: 4px; }
-        .workout-note { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+        
+        .workout-name { 
+            font-weight: 700; color: var(--text-main); font-size: 1rem; line-height: 1.4; 
+            display: block; margin-bottom: 4px; 
+        }
+        
+        /* DÜZELTME: Açıklamayı alta almak için display: block eklendi */
+        .workout-note { 
+            display: block; /* Yanına kaymayı engeller, alta atar */
+            margin-top: 4px;
+            font-size: 0.75rem; color: var(--text-muted); font-weight: 500; 
+        }
+
         .stats-container { display: flex; flex-direction: column; gap: 6px; }
         .sets-text { color: var(--text-muted); font-size: 0.8rem; font-family: monospace; letter-spacing: 0.5px; }
         
@@ -195,7 +206,7 @@
         .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 800; cursor: pointer; font-size: 1rem; border-radius: 16px; transition: filter 0.2s; }
         .btn-save:hover { filter: brightness(1.1); }
         
-        /* --- VİDEO MODAL (DÜZELTİLDİ) --- */
+        /* --- VİDEO MODAL --- */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #000; display: none; justify-content: center; align-items: center; z-index: 2000;
@@ -204,7 +215,6 @@
             width: 100%; height: 100%; display: flex; flex-direction: column; position: relative;
         }
         
-        /* Floating Close Button (Her zaman görünür) */
         .floating-close-btn {
             position: absolute; top: 20px; right: 20px;
             background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.2);
@@ -218,7 +228,10 @@
         .integrated-timer-bar {
             width: 100%; height: 80px; background: #09090b; border-bottom: 1px solid #333;
             display: none; /* JS ile açılacak */
-            align-items: center; justify-content: space-between; padding: 0 20px; 
+            align-items: center; justify-content: space-between; 
+            padding: 0 20px;
+            /* DÜZELTME: Çarpı tuşu için sağdan boşluk */
+            padding-right: 80px;
             color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 2005; flex-shrink: 0;
         }
         .timer-mini-btn { background: #333; border: 1px solid #444; color: #fff; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; }
@@ -231,6 +244,7 @@
             .main-title { font-size: 2rem; }
             .menu-btn { width: 40px; height: 40px; }
             .workout-table td { padding: 15px 15px; }
+            .integrated-timer-bar { font-size: 1.4rem; padding-right: 70px; }
         }
     </style>
 </head>
@@ -330,17 +344,17 @@
                     <tr>
                         <td class="workout-name">3. DB Shrug<span class="workout-note">Trapezler</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d1_3" class="weight-badge" data-label="Shrug" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('g6qbq4Lf1FI')">▶ İzle</button></td>
+                        <td><button class="video-btn" onclick="openVideo('rFsSeClGnNA')">▶ İzle</button></td>
                     </tr>
                     <tr>
                         <td class="workout-name">4. DB Bicep Curl<span class="workout-note">Pazu</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 x 10</span><span id="w_d1_4" class="weight-badge" data-label="Curl" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('sAq_ocpRh_I')">▶ İzle</button></td>
+                        <td><button class="video-btn" onclick="openVideo('MKWBV29S6c0')">▶ İzle</button></td>
                     </tr>
                     <tr>
                         <td class="workout-name">5. Plank<span class="workout-note">Core gücü</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 Set</span><span class="weight-badge">Maks Süre</span></div></td>
-                        <td><button class="timer-btn" onclick="openTimer(60, 'pSHjTRCQxIw')">⏱️ Zamanla</button></td>
+                        <td><button class="timer-btn" onclick="openTimer(60, 'xe2MXatLTUw')">⏱️ Zamanla</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -356,27 +370,27 @@
                     <tr>
                         <td class="workout-name">1. Floor Press<span class="workout-note">Yerde pres</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d2_1" class="weight-badge" data-label="Floor Press" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('uUGDRwge4F8')">▶ İzle</button></td>
+                        <td><button class="video-btn" onclick="openVideo('UBmpZ7l5Nlk')">▶ İzle</button></td>
                     </tr>
                     <tr>
                         <td class="workout-name">2. Shoulder Press<span class="workout-note">Omuz presi</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 x 10</span><span id="w_d2_2" class="weight-badge" data-label="Shoulder P." data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('qEwK657kfZE')">▶ İzle</button></td>
+                        <td><button class="video-btn" onclick="openVideo('k6tzKisR3NY')">▶ İzle</button></td>
                     </tr>
                     <tr>
                         <td class="workout-name">3. Lateral Raise<span class="workout-note">Yana açış</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 x 15</span><span id="w_d2_3" class="weight-badge" data-label="Lat Raise" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('3VcKaXpzqRo')">▶ İzle</button></td>
+                        <td><button class="video-btn" onclick="openVideo('Kl3LEzQ5Zqs')">▶ İzle</button></td>
                     </tr>
                     <tr>
                         <td class="workout-name">4. Overhead Ext.<span class="workout-note">Arka kol</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d2_4" class="weight-badge" data-label="Triceps" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('njGVDUmqPQA')">▶ İzle</button></td>
+                        <td><button class="video-btn" onclick="openVideo('b_r_LW4HEcM')">▶ İzle</button></td>
                     </tr>
                     <tr>
                         <td class="workout-name">5. Şınav (Push-up)<span class="workout-note">Tükenişe kadar</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 Set</span><span class="weight-badge">Maks</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('IODxDxX7oi4')">▶ İzle</button></td>
+                        <td><button class="video-btn" onclick="openVideo('4Bc1tPaYkOo')">▶ İzle</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -392,22 +406,22 @@
                     <tr>
                         <td class="workout-name">1. Goblet Squat<span class="workout-note">Çömelme</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d3_1" class="weight-badge" data-label="Squat" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('MeIiIdhvXT4')">▶ İzle</button></td>
+                        <td><button class="video-btn" onclick="openVideo('cuUPtfanAFQ')">▶ İzle</button></td>
                     </tr>
                     <tr>
                         <td class="workout-name">2. Lunges<span class="workout-note">Adımlama</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 x 10</span><span id="w_d3_2" class="weight-badge" data-label="Lunge" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('D7KaRcUTQeE')">▶ İzle</button></td>
+                        <td><button class="video-btn" onclick="openVideo('mJilHWIBWO8')">▶ İzle</button></td>
                     </tr>
                     <tr>
                         <td class="workout-name">3. RDL<span class="workout-note">Arka bacak & Bel</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d3_3" class="weight-badge" data-label="RDL" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('JCXUYuzwNrM')">▶ İzle</button></td>
+                        <td><button class="video-btn" onclick="openVideo('Wou9zVQrAfs')">▶ İzle</button></td>
                     </tr>
                     <tr>
                         <td class="workout-name">4. Calf Raise<span class="workout-note">Kalf kasları</span></td>
                         <td><div class="stats-container"><span class="sets-text">3 x 15</span><span id="w_d3_4" class="weight-badge" data-label="Calf" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('-M4-G8p8fmc')">▶ İzle</button></td>
+                        <td><button class="video-btn" onclick="openVideo('a-x_NR-ibos')">▶ İzle</button></td>
                     </tr>
                 </tbody>
             </table>
@@ -514,18 +528,16 @@
     // VİDEO VE SAYAÇ
     let timerInterval, currentSeconds = 0, initialSeconds = 0, isRunning = false;
 
-    // SADECE VİDEO (Sessiz, Loop, Playlist Modu)
     function openVideo(videoId) {
         const modal = document.getElementById('videoModal');
         const container = document.getElementById('playerContainer');
-        document.getElementById('integratedTimerBar').style.display = 'none'; // Timer barı gizle
+        document.getElementById('integratedTimerBar').style.display = 'none'; 
         
-        // Playlist param: Mute=1, Loop=1, Playlist=ID
-        container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1&rel=0&iv_load_policy=3" allowfullscreen></iframe>`;
+        // DÜZELTME: Resmi YouTube Embed, Autoplay (Mute ile) ve Playlist Loop
+        container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         modal.style.display = 'flex';
     }
 
-    // ZAMANLAYICILI VİDEO
     function openTimer(seconds, videoId) {
         const modal = document.getElementById('videoModal');
         const container = document.getElementById('playerContainer');
@@ -535,12 +547,12 @@
         
         initialSeconds = seconds; currentSeconds = seconds; isRunning = false;
         
-        timerBar.style.display = 'flex'; // Timer barı göster
+        timerBar.style.display = 'flex'; 
         display.style.color = "#fff"; btnToggle.innerText = "BAŞLAT";
         updateDisplay(currentSeconds, display);
         
-        // Timer'da da aynı loop mantığı
-        container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1&rel=0&iv_load_policy=3" allowfullscreen></iframe>`;
+        // DÜZELTME: Resmi YouTube Embed, Autoplay (Mute ile) ve Playlist Loop
+        container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         modal.style.display = 'flex';
         if(timerInterval) clearInterval(timerInterval);
     }
