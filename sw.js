@@ -1,19 +1,19 @@
-const CACHE_NAME = "pro-antrenman-v21";
+const CACHE_NAME = "pro-antrenman-v22-fix";
 const ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./icon.png"
+  "/",
+  "/index.html",
+  "/manifest.json",
+  "/icon.png"
 ];
 
-// Kurulum (Dosyaları hafızaya al)
+// Kurulum
 self.addEventListener("install", (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
 });
 
-// Çalıştırma (Önce hafızadan, yoksa internetten çek)
+// Çalıştırma
 self.addEventListener("fetch", (e) => {
   e.respondWith(
     caches.match(e.request).then((response) => {
@@ -22,7 +22,7 @@ self.addEventListener("fetch", (e) => {
   );
 });
 
-// Güncelleme (Eski versiyonları temizle)
+// Güncelleme
 self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
