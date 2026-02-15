@@ -2,13 +2,8 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    
-    <title>Pro Antrenman Takvimi (v14 - AutoReset)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Antrenman Takvimi (v13 - Tracker)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         /* --- CSS DEĞİŞKENLERİ --- */
@@ -21,7 +16,7 @@
             --primary: #bb86fc;
             --secondary: #03dac6;
             --danger: #ef4444;
-            --success: #10b981;
+            --success: #10b981; /* Yeni Başarı Rengi */
             --glass-blur: 16px;
             --shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
             --radius: 24px;
@@ -58,7 +53,7 @@
         
         .container { width: 100%; max-width: 850px; padding-bottom: 40px; position: relative; padding-top: 30px; }
 
-        /* --- İLERLEME ÇUBUĞU --- */
+        /* --- İLERLEME ÇUBUĞU (YENİ) --- */
         .progress-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.3); z-index: 9999;
         }
@@ -146,10 +141,11 @@
         .workout-table tr:last-child td { border-bottom: none; }
         .workout-table tr:hover td { background-color: rgba(255,255,255,0.02); }
 
-        .col-check { width: 12%; text-align: center; } 
-        .col-name { width: 45%; } 
-        .col-stats { width: 18%; } 
-        .col-actions { width: 25%; } 
+        /* Sütun Genişlikleri Ayarlandı */
+        .col-check { width: 10%; text-align: center; } /* Checkbox sütunu */
+        .col-name { width: 40%; } 
+        .col-stats { width: 20%; } 
+        .col-actions { width: 30%; } 
         
         .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; line-height: 1.4; display: block; margin-bottom: 4px; }
         .workout-note { display: block; margin-top: 4px; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
@@ -176,7 +172,7 @@
         .timer-btn { background-color: rgba(255, 152, 0, 0.1); color: #fbbf24; border: 1px solid rgba(255, 152, 0, 0.2); }
         .timer-btn:hover { background-color: #fbbf24; color: #000; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
 
-        /* --- CHECKBOX --- */
+        /* --- CHECKBOX TASARIMI (YENİ) --- */
         .check-container {
             display: flex; justify-content: center; align-items: center;
             cursor: pointer; position: relative; width: 24px; height: 24px;
@@ -197,10 +193,11 @@
         }
         .check-input:checked ~ .checkmark:after { display: block; }
 
+        /* Satır tamamlandığında üstünü çizme efekti */
         tr.completed td { opacity: 0.5; transition: opacity 0.3s; }
         tr.completed .workout-name { text-decoration: line-through; }
 
-        /* --- AYARLAR MODAL --- */
+        /* --- AYARLAR MENÜSÜ --- */
         .settings-modal {
             position: fixed; top: 0; right: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); z-index: 3000; display: none;
@@ -268,6 +265,7 @@
         .video-wrapper { flex-grow: 1; position: relative; background: #000; width: 100%; }
         iframe { width: 100%; height: 100%; border: none; }
         
+        /* Konfeti Canvas */
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; }
 
         @media (max-width: 600px) {
@@ -489,7 +487,7 @@
     </div>
 
     <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;">
-        <p>PRO ANTRENMAN v14 (AutoReset)</p>
+        <p>PRO ANTRENMAN v13 (TRACKER)</p>
     </footer>
 </div>
 
@@ -513,24 +511,10 @@
     document.addEventListener('DOMContentLoaded', () => { 
         loadSettings(); 
         generateWeightInputs(); 
-        checkDateAndLoadProgress(); 
+        loadProgress(); // İlerlemeyi yükle
     });
 
-    // --- GÜNLÜK SIFIRLAMA ---
-    function checkDateAndLoadProgress() {
-        const today = new Date().toDateString(); 
-        const lastSavedDate = localStorage.getItem('lastSavedDate');
-
-        if (lastSavedDate !== today) {
-            localStorage.removeItem('userProgress'); 
-            localStorage.setItem('lastSavedDate', today); 
-            updateProgressBar();
-        } else {
-            loadProgress(); 
-        }
-    }
-
-    // --- İLERLEME TAKİBİ ---
+    // --- İLERLEME TAKİBİ (CHECKBOX) ---
     function toggleCheck(rowId) {
         const row = document.getElementById(rowId);
         const checkbox = row.querySelector('.check-input');
@@ -547,10 +531,9 @@
 
     function saveProgressData(id, status) {
         let progress = JSON.parse(localStorage.getItem('userProgress')) || {};
+        // Bugünün tarihi ile kaydet ki yarın sıfırlanabilsin (Basit versiyon: Sadece ID tutuyoruz şimdilik)
         progress[id] = status;
         localStorage.setItem('userProgress', JSON.stringify(progress));
-        const today = new Date().toDateString();
-        localStorage.setItem('lastSavedDate', today);
     }
 
     function loadProgress() {
@@ -569,13 +552,14 @@
     }
 
     function resetProgress() {
-        if(confirm("Bugünkü ilerlemeyi silmek istediğine emin misin?")) {
+        if(confirm("Tüm ilerlemeyi silmek istediğine emin misin?")) {
             localStorage.removeItem('userProgress');
             location.reload();
         }
     }
 
     function updateProgressBar() {
+        // Aktif tab'daki checkboxları say
         const activeTab = document.querySelector('.tab-content.active-content');
         if(!activeTab) return;
 
@@ -588,7 +572,11 @@
         } else {
             const percentage = (checkedCheckboxes / totalCheckboxes) * 100;
             progressBar.style.width = percentage + '%';
-            if(percentage === 100) triggerConfetti();
+            
+            // Eğer %100 ise Konfeti patlat!
+            if(percentage === 100) {
+                triggerConfetti();
+            }
         }
     }
     
@@ -596,7 +584,9 @@
         var duration = 3 * 1000;
         var animationEnd = Date.now() + duration;
         var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 99999 };
+
         function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
         var interval = setInterval(function() {
             var timeLeft = animationEnd - Date.now();
             if (timeLeft <= 0) { return clearInterval(interval); }
@@ -606,7 +596,7 @@
         }, 250);
     }
 
-    // --- TAB & AYARLAR ---
+    // TAB SİSTEMİ (Güncellendi: Progress barı güncellemesi için)
     function openTab(tabId) {
         var contents = document.getElementsByClassName("tab-content");
         for (var i = 0; i < contents.length; i++) contents[i].classList.remove("active-content");
@@ -616,9 +606,12 @@
         document.getElementById(tabId).classList.add("active-content");
         if(tabId === 'warmup') document.getElementById("btn-warmup").classList.add("active");
         else { var activeBtn = document.getElementById("btn-" + tabId); if(activeBtn) activeBtn.classList.add("active"); }
+        
+        // Tab değişince progress barı güncelle
         setTimeout(updateProgressBar, 50);
     }
 
+    // AYARLAR
     function toggleSettings() {
         const modal = document.getElementById('settingsModal');
         if(modal.classList.contains('settings-open')) {
@@ -680,13 +673,14 @@
         }
     }
 
-    // --- VİDEO & SAYAÇ ---
+    // VİDEO VE SAYAÇ
     let timerInterval, currentSeconds = 0, initialSeconds = 0, isRunning = false;
 
     function openVideo(videoId) {
         const modal = document.getElementById('videoModal');
         const container = document.getElementById('playerContainer');
         document.getElementById('integratedTimerBar').style.display = 'none'; 
+        
         container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
         modal.style.display = 'flex';
     }
