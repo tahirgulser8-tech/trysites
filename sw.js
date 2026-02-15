@@ -1,4 +1,4 @@
-const CACHE_NAME = "pro-antrenman-v22-fix";
+const CACHE_NAME = "pro-antrenman-dynamic";
 const ASSETS = [
   "/",
   "/index.html",
@@ -6,29 +6,45 @@ const ASSETS = [
   "/icon.png"
 ];
 
-// Kurulum
+// 1. Kurulum: Temel dosyaları hafızaya al
 self.addEventListener("install", (e) => {
+  self.skipWaiting(); // Beklemeden hemen aktif ol
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
 });
 
-// Çalıştırma
+// 2. Çalışma Mantığı: "Network First" (Önce İnternet, Yoksa Hafıza)
 self.addEventListener("fetch", (e) => {
   e.respondWith(
-    caches.match(e.request).then((response) => {
-      return response || fetch(e.request);
-    })
+    fetch(e.request)
+      .then((response) => {
+        // İnternet varsa: Yanıtı al, kopyasını hafızaya at (güncelle), kullanıcıya göster
+        const resClone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(e.request, resClone);
+        });
+        return response;
+      })
+      .catch(() => {
+        // İnternet yoksa veya hata varsa: Hafızadakini göster
+        return caches.match(e.request);
+      })
   );
 });
 
-// Güncelleme
+// 3. Temizlik: Eski ve gereksiz dosyaları sil
 self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
       );
     })
   );
+  return self.clients.claim(); // Tüm sekmeleri hemen kontrol altına al
 });
