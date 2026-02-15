@@ -2,11 +2,16 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Antrenman Takvimi (v12 - Final)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+    <title>Pro Antrenman (v18 - Stable)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    
     <style>
-        /* --- CSS DEĞİŞKENLERİ --- */
         :root {
             --bg-body: #09090b;
             --bg-card: rgba(30, 30, 35, 0.6);
@@ -16,255 +21,112 @@
             --primary: #bb86fc;
             --secondary: #03dac6;
             --danger: #ef4444;
+            --success: #10b981;
             --glass-blur: 16px;
             --shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
             --radius: 24px;
         }
-
         body.light-mode {
-            --bg-body: #f3f4f6;
-            --bg-card: rgba(255, 255, 255, 0.8);
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
+            --bg-body: #f3f4f6; --bg-card: rgba(255, 255, 255, 0.8);
+            --text-main: #1f2937; --text-muted: #6b7280;
             --border-color: rgba(0, 0, 0, 0.06);
-            --shadow: 0 10px 40px -10px rgba(0,0,0,0.1);
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
         body { 
             background-color: var(--bg-body); 
-            background-image: 
-                radial-gradient(circle at 10% 10%, var(--primary), transparent 40%),
-                radial-gradient(circle at 90% 90%, var(--secondary), transparent 40%);
-            background-size: 100% 100%;
-            background-attachment: fixed;
-            color: var(--text-main); 
-            font-family: 'Inter', sans-serif; 
+            background-image: radial-gradient(circle at 10% 10%, var(--primary), transparent 40%), radial-gradient(circle at 90% 90%, var(--secondary), transparent 40%);
+            background-size: 100% 100%; background-attachment: fixed;
+            color: var(--text-main); font-family: 'Inter', sans-serif; 
             display: flex; justify-content: center; padding: 20px; min-height: 100vh; 
             transition: background 0.5s ease, color 0.3s ease;
         }
-
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-body); opacity: 0.94; z-index: -1;
-        }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); opacity: 0.94; z-index: -1; }
+        .container { width: 100%; max-width: 850px; padding-bottom: 40px; position: relative; padding-top: 30px; }
         
-        .container { width: 100%; max-width: 850px; padding-bottom: 40px; position: relative; padding-top: 10px; }
+        /* Progress Bar */
+        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.3); z-index: 9999; }
+        .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; box-shadow: 0 0 10px var(--success); }
 
-        /* --- MENÜ BUTONU --- */
-        .menu-bar { position: absolute; top: 5px; right: 0; z-index: 200; }
-        .menu-btn {
-            background: rgba(255,255,255,0.03); 
-            border: 1px solid var(--border-color);
-            color: var(--text-main); 
-            font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
-        }
-        .menu-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); transform: rotate(90deg) scale(1.1); box-shadow: 0 0 15px var(--primary); }
-
-        /* --- HEADER --- */
+        /* UI Elements */
+        .menu-bar { position: absolute; top: 15px; right: 0; z-index: 200; }
+        .menu-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-main); font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(10px); }
+        .menu-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); transform: rotate(90deg) scale(1.1); }
         header { text-align: center; margin-bottom: 30px; margin-top: 15px; }
-        .main-title { 
-            font-size: 2.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; 
-            background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            text-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            line-height: 1.1; margin-bottom: 10px;
-        }
-        .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; transition: background 0.3s ease; }
-
-        /* --- NAVİGASYON --- */
+        .main-title { font-size: 2.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; }
         .navigation-wrapper { margin-bottom: 30px; display: flex; flex-direction: column; gap: 15px; }
-        
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-
-        .warmup-hero-btn { 
-            width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
-            color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); 
-            padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; 
-            font-weight: 800; text-transform: uppercase; letter-spacing: 1px; 
-            transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 10px;
-            animation: pulse-glow 2s infinite;
-        }
-        .warmup-hero-btn:hover { background: var(--danger); color: white; transform: translateY(-2px); animation: none; }
-        .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); animation: none; border:none;}
-
+        .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; animation: pulse-glow 2s infinite; }
+        .warmup-hero-btn:hover, .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); animation: none; border:none; }
+        @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         .sub-menu { display: flex; justify-content: space-between; gap: 10px; }
-        .tab-btn { 
-            background-color: transparent; color: var(--text-muted); border: 1px solid var(--border-color); 
-            padding: 15px 10px; border-radius: 16px; cursor: pointer; font-size: 0.95rem; font-weight: 700; 
-            transition: all 0.3s ease; flex: 1; text-align: center;
-        }
-        .tab-btn:hover { border-color: var(--primary); color: var(--text-main); background: rgba(255,255,255,0.02); }
-        .tab-btn.active { background-color: var(--primary); color: #000; border-color: var(--primary); box-shadow: 0 5px 20px -5px var(--primary); transform: translateY(-2px); }
+        .tab-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); padding: 15px 10px; border-radius: 16px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: all 0.3s; flex: 1; text-align: center; }
+        .tab-btn.active { background: var(--primary); color: #000; border-color: var(--primary); box-shadow: 0 5px 20px -5px var(--primary); transform: translateY(-2px); }
         body.light-mode .tab-btn.active { color: #fff; }
-
-        /* --- İÇERİK --- */
         .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
         .tab-content.active-content { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- KART TASARIMI --- */
-        .day-card { 
-            background-color: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
-            border-radius: var(--radius); margin-bottom: 25px; overflow: hidden; 
-            border: 1px solid var(--border-color); box-shadow: var(--shadow); 
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .day-card:hover { transform: translateY(-3px); border-color: var(--primary); box-shadow: 0 10px 40px -10px var(--primary); }
-
-        .day-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;}
+        
+        /* Cards & Tables */
+        .day-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border-radius: var(--radius); margin-bottom: 25px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--shadow); transition: transform 0.3s; }
+        .day-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
         .day-header h2 { font-size: 1.2rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
-
-        .h-purple h2 { color: var(--primary); transition: color 0.3s; }
-        .h-red h2 { color: var(--danger); }
-
+        .h-purple h2 { color: var(--primary); } .h-red h2 { color: var(--danger); }
         .workout-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
-        .workout-table td { padding: 20px 30px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        .workout-table td, .workout-table th { padding: 20px 15px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .workout-table tr:last-child td { border-bottom: none; }
-        .workout-table tr:hover td { background-color: rgba(255,255,255,0.02); }
+        
+        .col-check { width: 12%; text-align: center; } 
+        .col-name { width: 43%; } 
+        .col-stats { width: 20%; } 
+        .col-actions { width: 25%; }
+        
+        .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; display: block; margin-bottom: 4px; }
+        .workout-note { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+        .weight-badge { display: inline-block; color: var(--primary); font-weight: 800; font-size: 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 8px; }
+        .video-btn, .timer-btn { padding: 10px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; display: flex; justify-content: center; align-items: center; border: none; font-weight: 700; gap: 4px; width: 100%; transition: all 0.2s; }
+        .video-btn { background: rgba(255,255,255,0.05); color: var(--text-main); } .video-btn:hover { background: var(--text-main); color: var(--bg-body); }
+        .timer-btn { background: rgba(255, 152, 0, 0.1); color: #fbbf24; border: 1px solid rgba(255, 152, 0, 0.2); }
+        
+        /* Checkbox */
+        .check-container { display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; width: 24px; height: 24px; }
+        .check-input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+        .checkmark { position: absolute; top: 0; left: 0; height: 24px; width: 24px; background: rgba(255,255,255,0.1); border-radius: 6px; border: 1px solid var(--border-color); transition: all 0.2s; }
+        .check-input:checked ~ .checkmark { background: var(--success); border-color: var(--success); }
+        .checkmark:after { content: ""; position: absolute; display: none; left: 8px; top: 4px; width: 6px; height: 12px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
+        .check-input:checked ~ .checkmark:after { display: block; }
+        tr.completed .workout-name { text-decoration: line-through; opacity: 0.5; }
 
-        .col-name { width: 45%; } .col-stats { width: 25%; } .col-actions { width: 30%; } 
-        
-        .workout-name { 
-            font-weight: 700; color: var(--text-main); font-size: 1rem; line-height: 1.4; 
-            display: block; margin-bottom: 4px; 
-        }
-        
-        /* DÜZELTME: Açıklamayı alta almak için display: block eklendi */
-        .workout-note { 
-            display: block; /* Yanına kaymayı engeller, alta atar */
-            margin-top: 4px;
-            font-size: 0.75rem; color: var(--text-muted); font-weight: 500; 
-        }
-
-        .stats-container { display: flex; flex-direction: column; gap: 6px; }
-        .sets-text { color: var(--text-muted); font-size: 0.8rem; font-family: monospace; letter-spacing: 0.5px; }
-        
-        .weight-badge { 
-            display: inline-block; align-self: flex-start; color: var(--primary); 
-            font-weight: 800; font-size: 0.85rem; 
-            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); 
-            padding: 4px 10px; border-radius: 8px; transition: all 0.3s;
-        }
-        body.light-mode .weight-badge { background: rgba(0,0,0,0.05); }
-        
-        .video-btn, .timer-btn { 
-            padding: 10px 16px; border-radius: 12px; cursor: pointer; font-size: 0.8rem; 
-            display: flex; justify-content: center; align-items: center; border: none; font-weight: 700; 
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); gap: 6px;
-        }
-        .video-btn { background-color: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid transparent; }
-        .video-btn:hover { background-color: var(--text-main); color: var(--bg-body); transform: translateY(-2px); }
-        
-        .timer-btn { background-color: rgba(255, 152, 0, 0.1); color: #fbbf24; border: 1px solid rgba(255, 152, 0, 0.2); }
-        .timer-btn:hover { background-color: #fbbf24; color: #000; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
-
-        /* --- AYARLAR MENÜSÜ --- */
-        .settings-modal {
-            position: fixed; top: 0; right: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 3000; display: none;
-            justify-content: flex-end; opacity: 0; transition: opacity 0.3s;
-            backdrop-filter: blur(5px);
-        }
-        .settings-panel {
-            width: 100%; max-width: 360px; height: 100%;
-            background: var(--bg-body); border-left: 1px solid var(--border-color);
-            display: flex; flex-direction: column;
-            transform: translateX(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            box-shadow: -20px 0 50px rgba(0,0,0,0.5);
-        }
-        .settings-open { display: flex; opacity: 1; }
-        .settings-open .settings-panel { transform: translateX(0); }
-        
-        .settings-header { padding: 25px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .settings-header h3 { font-size: 1.2rem; font-weight: 800; }
-        .settings-content { flex: 1; overflow-y: auto; padding: 25px; }
-        .settings-section { margin-bottom: 35px; }
-        .section-label { margin-bottom: 15px; font-weight: 800; color: var(--text-muted); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; }
-
+        /* Settings */
+        .settings-modal { position: fixed; top: 0; right: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; justify-content: flex-end; backdrop-filter: blur(5px); }
+        .settings-panel { width: 100%; max-width: 360px; height: 100%; background: var(--bg-body); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; box-shadow: -20px 0 50px rgba(0,0,0,0.5); }
         .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .color-btn { 
-            width: 100%; aspect-ratio: 1; border-radius: 50%; border: 2px solid transparent; 
-            cursor: pointer; transition: transform 0.2s; position: relative;
-        }
-        .color-btn:hover { transform: scale(1.1); }
-        .color-btn.active::after {
-            content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            color: #fff; font-weight: bold; font-size: 1.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
+        .color-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; position: relative; }
+        .color-btn.active::after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; }
+        .weight-input-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--border-color); }
+        .weight-input { width: 60px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-main); padding: 5px; border-radius: 5px; text-align: center; }
+        .btn-save { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; font-weight: 800; cursor: pointer; border-radius: 12px; margin-top: 10px; }
 
-        .weight-input-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
-        .weight-input { width: 70px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1rem; }
-        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 800; cursor: pointer; font-size: 1rem; border-radius: 16px; transition: filter 0.2s; }
-        .btn-save:hover { filter: brightness(1.1); }
-        
-        /* --- VİDEO MODAL --- */
-        .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #000; display: none; justify-content: center; align-items: center; z-index: 2000;
-        }
-        .modal-content { 
-            width: 100%; height: 100%; display: flex; flex-direction: column; position: relative;
-        }
-        
-        .floating-close-btn {
-            position: absolute; top: 20px; right: 20px;
-            background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.2);
-            width: 50px; height: 50px; border-radius: 50%;
-            font-size: 2rem; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; z-index: 2100; backdrop-filter: blur(5px);
-            line-height: 1;
-        }
-        .floating-close-btn:hover { background: var(--danger); border-color: var(--danger); }
-
-        .integrated-timer-bar {
-            width: 100%; height: 80px; background: #09090b; border-bottom: 1px solid #333;
-            display: none; /* JS ile açılacak */
-            align-items: center; justify-content: space-between; 
-            padding: 0 20px;
-            /* DÜZELTME: Çarpı tuşu için sağdan boşluk */
-            padding-right: 80px;
-            color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 2005; flex-shrink: 0;
-        }
-        .timer-mini-btn { background: #333; border: 1px solid #444; color: #fff; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; font-weight: 700; }
+        /* Video Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
+        .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2100; border: 1px solid rgba(255,255,255,0.2); }
+        .integrated-timer-bar { width: 100%; height: 80px; background: #09090b; display: none; align-items: center; justify-content: space-between; padding: 0 20px; padding-right: 80px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 2005; }
         .video-wrapper { flex-grow: 1; position: relative; background: #000; width: 100%; }
         iframe { width: 100%; height: 100%; border: none; }
-
-        @media (max-width: 600px) {
-            .col-name { width: 50%; } .col-stats { width: 25%; } .col-actions { width: 25%; }
-            .warmup-hero-btn { font-size: 1rem; padding: 16px; }
-            .main-title { font-size: 2rem; }
-            .menu-btn { width: 40px; height: 40px; }
-            .workout-table td { padding: 15px 15px; }
-            .integrated-timer-bar { font-size: 1.4rem; padding-right: 70px; }
-        }
+        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="menu-bar">
-        <button class="menu-btn" onclick="toggleSettings()">⚙️</button>
-    </div>
+<canvas id="confetti-canvas"></canvas>
+<div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
 
-    <header>
-        <h1 class="main-title">Spor Planı</h1>
-        <div class="header-line"></div>
-    </header>
+<div class="container">
+    <div class="menu-bar"><button class="menu-btn" onclick="toggleSettings()">⚙️</button></div>
+    <header><h1 class="main-title">Spor Planı</h1><div class="header-line"></div></header>
 
     <div class="navigation-wrapper">
-        <button id="btn-warmup" class="warmup-hero-btn active" onclick="openTab('warmup')">
-            <span>🔥</span> ANTRENMANA BAŞLA: ISINMA
-        </button>
-
+        <button id="btn-warmup" class="warmup-hero-btn active" onclick="openTab('warmup')"><span>🔥</span> ISINMA</button>
         <div class="sub-menu">
             <button id="btn-day1" class="tab-btn" onclick="openTab('day1')">1. GÜN</button>
             <button id="btn-day2" class="tab-btn" onclick="openTab('day2')">2. GÜN</button>
@@ -274,88 +136,50 @@
 
     <div id="settingsModal" class="settings-modal" onclick="toggleSettings()">
         <div class="settings-panel" onclick="event.stopPropagation()">
-            <div class="settings-header">
-                <h3>Ayarlar</h3>
-                <button class="menu-btn" style="width:35px; height:35px; border:none;" onclick="toggleSettings()">×</button>
-            </div>
+            <div class="settings-header"><h3>Ayarlar</h3><button class="menu-btn" style="border:none;" onclick="toggleSettings()">×</button></div>
             <div class="settings-content">
                 <div class="settings-section">
-                    <div class="section-label">MOD</div>
-                    <div style="display:flex; gap:10px;">
-                        <button onclick="setTheme('dark')" class="timer-mini-btn" style="flex:1; background:rgba(255,255,255,0.05);">🌙 Koyu</button>
-                        <button onclick="setTheme('light')" class="timer-mini-btn" style="flex:1; background:rgba(255,255,255,0.05);">☀️ Açık</button>
-                    </div>
+                    <div class="section-label">Mod</div>
+                    <div style="display:flex; gap:10px;"><button onclick="setTheme('dark')" class="timer-mini-btn">🌙 Koyu</button><button onclick="setTheme('light')" class="timer-mini-btn">☀️ Açık</button></div>
                 </div>
-
                 <div class="settings-section">
-                    <div class="section-label">VURGU RENGİ</div>
+                    <div class="section-label">Renk</div>
                     <div class="color-grid">
-                        <button onclick="setAccent('#bb86fc')" class="color-btn" style="background:#bb86fc; box-shadow:0 0 10px #bb86fc80"></button>
-                        <button onclick="setAccent('#3b82f6')" class="color-btn" style="background:#3b82f6; box-shadow:0 0 10px #3b82f680"></button>
-                        <button onclick="setAccent('#f59e0b')" class="color-btn" style="background:#f59e0b; box-shadow:0 0 10px #f59e0b80"></button>
-                        <button onclick="setAccent('#10b981')" class="color-btn" style="background:#10b981; box-shadow:0 0 10px #10b98180"></button>
-                        <button onclick="setAccent('#ec4899')" class="color-btn" style="background:#ec4899; box-shadow:0 0 10px #ec489980"></button>
+                        <button onclick="setAccent('#bb86fc')" class="color-btn" style="background:#bb86fc"></button>
+                        <button onclick="setAccent('#3b82f6')" class="color-btn" style="background:#3b82f6"></button>
+                        <button onclick="setAccent('#f59e0b')" class="color-btn" style="background:#f59e0b"></button>
+                        <button onclick="setAccent('#10b981')" class="color-btn" style="background:#10b981"></button>
+                        <button onclick="setAccent('#ec4899')" class="color-btn" style="background:#ec4899"></button>
                     </div>
                 </div>
-
                 <div class="settings-section">
-                    <div class="section-label">AĞIRLIKLAR (KG)</div>
+                    <div class="section-label">Ağırlıklar (Kg)</div>
                     <div id="weightSettingsContainer"></div>
                 </div>
+                <div class="settings-section"><button onclick="resetProgress()" class="timer-mini-btn" style="width:100%; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4);">İLERLEMEYİ SIFIRLA</button></div>
             </div>
-            <div style="padding:20px; border-top:1px solid var(--border-color);">
-                 <button class="btn-save" onclick="saveAllSettings()">KAYDET & KAPAT</button>
-            </div>
+            <div style="padding:20px; border-top:1px solid var(--border-color);"><button class="btn-save" onclick="saveAllSettings()">KAYDET & KAPAT</button></div>
         </div>
     </div>
 
     <div id="warmup" class="tab-content active-content">
         <div class="day-card h-red">
-            <div class="day-header" style="border-left: 4px solid var(--danger);">
-                <h2>ISINMA RUTİNİ</h2>
-                <button class="video-btn" style="background-color: var(--danger); color: #fff; width: auto; padding: 8px 20px;" onclick="openVideo('bOxkisEVC8A')">▶ Tümünü İzle</button>
-            </div>
-            <table class="workout-table">
-                <tbody>
-                    <tr><td class="workout-name">Genel Isınma Hareketleri<span class="workout-note">Eklemleri hazırla, nabzı yükselt</span></td><td><span class="weight-badge" style="background:var(--danger); color:#fff; border:none;">5-10 Dk</span></td></tr>
-                </tbody>
-            </table>
+            <div class="day-header" style="border-left: 4px solid var(--danger);"><h2>ISINMA</h2><button class="video-btn" style="width:auto; background:var(--danger); color:#fff;" onclick="openVideo('bOxkisEVC8A')">▶ İzle</button></div>
+            <table class="workout-table"><tbody><tr id="row_warmup"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_warmup')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Genel Isınma</span></td><td class="col-stats"><span class="weight-badge">5 Dk</span></td><td class="col-actions"></td></tr></tbody></table>
         </div>
     </div>
 
     <div id="day1" class="tab-content">
         <div class="day-card h-purple">
-            <div class="day-header" style="border-left: 4px solid var(--primary);">
-                <h2>1. GÜN: ÇEKME & ARKA OMUZ</h2>
-            </div>
+            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>1. GÜN: ÇEKME</h2></div>
             <table class="workout-table">
-                <thead><tr><th class="col-name">Hareket</th><th class="col-stats">Set</th><th class="col-actions">Video</th></tr></thead>
+                <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
                 <tbody>
-                    <tr>
-                        <td class="workout-name">1. One Arm Row<span class="workout-note">Sırt kalınlığı</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d1_1" class="weight-badge" data-label="DB Row" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('yHqqGd0tXcw')">▶ İzle</button></td>
-                    </tr>
-                    <tr>
-                        <td class="workout-name">2. DB Reverse Fly<span class="workout-note">Duruş düzeltici</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 15</span><span id="w_d1_2" class="weight-badge" data-label="Rev Fly" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('LsT-bR_zxLo')">▶ İzle</button></td>
-                    </tr>
-                    <tr>
-                        <td class="workout-name">3. DB Shrug<span class="workout-note">Trapezler</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d1_3" class="weight-badge" data-label="Shrug" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('rFsSeClGnNA')">▶ İzle</button></td>
-                    </tr>
-                    <tr>
-                        <td class="workout-name">4. DB Bicep Curl<span class="workout-note">Pazu</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 10</span><span id="w_d1_4" class="weight-badge" data-label="Curl" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('MKWBV29S6c0')">▶ İzle</button></td>
-                    </tr>
-                    <tr>
-                        <td class="workout-name">5. Plank<span class="workout-note">Core gücü</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 Set</span><span class="weight-badge">Maks Süre</span></div></td>
-                        <td><button class="timer-btn" onclick="openTimer(60, 'xe2MXatLTUw')">⏱️ Zamanla</button></td>
-                    </tr>
+                    <tr id="row_d1_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">One Arm Row</span><span class="workout-note">Sırt</span></td><td class="col-stats"><span id="w_d1_1" class="weight-badge" data-label="Row" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('yHqqGd0tXcw')">▶ İzle</button></td></tr>
+                    <tr id="row_d1_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">DB Rev. Fly</span><span class="workout-note">Arka Omuz</span></td><td class="col-stats"><span id="w_d1_2" class="weight-badge" data-label="Rev Fly" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('LsT-bR_zxLo')">▶ İzle</button></td></tr>
+                    <tr id="row_d1_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">DB Shrug</span><span class="workout-note">Trapez</span></td><td class="col-stats"><span id="w_d1_3" class="weight-badge" data-label="Shrug" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('rFsSeClGnNA')">▶ İzle</button></td></tr>
+                    <tr id="row_d1_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Bicep Curl</span><span class="workout-note">Pazu</span></td><td class="col-stats"><span id="w_d1_4" class="weight-badge" data-label="Curl" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('MKWBV29S6c0')">▶ İzle</button></td></tr>
+                    <tr id="row_d1_5"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_5')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Plank</span><span class="workout-note">Karın</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="timer-btn" onclick="openTimer(60, 'xe2MXatLTUw')">⏱️</button></td></tr>
                 </tbody>
             </table>
         </div>
@@ -363,234 +187,197 @@
 
     <div id="day2" class="tab-content">
         <div class="day-card h-purple">
-            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>2. GÜN: İTME (GÖĞÜS/OMUZ)</h2></div>
+            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>2. GÜN: İTME</h2></div>
             <table class="workout-table">
-                <thead><tr><th class="col-name">Hareket</th><th class="col-stats">Set</th><th class="col-actions">Video</th></tr></thead>
+                <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
                 <tbody>
-                    <tr>
-                        <td class="workout-name">1. Floor Press<span class="workout-note">Yerde pres</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d2_1" class="weight-badge" data-label="Floor Press" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('UBmpZ7l5Nlk')">▶ İzle</button></td>
-                    </tr>
-                    <tr>
-                        <td class="workout-name">2. Shoulder Press<span class="workout-note">Omuz presi</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 10</span><span id="w_d2_2" class="weight-badge" data-label="Shoulder P." data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('k6tzKisR3NY')">▶ İzle</button></td>
-                    </tr>
-                    <tr>
-                        <td class="workout-name">3. Lateral Raise<span class="workout-note">Yana açış</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 15</span><span id="w_d2_3" class="weight-badge" data-label="Lat Raise" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('Kl3LEzQ5Zqs')">▶ İzle</button></td>
-                    </tr>
-                    <tr>
-                        <td class="workout-name">4. Overhead Ext.<span class="workout-note">Arka kol</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d2_4" class="weight-badge" data-label="Triceps" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('b_r_LW4HEcM')">▶ İzle</button></td>
-                    </tr>
-                    <tr>
-                        <td class="workout-name">5. Şınav (Push-up)<span class="workout-note">Tükenişe kadar</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 Set</span><span class="weight-badge">Maks</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('4Bc1tPaYkOo')">▶ İzle</button></td>
-                    </tr>
+                    <tr id="row_d2_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Floor Press</span><span class="workout-note">Göğüs</span></td><td class="col-stats"><span id="w_d2_1" class="weight-badge" data-label="Press" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('UBmpZ7l5Nlk')">▶ İzle</button></td></tr>
+                    <tr id="row_d2_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Shoulder Pr.</span><span class="workout-note">Omuz</span></td><td class="col-stats"><span id="w_d2_2" class="weight-badge" data-label="Sh. Press" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('k6tzKisR3NY')">▶ İzle</button></td></tr>
+                    <tr id="row_d2_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Lat. Raise</span><span class="workout-note">Yan Omuz</span></td><td class="col-stats"><span id="w_d2_3" class="weight-badge" data-label="Lat. R" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('Kl3LEzQ5Zqs')">▶ İzle</button></td></tr>
+                    <tr id="row_d2_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Overhead Ext.</span><span class="workout-note">Arka Kol</span></td><td class="col-stats"><span id="w_d2_4" class="weight-badge" data-label="Triceps" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('b_r_LW4HEcM')">▶ İzle</button></td></tr>
+                    <tr id="row_d2_5"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_5')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Push-up</span><span class="workout-note">Şınav</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('4Bc1tPaYkOo')">▶ İzle</button></td></tr>
                 </tbody>
             </table>
         </div>
     </div>
-    
+
     <div id="day3" class="tab-content">
         <div class="day-card h-purple">
-            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>3. GÜN: BACAK & ALT SIRT</h2></div>
+            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>3. GÜN: BACAK</h2></div>
             <table class="workout-table">
-                <thead><tr><th class="col-name">Hareket</th><th class="col-stats">Set</th><th class="col-actions">Video</th></tr></thead>
+                <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
                 <tbody>
-                    <tr>
-                        <td class="workout-name">1. Goblet Squat<span class="workout-note">Çömelme</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d3_1" class="weight-badge" data-label="Squat" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('cuUPtfanAFQ')">▶ İzle</button></td>
-                    </tr>
-                    <tr>
-                        <td class="workout-name">2. Lunges<span class="workout-note">Adımlama</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 10</span><span id="w_d3_2" class="weight-badge" data-label="Lunge" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('mJilHWIBWO8')">▶ İzle</button></td>
-                    </tr>
-                    <tr>
-                        <td class="workout-name">3. RDL<span class="workout-note">Arka bacak & Bel</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 12</span><span id="w_d3_3" class="weight-badge" data-label="RDL" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('Wou9zVQrAfs')">▶ İzle</button></td>
-                    </tr>
-                    <tr>
-                        <td class="workout-name">4. Calf Raise<span class="workout-note">Kalf kasları</span></td>
-                        <td><div class="stats-container"><span class="sets-text">3 x 15</span><span id="w_d3_4" class="weight-badge" data-label="Calf" data-unit="kg">5kg</span></div></td>
-                        <td><button class="video-btn" onclick="openVideo('a-x_NR-ibos')">▶ İzle</button></td>
-                    </tr>
+                    <tr id="row_d3_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Goblet Squat</span><span class="workout-note">Bacak</span></td><td class="col-stats"><span id="w_d3_1" class="weight-badge" data-label="Squat" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('cuUPtfanAFQ')">▶ İzle</button></td></tr>
+                    <tr id="row_d3_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Lunges</span><span class="workout-note">Adım</span></td><td class="col-stats"><span id="w_d3_2" class="weight-badge" data-label="Lunge" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('mJilHWIBWO8')">▶ İzle</button></td></tr>
+                    <tr id="row_d3_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">RDL</span><span class="workout-note">Arka Bacak</span></td><td class="col-stats"><span id="w_d3_3" class="weight-badge" data-label="RDL" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('Wou9zVQrAfs')">▶ İzle</button></td></tr>
+                    <tr id="row_d3_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Calf Raise</span><span class="workout-note">Kalf</span></td><td class="col-stats"><span id="w_d3_4" class="weight-badge" data-label="Calf" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('a-x_NR-ibos')">▶ İzle</button></td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;">
-        <p>PRO ANTRENMAN v12</p>
-    </footer>
+    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN v18 (Stable)</p></footer>
 </div>
 
-<div class="modal-overlay" id="videoModal" onclick="closeVideo()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <button class="floating-close-btn" onclick="closeVideo()">×</button>
+<div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">×</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-mini-btn">BAŞLAT</button><button onclick="resetTimer()" class="timer-mini-btn">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
 
-        <div id="integratedTimerBar" class="integrated-timer-bar">
-            <span id="integratedTimerDisplay">00:00</span>
-            <div style="display:flex; gap:10px;">
-                <button onclick="toggleTimer()" id="btnTimerToggle" class="timer-mini-btn">BAŞLAT</button>
-                <button onclick="resetTimer()" class="timer-mini-btn">↺</button>
-            </div>
-        </div>
-        <div id="playerContainer" class="video-wrapper"></div>
-    </div>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => { loadSettings(); generateWeightInputs(); });
+    document.addEventListener('DOMContentLoaded', () => { 
+        loadSettings(); generateWeightInputs(); checkDateAndLoadProgress(); 
+        
+        // --- BOZUK SERVICE WORKER'LARI SİL (KURTARMA KODU) ---
+        if(window.navigator && navigator.serviceWorker) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                    console.log("Eski SW silindi.");
+                }
+            });
+        }
+    });
 
-    // TAB SİSTEMİ
+    // --- GÜNLÜK SIFIRLAMA (YENİ GÜN KONTROLÜ) ---
+    function checkDateAndLoadProgress() {
+        // Bugünün tarihi: "YYYY-MM-DD" formatında (Daha güvenli)
+        const today = new Date().toISOString().split('T')[0];
+        const lastSavedDate = localStorage.getItem('last_active_date');
+
+        if (lastSavedDate !== today) {
+            console.log("Yeni gün! İlerlemeler sıfırlanıyor.");
+            localStorage.setItem('userProgress', '{}'); // Sadece checkboxları sıfırla
+            localStorage.setItem('last_active_date', today);
+            updateProgressBar();
+        } else {
+            loadProgress();
+        }
+    }
+
+    // --- TEMEL FONKSİYONLAR ---
     function openTab(tabId) {
-        var contents = document.getElementsByClassName("tab-content");
-        for (var i = 0; i < contents.length; i++) contents[i].classList.remove("active-content");
+        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active-content"));
         document.getElementById("btn-warmup").classList.remove("active");
-        var dayBtns = document.querySelectorAll(".sub-menu .tab-btn");
-        dayBtns.forEach(btn => btn.classList.remove("active"));
+        document.querySelectorAll(".sub-menu .tab-btn").forEach(b => b.classList.remove("active"));
         document.getElementById(tabId).classList.add("active-content");
         if(tabId === 'warmup') document.getElementById("btn-warmup").classList.add("active");
-        else { var activeBtn = document.getElementById("btn-" + tabId); if(activeBtn) activeBtn.classList.add("active"); }
+        else { const btn = document.getElementById("btn-" + tabId); if(btn) btn.classList.add("active"); }
+        setTimeout(updateProgressBar, 50);
     }
 
-    // AYARLAR
+    function toggleCheck(rowId) {
+        const row = document.getElementById(rowId);
+        const isChecked = row.querySelector('.check-input').checked;
+        isChecked ? row.classList.add('completed') : row.classList.remove('completed');
+        
+        let progress = JSON.parse(localStorage.getItem('userProgress')) || {};
+        progress[rowId] = isChecked;
+        localStorage.setItem('userProgress', JSON.stringify(progress));
+        
+        // Her işlemde tarihi güncelle
+        localStorage.setItem('last_active_date', new Date().toISOString().split('T')[0]);
+        updateProgressBar();
+    }
+
+    function loadProgress() {
+        let progress = JSON.parse(localStorage.getItem('userProgress')) || {};
+        for (const [id, status] of Object.entries(progress)) {
+            if(status) {
+                const row = document.getElementById(id);
+                if(row) {
+                    row.querySelector('.check-input').checked = true;
+                    row.classList.add('completed');
+                }
+            }
+        }
+        updateProgressBar();
+    }
+
+    function updateProgressBar() {
+        const activeTab = document.querySelector('.tab-content.active-content');
+        if(!activeTab) return;
+        const total = activeTab.querySelectorAll('.check-input').length;
+        const checked = activeTab.querySelectorAll('.check-input:checked').length;
+        const bar = document.getElementById('progressBar');
+        if(total === 0) bar.style.width = '0%';
+        else {
+            const pct = (checked / total) * 100;
+            bar.style.width = pct + '%';
+            if(pct === 100) confetti({particleCount: 100, spread: 70, origin: { y: 0.6 }});
+        }
+    }
+
+    function resetProgress() {
+        if(confirm("Bugünü sıfırla?")) {
+            localStorage.setItem('userProgress', '{}');
+            location.reload();
+        }
+    }
+
+    // --- AYARLAR & VIDEO ---
     function toggleSettings() {
-        const modal = document.getElementById('settingsModal');
-        if(modal.classList.contains('settings-open')) {
-            modal.classList.remove('settings-open');
-            setTimeout(() => { modal.style.display = 'none'; }, 300);
-        } else { modal.style.display = 'flex'; setTimeout(() => { modal.classList.add('settings-open'); }, 10); }
+        const m = document.getElementById('settingsModal');
+        m.classList.contains('settings-open') ? (m.classList.remove('settings-open'), setTimeout(()=>m.style.display='none',300)) : (m.style.display='flex', setTimeout(()=>m.classList.add('settings-open'),10));
     }
-
-    function setTheme(mode) {
-        if(mode === 'light') { document.body.classList.add('light-mode'); localStorage.setItem('themeMode', 'light'); } 
-        else { document.body.classList.remove('light-mode'); localStorage.setItem('themeMode', 'dark'); }
-    }
-
-    function setAccent(color) {
-        document.documentElement.style.setProperty('--primary', color);
-        localStorage.setItem('accentColor', color);
-        const btns = document.querySelectorAll('.color-btn');
-        btns.forEach(btn => btn.classList.remove('active'));
-        btns.forEach(btn => { if(btn.getAttribute('onclick').includes(color)) btn.classList.add('active'); });
-    }
-
     function generateWeightInputs() {
-        const container = document.getElementById('weightSettingsContainer');
-        container.innerHTML = '';
-        const weightElements = document.querySelectorAll('.weight-badge[id]');
-        weightElements.forEach(el => {
-            const unit = el.getAttribute('data-unit');
-            const label = el.getAttribute('data-label');
-            if(unit === 'kg' && label) {
-                const id = el.id;
-                let currentVal = el.innerText.replace('kg', '').replace('Kg', '').trim();
-                container.innerHTML += `<div class="weight-input-group"><span style="color:var(--text-main); font-size:0.9rem; font-weight:600;">${label}</span><div style="display:flex; align-items:center; gap:5px;"><input type="number" id="input_${id}" class="weight-input" value="${currentVal}"><span style="font-size:0.8rem; color:var(--text-muted);">kg</span></div></div>`;
+        const c = document.getElementById('weightSettingsContainer'); c.innerHTML = '';
+        document.querySelectorAll('.weight-badge[id]').forEach(el => {
+            if(el.dataset.unit === 'kg') {
+                let val = el.innerText.replace(/\D/g,'');
+                c.innerHTML += `<div class="weight-input-group"><span>${el.dataset.label}</span><input type="number" id="in_${el.id}" class="weight-input" value="${val}"></div>`;
             }
         });
     }
-
     function saveAllSettings() {
-        const inputs = document.querySelectorAll('.weight-input');
-        const weightsData = {};
-        inputs.forEach(input => {
-            const spanId = input.id.replace('input_', '');
-            let val = input.value; if(!val) val = "5";
-            const spanEl = document.getElementById(spanId);
-            if(spanEl) { spanEl.innerText = val + "kg"; weightsData[spanId] = val + "kg"; }
+        const weights = {};
+        document.querySelectorAll('.weight-input').forEach(i => {
+            let id = i.id.replace('in_', '');
+            let val = i.value || "5";
+            document.getElementById(id).innerText = val + "kg";
+            weights[id] = val + "kg";
         });
-        localStorage.setItem('userWeights', JSON.stringify(weightsData));
+        localStorage.setItem('userWeights', JSON.stringify(weights));
         toggleSettings();
     }
-
     function loadSettings() {
-        const savedMode = localStorage.getItem('themeMode');
-        if(savedMode === 'light') document.body.classList.add('light-mode');
-        const savedAccent = localStorage.getItem('accentColor');
-        if(savedAccent) { setAccent(savedAccent); } else { setAccent('#bb86fc'); }
-        const savedWeights = localStorage.getItem('userWeights');
-        if(savedWeights) {
-            const weights = JSON.parse(savedWeights);
-            for (const [id, val] of Object.entries(weights)) { const el = document.getElementById(id); if(el) el.innerText = val; }
-        }
+        if(localStorage.getItem('themeMode')==='light') document.body.classList.add('light-mode');
+        if(localStorage.getItem('accentColor')) setAccent(localStorage.getItem('accentColor'));
+        const w = JSON.parse(localStorage.getItem('userWeights'));
+        if(w) for(const [k,v] of Object.entries(w)) { const e = document.getElementById(k); if(e) e.innerText = v; }
     }
+    function setTheme(m) { m==='light' ? (document.body.classList.add('light-mode'), localStorage.setItem('themeMode','light')) : (document.body.classList.remove('light-mode'), localStorage.setItem('themeMode','dark')); }
+    function setAccent(c) { document.documentElement.style.setProperty('--primary', c); localStorage.setItem('accentColor', c); }
 
-    // VİDEO VE SAYAÇ
-    let timerInterval, currentSeconds = 0, initialSeconds = 0, isRunning = false;
-
-    function openVideo(videoId) {
-        const modal = document.getElementById('videoModal');
-        const container = document.getElementById('playerContainer');
-        document.getElementById('integratedTimerBar').style.display = 'none'; 
-        
-        // DÜZELTME: Resmi YouTube Embed, Autoplay (Mute ile) ve Playlist Loop
-        container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-        modal.style.display = 'flex';
+    // --- PLAYER ---
+    let timerInterval, currSec = 0;
+    function openVideo(vid) {
+        document.getElementById('videoModal').style.display = 'flex';
+        document.getElementById('integratedTimerBar').style.display = 'none';
+        document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
     }
-
-    function openTimer(seconds, videoId) {
-        const modal = document.getElementById('videoModal');
-        const container = document.getElementById('playerContainer');
-        const timerBar = document.getElementById('integratedTimerBar');
-        const display = document.getElementById('integratedTimerDisplay');
-        const btnToggle = document.getElementById('btnTimerToggle');
-        
-        initialSeconds = seconds; currentSeconds = seconds; isRunning = false;
-        
-        timerBar.style.display = 'flex'; 
-        display.style.color = "#fff"; btnToggle.innerText = "BAŞLAT";
-        updateDisplay(currentSeconds, display);
-        
-        // DÜZELTME: Resmi YouTube Embed, Autoplay (Mute ile) ve Playlist Loop
-        container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-        modal.style.display = 'flex';
-        if(timerInterval) clearInterval(timerInterval);
+    function openTimer(sec, vid) {
+        document.getElementById('videoModal').style.display = 'flex';
+        const bar = document.getElementById('integratedTimerBar');
+        bar.style.display = 'flex';
+        currSec = sec;
+        document.getElementById('integratedTimerDisplay').innerText = formatTime(currSec);
+        document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+        clearInterval(timerInterval);
     }
-
     function toggleTimer() {
-        const display = document.getElementById('integratedTimerDisplay');
-        const btnToggle = document.getElementById('btnTimerToggle');
-        if (isRunning) {
-            clearInterval(timerInterval); isRunning = false; btnToggle.innerText = "DEVAM";
-        } else {
-            if(currentSeconds <= 0) return;
-            isRunning = true; btnToggle.innerText = "DURAKLAT";
+        const btn = document.getElementById('btnTimerToggle');
+        if(timerInterval) { clearInterval(timerInterval); timerInterval=null; btn.innerText = "DEVAM"; }
+        else {
+            btn.innerText = "DURAKLAT";
             timerInterval = setInterval(() => {
-                currentSeconds--; updateDisplay(currentSeconds, display);
-                if(currentSeconds <= 0) { clearInterval(timerInterval); display.style.color = "#ef4444"; btnToggle.innerText = "BİTTİ"; isRunning = false; }
+                currSec--; document.getElementById('integratedTimerDisplay').innerText = formatTime(currSec);
+                if(currSec<=0) { clearInterval(timerInterval); timerInterval=null; document.getElementById('integratedTimerDisplay').style.color='red'; btn.innerText="BİTTİ"; }
             }, 1000);
         }
     }
-
-    function resetTimer() {
-        if(timerInterval) clearInterval(timerInterval);
-        isRunning = false; currentSeconds = initialSeconds;
-        updateDisplay(currentSeconds, document.getElementById('integratedTimerDisplay'));
-        document.getElementById('btnTimerToggle').innerText = "BAŞLAT";
-    }
-
-    function updateDisplay(time, displayElement) {
-        const m = Math.floor(time / 60).toString().padStart(2, '0');
-        const s = (time % 60).toString().padStart(2, '0');
-        displayElement.innerText = `${m}:${s}`;
-    }
-
-    function closeVideo() {
-        if(timerInterval) clearInterval(timerInterval);
-        document.getElementById('videoModal').style.display = 'none';
-        document.getElementById('playerContainer').innerHTML = '';
-        isRunning = false;
-    }
+    function resetTimer() { clearInterval(timerInterval); timerInterval=null; currSec=60; document.getElementById('integratedTimerDisplay').innerText = "01:00"; document.getElementById('btnTimerToggle').innerText="BAŞLAT"; document.getElementById('integratedTimerDisplay').style.color='#fff'; }
+    function closeVideo() { document.getElementById('videoModal').style.display='none'; document.getElementById('playerContainer').innerHTML=''; clearInterval(timerInterval); timerInterval=null; }
+    function formatTime(s) { return new Date(s*1000).toISOString().substr(14, 5); }
 </script>
 </body>
 </html>
