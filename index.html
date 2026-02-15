@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <meta name="theme-color" content="#bb86fc">
-    <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" href="/icon.png">
     <link rel="apple-touch-icon" href="/icon.png">
 
@@ -13,308 +12,148 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>ANTRENMAN TAKVİMİ (Güncel)</title>
+    <title>Güncelleniyoruz...</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <style>
-        /* CSS AYNIDIR */
-        :root { --bg-body: #09090b; --bg-card: rgba(30, 30, 35, 0.6); --text-main: #e0e0e0; --text-muted: #9CA3AF; --border-color: rgba(255, 255, 255, 0.08); --primary: #bb86fc; --secondary: #03dac6; --danger: #ef4444; --success: #10b981; --glass-blur: 16px; --shadow: 0 10px 40px -10px rgba(0,0,0,0.5); --radius: 24px; }
-        body.light-mode { --bg-body: #f3f4f6; --bg-card: rgba(255, 255, 255, 0.8); --text-main: #1f2937; --text-muted: #6b7280; --border-color: rgba(0, 0, 0, 0.06); }
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-body); background-image: radial-gradient(circle at 10% 10%, var(--primary), transparent 40%), radial-gradient(circle at 90% 90%, var(--secondary), transparent 40%); background-size: 100% 100%; background-attachment: fixed; color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; padding: 20px; min-height: 100vh; transition: background 0.5s ease, color 0.3s ease; }
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); opacity: 0.94; z-index: -1; }
-        .container { width: 100%; max-width: 850px; padding-bottom: 40px; position: relative; padding-top: 30px; }
-        .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.3); z-index: 9999; }
-        .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; box-shadow: 0 0 10px var(--success); }
-        .menu-bar { position: absolute; top: 15px; right: 0; z-index: 200; }
-        .menu-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-main); font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(10px); }
-        header { text-align: center; margin-bottom: 30px; margin-top: 15px; }
-        .main-title { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-        .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; }
-        .navigation-wrapper { margin-bottom: 30px; display: flex; flex-direction: column; gap: 15px; }
-        .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; transition: all 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; animation: pulse-glow 2s infinite; }
-        .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); animation: none; border:none; }
-        @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        .sub-menu { display: flex; justify-content: space-between; gap: 10px; }
-        .tab-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); padding: 15px 10px; border-radius: 16px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: all 0.3s; flex: 1; text-align: center; }
-        .tab-btn.active { background: var(--primary); color: #000; border-color: var(--primary); box-shadow: 0 5px 20px -5px var(--primary); transform: translateY(-2px); }
-        body.light-mode .tab-btn.active { color: #fff; }
-        .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
-        .tab-content.active-content { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .day-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border-radius: var(--radius); margin-bottom: 25px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
-        .day-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
-        .day-header h2 { font-size: 1.2rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
-        .h-purple h2 { color: var(--primary); } .h-red h2 { color: var(--danger); }
-        .workout-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
-        .workout-table td, .workout-table th { padding: 20px 15px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
-        .workout-table tr:last-child td { border-bottom: none; }
-        .col-check { width: 12%; text-align: center; } .col-name { width: 43%; } .col-stats { width: 20%; } .col-actions { width: 25%; }
-        .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; display: block; margin-bottom: 4px; }
-        .workout-note { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
-        .weight-badge { display: inline-block; color: var(--primary); font-weight: 800; font-size: 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 8px; }
-        .video-btn, .timer-btn { padding: 10px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; display: flex; justify-content: center; align-items: center; border: none; font-weight: 700; width: 100%; transition: all 0.2s; }
-        .video-btn { background: rgba(255,255,255,0.05); color: var(--text-main); } .video-btn:hover { background: var(--text-main); color: var(--bg-body); }
-        .timer-btn { background: rgba(255, 152, 0, 0.1); color: #fbbf24; border: 1px solid rgba(255, 152, 0, 0.2); }
-        .check-container { display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; width: 24px; height: 24px; }
-        .check-input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
-        .checkmark { position: absolute; top: 0; left: 0; height: 24px; width: 24px; background: rgba(255,255,255,0.1); border-radius: 6px; border: 1px solid var(--border-color); }
-        .check-input:checked ~ .checkmark { background: var(--success); border-color: var(--success); }
-        .checkmark:after { content: ""; position: absolute; display: none; left: 8px; top: 4px; width: 6px; height: 12px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
-        .check-input:checked ~ .checkmark:after { display: block; }
-        tr.completed .workout-name { text-decoration: line-through; opacity: 0.5; }
-        .settings-modal { position: fixed; top: 0; right: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; justify-content: flex-end; backdrop-filter: blur(5px); }
-        .settings-panel { width: 100%; max-width: 360px; height: 100%; background: var(--bg-body); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s; }
-        .settings-open .settings-panel { transform: translateX(0); }
-        .settings-header { padding: 25px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .settings-content { flex: 1; overflow-y: auto; padding: 25px; }
-        .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .color-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; position: relative; }
-        .color-btn.active::after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; }
-        .weight-input-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
-        .weight-input { width: 60px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-main); padding: 5px; border-radius: 5px; text-align: center; }
-        .btn-save { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; font-weight: 800; cursor: pointer; border-radius: 12px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 2000; }
-        .modal-content { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
-        .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2100; border: 1px solid rgba(255,255,255,0.2); }
-        .integrated-timer-bar { width: 100%; height: 80px; background: #09090b; display: none; align-items: center; justify-content: space-between; padding: 0 20px; padding-right: 80px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 2005; }
-        .video-wrapper { flex-grow: 1; position: relative; background: #000; width: 100%; }
-        iframe { width: 100%; height: 100%; border: none; }
-        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; }
+        /* --- ANA TEMA AYARLARI --- */
+        :root {
+            --bg-body: #09090b;
+            --text-main: #e0e0e0;
+            --text-muted: #9CA3AF;
+            --primary: #bb86fc;
+            --secondary: #03dac6;
+            --glass-bg: rgba(30, 30, 35, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            background-color: var(--bg-body); 
+            background-image: 
+                radial-gradient(circle at 10% 10%, var(--primary), transparent 40%),
+                radial-gradient(circle at 90% 90%, var(--secondary), transparent 40%);
+            background-size: 100% 100%;
+            background-attachment: fixed;
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            height: 100vh;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            overflow: hidden;
+        }
+
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-body); opacity: 0.94; z-index: -1;
+        }
+
+        /* --- KART TASARIMI --- */
+        .maintenance-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* --- İKON VE ANİMASYON --- */
+        .icon-container {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: spin 4s linear infinite;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff 30%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        /* --- YÜKLENİYOR ÇUBUĞU --- */
+        .loading-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 50%;
+            background: var(--primary);
+            border-radius: 10px;
+            position: absolute;
+            left: -50%;
+            animation: loading 1.5s infinite ease-in-out;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* --- ANİMASYONLAR --- */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes loading {
+            0% { left: -50%; width: 30%; }
+            50% { width: 60%; }
+            100% { left: 100%; width: 30%; }
+        }
     </style>
 </head>
 <body>
 
-<canvas id="confetti-canvas"></canvas>
-<div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
-
-<div class="container">
-    <div class="menu-bar"><button class="menu-btn" onclick="toggleSettings()">⚙️</button></div>
-    <header><h1 class="main-title">Antrenman Takvimi</h1><div class="header-line"></div></header>
-
-    <div class="navigation-wrapper">
-        <button id="btn-warmup" class="warmup-hero-btn active" onclick="openTab('warmup')"><span>🔥</span> ISINMA</button>
-        <div class="sub-menu">
-            <button id="btn-day1" class="tab-btn" onclick="openTab('day1')">1. GÜN</button>
-            <button id="btn-day2" class="tab-btn" onclick="openTab('day2')">2. GÜN</button>
-            <button id="btn-day3" class="tab-btn" onclick="openTab('day3')">3. GÜN</button>
+    <div class="maintenance-card">
+        <div class="icon-container">⚙️</div>
+        <h1>GÜNCELLENİYORUZ</h1>
+        <p>Sizlere daha iyi bir deneyim sunmak için kısa bir bakım yapıyoruz.<br><br>Lütfen daha sonra tekrar deneyiniz.</p>
+        
+        <div class="loading-bar-container">
+            <div class="loading-bar"></div>
+        </div>
+        
+        <div style="margin-top: 20px; font-size: 0.75rem; color: var(--text-muted); opacity: 0.6;">
+            Pro Antrenman
         </div>
     </div>
 
-    <div id="settingsModal" class="settings-modal" onclick="toggleSettings()">
-        <div class="settings-panel" onclick="event.stopPropagation()">
-            <div class="settings-header"><h3>Ayarlar</h3><button class="menu-btn" style="border:none;" onclick="toggleSettings()">×</button></div>
-            <div class="settings-content">
-                <div class="settings-section">
-                    <div class="section-label">Mod</div>
-                    <div style="display:flex; gap:10px;"><button onclick="setTheme('dark')" class="timer-mini-btn">🌙 Koyu</button><button onclick="setTheme('light')" class="timer-mini-btn">☀️ Açık</button></div>
-                </div>
-                <div class="settings-section">
-                    <div class="section-label">Renk</div>
-                    <div class="color-grid">
-                        <button onclick="setAccent('#bb86fc')" class="color-btn" style="background:#bb86fc"></button>
-                        <button onclick="setAccent('#3b82f6')" class="color-btn" style="background:#3b82f6"></button>
-                        <button onclick="setAccent('#f59e0b')" class="color-btn" style="background:#f59e0b"></button>
-                        <button onclick="setAccent('#10b981')" class="color-btn" style="background:#10b981"></button>
-                        <button onclick="setAccent('#ec4899')" class="color-btn" style="background:#ec4899"></button>
-                    </div>
-                </div>
-                <div class="settings-section">
-                    <div class="section-label">Ağırlıklar (Kg)</div>
-                    <div id="weightSettingsContainer"></div>
-                </div>
-                <div class="settings-section"><button onclick="resetProgress()" class="timer-mini-btn" style="width:100%; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4);">İLERLEMEYİ SIFIRLA</button></div>
-            </div>
-            <div style="padding:20px; border-top:1px solid var(--border-color);"><button class="btn-save" onclick="saveAllSettings()">KAYDET & KAPAT</button></div>
-        </div>
-    </div>
-
-    <div id="warmup" class="tab-content active-content">
-        <div class="day-card h-red">
-            <div class="day-header" style="border-left: 4px solid var(--danger);"><h2>ISINMA</h2><button class="video-btn" style="width:auto; background:var(--danger); color:#fff;" onclick="openVideo('bOxkisEVC8A')">▶ İzle</button></div>
-            <table class="workout-table"><tbody><tr id="row_warmup"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_warmup')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Genel Isınma</span></td><td class="col-stats"><span class="weight-badge">5 Dk</span></td><td class="col-actions"></td></tr></tbody></table>
-        </div>
-    </div>
-
-    <div id="day1" class="tab-content">
-        <div class="day-card h-purple">
-            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>1. GÜN: ÇEKME</h2></div>
-            <table class="workout-table">
-                <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
-                <tbody>
-                    <tr id="row_d1_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">One Arm Row</span><span class="workout-note">Sırt</span></td><td class="col-stats"><span id="w_d1_1" class="weight-badge" data-label="Row" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('yHqqGd0tXcw')">▶ İzle</button></td></tr>
-                    <tr id="row_d1_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">DB Rev. Fly</span><span class="workout-note">Arka Omuz</span></td><td class="col-stats"><span id="w_d1_2" class="weight-badge" data-label="Rev Fly" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('LsT-bR_zxLo')">▶ İzle</button></td></tr>
-                    <tr id="row_d1_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">DB Shrug</span><span class="workout-note">Trapez</span></td><td class="col-stats"><span id="w_d1_3" class="weight-badge" data-label="Shrug" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('rFsSeClGnNA')">▶ İzle</button></td></tr>
-                    <tr id="row_d1_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Bicep Curl</span><span class="workout-note">Pazu</span></td><td class="col-stats"><span id="w_d1_4" class="weight-badge" data-label="Curl" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('MKWBV29S6c0')">▶ İzle</button></td></tr>
-                    <tr id="row_d1_5"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_5')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Plank</span><span class="workout-note">Karın</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="timer-btn" onclick="openTimer(60, 'xe2MXatLTUw')">⏱️</button></td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div id="day2" class="tab-content">
-        <div class="day-card h-purple">
-            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>2. GÜN: İTME</h2></div>
-            <table class="workout-table">
-                <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
-                <tbody>
-                    <tr id="row_d2_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Floor Press</span><span class="workout-note">Göğüs</span></td><td class="col-stats"><span id="w_d2_1" class="weight-badge" data-label="Press" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('UBmpZ7l5Nlk')">▶ İzle</button></td></tr>
-                    <tr id="row_d2_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Shoulder Pr.</span><span class="workout-note">Omuz</span></td><td class="col-stats"><span id="w_d2_2" class="weight-badge" data-label="Sh. Press" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('k6tzKisR3NY')">▶ İzle</button></td></tr>
-                    <tr id="row_d2_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Lat. Raise</span><span class="workout-note">Yan Omuz</span></td><td class="col-stats"><span id="w_d2_3" class="weight-badge" data-label="Lat. R" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('Kl3LEzQ5Zqs')">▶ İzle</button></td></tr>
-                    <tr id="row_d2_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Overhead Ext.</span><span class="workout-note">Arka Kol</span></td><td class="col-stats"><span id="w_d2_4" class="weight-badge" data-label="Triceps" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('b_r_LW4HEcM')">▶ İzle</button></td></tr>
-                    <tr id="row_d2_5"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_5')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Push-up</span><span class="workout-note">Şınav</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('4Bc1tPaYkOo')">▶ İzle</button></td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <div id="day3" class="tab-content">
-        <div class="day-card h-purple">
-            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>3. GÜN: BACAK</h2></div>
-            <table class="workout-table">
-                <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
-                <tbody>
-                    <tr id="row_d3_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Goblet Squat</span><span class="workout-note">Bacak</span></td><td class="col-stats"><span id="w_d3_1" class="weight-badge" data-label="Squat" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('cuUPtfanAFQ')">▶ İzle</button></td></tr>
-                    <tr id="row_d3_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Lunges</span><span class="workout-note">Adım</span></td><td class="col-stats"><span id="w_d3_2" class="weight-badge" data-label="Lunge" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('mJilHWIBWO8')">▶ İzle</button></td></tr>
-                    <tr id="row_d3_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">RDL</span><span class="workout-note">Arka Bacak</span></td><td class="col-stats"><span id="w_d3_3" class="weight-badge" data-label="RDL" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('Wou9zVQrAfs')">▶ İzle</button></td></tr>
-                    <tr id="row_d3_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Calf Raise</span><span class="workout-note">Kalf</span></td><td class="col-stats"><span id="w_d3_4" class="weight-badge" data-label="Calf" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('a-x_NR-ibos')">▶ İzle</button></td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>2026 Güncel</p></footer>
-</div>
-
-<div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">×</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-mini-btn">BAŞLAT</button><button onclick="resetTimer()" class="timer-mini-btn">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => { loadSettings(); generateWeightInputs(); checkDateAndLoadProgress(); });
-
-    // SERVICE WORKER KAYIT (Kesin Mutlak Yol İle)
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log('SW Registered'))
-        .catch((err) => console.log('SW Error:', err));
-    }
-
-    // GÜNLÜK SIFIRLAMA
-    function checkDateAndLoadProgress() {
-        const today = new Date().toDateString(); 
-        const last = localStorage.getItem('lastSavedDate');
-        if (last !== today) { localStorage.removeItem('userProgress'); localStorage.setItem('lastSavedDate', today); updateProgressBar(); } 
-        else { loadProgress(); }
-    }
-
-    // FONKSİYONLAR
-    function openTab(id) {
-        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active-content"));
-        document.getElementById("btn-warmup").classList.remove("active");
-        document.querySelectorAll(".sub-menu .tab-btn").forEach(b => b.classList.remove("active"));
-        document.getElementById(id).classList.add("active-content");
-        if(id === 'warmup') document.getElementById("btn-warmup").classList.add("active");
-        else { const btn = document.getElementById("btn-" + id); if(btn) btn.classList.add("active"); }
-        setTimeout(updateProgressBar, 50);
-    }
-
-    function toggleCheck(id) {
-        const row = document.getElementById(id);
-        const checked = row.querySelector('.check-input').checked;
-        checked ? row.classList.add('completed') : row.classList.remove('completed');
-        let p = JSON.parse(localStorage.getItem('userProgress')) || {};
-        p[id] = checked;
-        localStorage.setItem('userProgress', JSON.stringify(p));
-        localStorage.setItem('lastSavedDate', new Date().toDateString());
-        updateProgressBar();
-    }
-
-    function loadProgress() {
-        let p = JSON.parse(localStorage.getItem('userProgress')) || {};
-        for (const [id, val] of Object.entries(p)) {
-            if(val) { const r = document.getElementById(id); if(r) { r.querySelector('.check-input').checked = true; r.classList.add('completed'); } }
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    // Bakım modundayken eski workerları temizlemiyoruz ki
+                    // kullanıcı geri döndüğünde tekrar kurulumla uğraşmasın.
+                    // Sadece console'a bilgi veriyoruz.
+                    console.log('Bakım modu aktif.');
+                }
+            });
         }
-        updateProgressBar();
-    }
+    </script>
 
-    function updateProgressBar() {
-        const tab = document.querySelector('.tab-content.active-content'); if(!tab) return;
-        const total = tab.querySelectorAll('.check-input').length;
-        const checked = tab.querySelectorAll('.check-input:checked').length;
-        const bar = document.getElementById('progressBar');
-        if(total === 0) bar.style.width = '0%';
-        else {
-            const pct = (checked / total) * 100;
-            bar.style.width = pct + '%';
-            if(pct === 100) confetti({particleCount: 100, spread: 70, origin: { y: 0.6 }});
-        }
-    }
-
-    function resetProgress() { if(confirm("Bugünü sıfırla?")) { localStorage.setItem('userProgress', '{}'); location.reload(); } }
-
-    function toggleSettings() {
-        const m = document.getElementById('settingsModal');
-        if(m.classList.contains('settings-open')) { m.classList.remove('settings-open'); setTimeout(()=>m.style.display='none',300); }
-        else { m.style.display='flex'; setTimeout(()=>m.classList.add('settings-open'),10); }
-    }
-    function generateWeightInputs() {
-        const c = document.getElementById('weightSettingsContainer'); c.innerHTML = '';
-        document.querySelectorAll('.weight-badge[id]').forEach(el => {
-            if(el.dataset.unit === 'kg') {
-                let val = el.innerText.replace(/\D/g,'');
-                c.innerHTML += `<div class="weight-input-group"><span>${el.dataset.label}</span><input type="number" id="in_${el.id}" class="weight-input" value="${val}"></div>`;
-            }
-        });
-    }
-    function saveAllSettings() {
-        const w = {};
-        document.querySelectorAll('.weight-input').forEach(i => {
-            let id = i.id.replace('in_', '');
-            let val = i.value || "5";
-            document.getElementById(id).innerText = val + "kg";
-            w[id] = val + "kg";
-        });
-        localStorage.setItem('userWeights', JSON.stringify(w));
-        toggleSettings();
-    }
-    function loadSettings() {
-        if(localStorage.getItem('themeMode')==='light') setTheme('light');
-        if(localStorage.getItem('accentColor')) setAccent(localStorage.getItem('accentColor'));
-        const w = JSON.parse(localStorage.getItem('userWeights'));
-        if(w) for(const [k,v] of Object.entries(w)) { const e = document.getElementById(k); if(e) e.innerText = v; }
-    }
-    function setTheme(m) { m==='light' ? (document.body.classList.add('light-mode'), localStorage.setItem('themeMode','light')) : (document.body.classList.remove('light-mode'), localStorage.setItem('themeMode','dark')); }
-    function setAccent(c) { document.documentElement.style.setProperty('--primary', c); localStorage.setItem('accentColor', c); }
-
-    let tInt, sec = 0;
-    function openVideo(id) {
-        document.getElementById('videoModal').style.display = 'flex';
-        document.getElementById('integratedTimerBar').style.display = 'none';
-        document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-    }
-    function openTimer(s, id) {
-        document.getElementById('videoModal').style.display = 'flex';
-        document.getElementById('integratedTimerBar').style.display = 'flex';
-        sec = s;
-        document.getElementById('integratedTimerDisplay').innerText = fmt(sec);
-        document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-        clearInterval(tInt);
-    }
-    function toggleTimer() {
-        const btn = document.getElementById('btnTimerToggle');
-        if(tInt) { clearInterval(tInt); tInt=null; btn.innerText = "DEVAM"; }
-        else {
-            btn.innerText = "DURAKLAT";
-            tInt = setInterval(() => {
-                sec--; document.getElementById('integratedTimerDisplay').innerText = fmt(sec);
-                if(sec<=0) { clearInterval(tInt); tInt=null; document.getElementById('integratedTimerDisplay').style.color='red'; btn.innerText="BİTTİ"; }
-            }, 1000);
-        }
-    }
-    function resetTimer() { clearInterval(tInt); tInt=null; sec=60; document.getElementById('integratedTimerDisplay').innerText = "01:00"; document.getElementById('btnTimerToggle').innerText="BAŞLAT"; document.getElementById('integratedTimerDisplay').style.color='#fff'; }
-    function closeVideo() { document.getElementById('videoModal').style.display='none'; document.getElementById('playerContainer').innerHTML=''; clearInterval(tInt); tInt=null; }
-    function fmt(s) { return new Date(s*1000).toISOString().substr(14, 5); }
-</script>
 </body>
 </html>
