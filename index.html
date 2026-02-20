@@ -16,7 +16,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>Pro Antrenman (v28 - Profile & UI)</title>
+    <title>Pro Antrenman (v29 - Secure Auth)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -32,21 +32,39 @@
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); opacity: 0.94; z-index: -1; }
         .container { width: 100%; max-width: 850px; padding-bottom: 40px; position: relative; padding-top: 30px; }
         
-        /* --- GİRİŞ / KAYIT EKRANI (AUTH YENİLENDİ) --- */
+        /* --- GİRİŞ / KAYIT EKRANI YEPYENİ TASARIM --- */
         #authScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.5s ease; }
-        .auth-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--border-color); padding: 50px 35px; border-radius: 30px; width: 100%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); text-align: center; animation: float 4s ease-in-out infinite; }
+        .auth-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--border-color); padding: 45px 35px; border-radius: 30px; width: 100%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); text-align: center; animation: float 4s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .auth-icon { font-size: 3.5rem; margin-bottom: 10px; display: block; animation: pulse-glow 3s infinite; }
-        .auth-title { font-size: 2.2rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; letter-spacing: -1px; }
-        .auth-subtitle { color: var(--primary); font-size: 0.85rem; font-weight: 700; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 3px; }
+        
+        /* Yeni Şık Logo Tasarımı */
+        .auth-logo { width: 70px; height: 70px; background: var(--primary); color: #000; margin: 0 auto 15px; border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: 900; transform: rotate(-5deg); box-shadow: 0 10px 25px rgba(187, 134, 252, 0.4); letter-spacing: -1px; transition: background 0.4s; }
+        
+        .auth-title { font-size: 2.2rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; letter-spacing: -1px; transition: color 0.3s; }
+        .auth-subtitle { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        /* Yumuşak Açılan Input Alanı */
+        .expandable-field { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); margin-bottom: 0; transform: translateY(-10px); }
+        .expandable-field.show { max-height: 80px; opacity: 1; margin-bottom: 20px; transform: translateY(0); }
+        
         .auth-input-group { position: relative; margin-bottom: 20px; }
         .auth-input { width: 100%; padding: 18px 20px; border-radius: 16px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); color: var(--text-main); font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.3s; }
         .auth-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 20px rgba(187, 134, 252, 0.2); background: rgba(0,0,0,0.5); }
         .auth-input::placeholder { color: rgba(255,255,255,0.3); }
-        body.light-mode .auth-input { background: rgba(255,255,255,0.5); color: #000; }
-        body.light-mode .auth-input::placeholder { color: rgba(0,0,0,0.4); }
-        .auth-btn { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; font-size: 1.1rem; margin-top: 5px; margin-bottom: 25px; transition: all 0.3s; box-shadow: 0 5px 20px -5px var(--primary); letter-spacing: 1px; }
+        body.light-mode .auth-input { background: rgba(255,255,255,0.5); color: #000; } body.light-mode .auth-input::placeholder { color: rgba(0,0,0,0.4); }
+        
+        /* Güçlü Şifre İpucu (Kayıt ekranında görünür) */
+        .pass-hint { font-size: 0.75rem; color: var(--text-muted); text-align: left; margin-top: 6px; padding-left: 10px; opacity: 0; max-height: 0; transition: all 0.4s; overflow: hidden; }
+        .pass-hint.show { opacity: 1; max-height: 20px; }
+
+        .auth-btn { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; font-size: 1.1rem; margin-top: 5px; margin-bottom: 25px; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 5px 20px -5px var(--primary); letter-spacing: 1px; }
         .auth-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px var(--primary); }
+        
+        /* Kayıt Olma Modunda Butonun Rengi Değişir */
+        .auth-btn.register-mode { background: var(--success); box-shadow: 0 5px 20px -5px var(--success); }
+        .auth-btn.register-mode:hover { box-shadow: 0 10px 25px -5px var(--success); }
+        .auth-logo.register-mode { background: var(--success); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); }
+
         .auth-toggle { color: var(--text-muted); font-size: 0.95rem; cursor: pointer; transition: color 0.3s; font-weight: 500; }
         .auth-toggle span { color: var(--secondary); font-weight: 800; text-decoration: none; border-bottom: 1px dashed var(--secondary); padding-bottom: 2px; }
         #authError { color: var(--danger); font-size: 0.85rem; font-weight: 700; margin-bottom: 15px; min-height: 20px; display: block; background: rgba(239, 68, 68, 0.1); border-radius: 8px; padding: 5px; opacity: 0; transition: opacity 0.3s; }
@@ -55,27 +73,21 @@
         /* --- UI ELEMANLARI VE MENÜLER --- */
         .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.3); z-index: 9999; }
         .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 15px var(--success); }
-        
-        /* SAĞ VE SOL BUTONLAR */
         .menu-bar-right { position: absolute; top: 15px; right: 0; z-index: 200; }
         .menu-bar-left { position: absolute; top: 15px; left: 0; z-index: 200; }
         .menu-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-main); font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; backdrop-filter: blur(10px); }
         .menu-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); transform: scale(1.1); }
-        
         header { text-align: center; margin-bottom: 30px; margin-top: 15px; }
         .main-title { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
         .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; transition: background 0.3s; }
-        
         .navigation-wrapper { margin-bottom: 30px; display: flex; flex-direction: column; gap: 15px; }
         .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; gap: 10px; animation: pulse-glow-red 2s infinite; }
         .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); animation: none; border:none; transform: scale(1.02); }
         @keyframes pulse-glow-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        
         .sub-menu { display: flex; justify-content: space-between; gap: 12px; background: rgba(0,0,0,0.1); padding: 6px; border-radius: 20px; border: 1px solid var(--border-color); }
         .tab-btn { background: transparent; color: var(--text-muted); border: none; padding: 12px 10px; border-radius: 14px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); flex: 1; text-align: center; }
         .tab-btn.active { background: var(--primary); color: #000; box-shadow: 0 5px 20px -5px var(--primary); transform: translateY(-2px); }
         body.light-mode .sub-menu { background: rgba(0,0,0,0.03); } body.light-mode .tab-btn.active { color: #fff; }
-        
         .tab-content { display: none; animation: fadeIn 0.4s ease-out; } .tab-content.active-content { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -91,11 +103,9 @@
         .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; display: block; margin-bottom: 4px; transition: color 0.3s; }
         .workout-note { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
         .weight-badge { display: inline-block; color: var(--primary); font-weight: 800; font-size: 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 8px; transition: all 0.3s; }
-        
         .video-btn, .timer-btn { padding: 10px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; display: flex; justify-content: center; align-items: center; border: none; font-weight: 700; width: 100%; transition: all 0.3s ease; }
         .video-btn { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid transparent; } .video-btn:hover { background: var(--text-main); color: var(--bg-body); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,255,255,0.1); }
         .timer-btn { background: rgba(255, 152, 0, 0.1); color: #fbbf24; border: 1px solid rgba(255, 152, 0, 0.2); } .timer-btn:hover { background: #fbbf24; color: #000; transform: translateY(-2px); }
-        
         .check-container { display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; width: 26px; height: 26px; }
         .check-container:active .checkmark { transform: scale(0.8); }
         .check-input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
@@ -107,49 +117,37 @@
         @keyframes fadeInCheck { from { opacity: 0; transform: rotate(45deg) scale(0); } to { opacity: 1; transform: rotate(45deg) scale(1); } }
         tr.completed .workout-name { text-decoration: line-through; opacity: 0.4; }
 
-        /* --- MODALLAR (AYARLAR VE PROFIL) --- */
+        /* --- MODALLAR --- */
         .settings-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; display: none; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .settings-panel { width: 100%; max-width: 360px; height: 100%; background: var(--bg-body); display: flex; flex-direction: column; transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 50px rgba(0,0,0,0.5); }
-        
-        /* Sağdan Açılan (Ayarlar) */
-        .settings-right { position: absolute; right: 0; border-left: 1px solid var(--border-color); transform: translateX(100%); }
-        .settings-open .settings-right { transform: translateX(0); }
-        
-        /* Soldan Açılan (Profil) */
-        .settings-left { position: absolute; left: 0; border-right: 1px solid var(--border-color); transform: translateX(-100%); }
-        .profile-open .settings-left { transform: translateX(0); }
-
+        .settings-right { position: absolute; right: 0; border-left: 1px solid var(--border-color); transform: translateX(100%); } .settings-open .settings-right { transform: translateX(0); }
+        .settings-left { position: absolute; left: 0; border-right: 1px solid var(--border-color); transform: translateX(-100%); } .profile-open .settings-left { transform: translateX(0); }
         .settings-header { padding: 30px 25px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .settings-header h3 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
         .settings-content { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 25px; }
         .section-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; }
-        
         .theme-toggle-group { display: flex; background: rgba(255,255,255,0.05); border-radius: 14px; padding: 5px; border: 1px solid var(--border-color); }
         .theme-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); border-radius: 10px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; font-size: 0.9rem; }
         .theme-btn.active { background: var(--primary); color: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transform: scale(1.02); }
         body.light-mode .theme-toggle-group { background: rgba(0,0,0,0.05); } body.light-mode .theme-btn.active { color: #fff; }
-        
         .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
         .color-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; position: relative; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .color-btn:hover { transform: scale(1.15); } .color-btn.active { transform: scale(1.1); box-shadow: 0 0 15px currentColor; border-color: #fff; }
         .color-btn.active::after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-        
         .weight-input-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--border-color); }
         .weight-input-group span { font-weight: 600; font-size: 0.95rem; }
         .weight-input { width: 70px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1rem; transition: all 0.3s; font-family: 'JetBrains Mono', monospace; }
         .weight-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(187, 134, 252, 0.3); background: rgba(0,0,0,0.4); }
         body.light-mode .weight-input { background: rgba(255,255,255,0.5); } body.light-mode .weight-input:focus { background: #fff; }
-        
         .reset-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; cursor: pointer; border-radius: 14px; transition: all 0.3s; margin-top: 10px; }
         .reset-btn:hover { background: var(--danger); color: #fff; box-shadow: 0 5px 15px rgba(239,68,68,0.3); }
         .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; cursor: pointer; border-radius: 16px; font-size: 1.05rem; transition: all 0.3s; box-shadow: 0 5px 20px -5px var(--primary); }
         .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px var(--primary); }
         body.light-mode .btn-save { color: #fff; }
-        
         .logout-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; cursor: pointer; border-radius: 14px; transition: all 0.3s; margin-top: auto; margin-bottom: 20px; }
         .logout-btn:hover { background: var(--danger); color: #fff; box-shadow: 0 5px 15px rgba(239,68,68,0.3); }
 
-        /* --- VİDEO MODAL --- */
+        /* VİDEO MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 4000; }
         .modal-content { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
         .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 4100; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); }
@@ -162,18 +160,24 @@
 
 <div id="authScreen">
     <div class="auth-card">
-        <span class="auth-icon">⚡</span>
+        <div class="auth-logo" id="authLogoBox">PRO</div>
         <h1 class="auth-title" id="authTitleText">GİRİŞ YAP</h1>
-        <p class="auth-subtitle">PRO ANTRENMAN</p>
+        <p class="auth-subtitle" id="authSubtitleText">Sisteme Hoş Geldin</p>
         
         <span id="authError"></span>
+
+        <div class="expandable-field" id="usernameField">
+            <input type="text" id="authUsername" class="auth-input" placeholder="Kendine bir Kullanıcı Adı belirle">
+        </div>
 
         <div class="auth-input-group">
             <input type="email" id="authEmail" class="auth-input" placeholder="E-posta Adresi" required>
         </div>
-        <div class="auth-input-group">
-            <input type="password" id="authPass" class="auth-input" placeholder="Şifre (En az 6 hane)" required>
+        
+        <div class="auth-input-group" style="margin-bottom: 10px;">
+            <input type="password" id="authPass" class="auth-input" placeholder="Şifre" required>
         </div>
+        <p class="pass-hint" id="passHintText">⚠️ Şifre en az 6 karakter olmalı ve hem harf hem de rakam içermelidir.</p>
         
         <button id="authSubmitBtn" class="auth-btn" onclick="handleAuth()">GİRİŞ YAP</button>
         
@@ -209,8 +213,12 @@
             </div>
             <div class="settings-content" style="align-items: center; text-align: center; padding-top: 40px;">
                 <div style="font-size: 5rem; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary);">👤</div>
-                <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Giriş Yapılan Hesap</div>
-                <div id="userEmailDisplay" style="font-weight: 800; color: var(--text-main); font-size: 1.1rem; margin-bottom: 30px; word-break: break-all;">bekleniyor...</div>
+                
+                <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Kullanıcı Adı</div>
+                <div id="userNameDisplay" style="font-weight: 900; color: var(--primary); font-size: 1.5rem; margin-bottom: 15px; letter-spacing:-0.5px;">Bilinmiyor</div>
+
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Bağlı E-posta</div>
+                <div id="userEmailDisplay" style="font-weight: 600; color: var(--text-main); font-size: 0.9rem; margin-bottom: 30px; word-break: break-all; opacity: 0.8;">bekleniyor...</div>
                 
                 <button class="logout-btn" onclick="logoutUser()">ÇIKIŞ YAP</button>
             </div>
@@ -314,7 +322,7 @@
         </div>
     </div>
 
-    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN v28 (Profile Update)</p></footer>
+    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN v29 (Secure Profile)</p></footer>
 </div>
 
 <div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">✕</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-btn" style="width:auto; padding:8px 15px;">BAŞLAT</button><button onclick="resetTimer()" class="timer-btn" style="width:auto; padding:8px 15px;">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
@@ -335,14 +343,17 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
     let currentUser = null;
+    let isRegisterMode = false;
 
     // --- 2. KİMLİK DOĞRULAMA (AUTH) SİSTEMİ ---
     auth.onAuthStateChanged((user) => {
         if (user) {
             currentUser = user;
-            // Giriş başarılıysa butonu eski haline getir ve ekranı gizle
             btnLoading(false);
+            
+            // Profil bilgilerini güncelle
             document.getElementById('userEmailDisplay').innerText = user.email;
+            document.getElementById('userNameDisplay').innerText = user.displayName || "Sporcu";
             
             document.getElementById('authScreen').style.opacity = '0';
             setTimeout(() => { document.getElementById('authScreen').style.display = 'none'; }, 500);
@@ -351,52 +362,100 @@
             syncFromCloud(); 
         } else {
             currentUser = null;
-            // Çıkış yapıldığında ana ekranı gizle, giriş ekranını göster
             document.getElementById('mainContainer').style.display = 'none';
             document.getElementById('authScreen').style.display = 'flex';
             
-            // Kutuları ve hataları temizle ki temiz bir ekran gelsin
+            // Çıkış yapıldığında form kutularını temizle
+            document.getElementById('authUsername').value = '';
             document.getElementById('authEmail').value = '';
             document.getElementById('authPass').value = '';
             document.getElementById('authError').classList.remove('show');
-            btnLoading(false); // Buton kilitli kalmasın
+            btnLoading(false); 
+            
+            // Eğer kayıt modunda kaldıysa Giriş moduna döndür
+            if(isRegisterMode) toggleAuthMode();
             
             setTimeout(() => { document.getElementById('authScreen').style.opacity = '1'; }, 50);
         }
     });
 
     function toggleAuthMode() {
+        isRegisterMode = !isRegisterMode;
         const title = document.getElementById('authTitleText');
+        const subtitle = document.getElementById('authSubtitleText');
         const btn = document.getElementById('authSubmitBtn');
         const toggle = document.getElementById('authToggleText');
+        const logo = document.getElementById('authLogoBox');
+        
+        // Animasyonlu alanlar
+        const usernameField = document.getElementById('usernameField');
+        const passHint = document.getElementById('passHintText');
+
         document.getElementById('authError').classList.remove('show'); 
 
-        if(title.innerText === 'GİRİŞ YAP') {
+        if(isRegisterMode) {
+            // KAYIT OL MODU
             title.innerText = 'KAYIT OL';
+            subtitle.innerText = 'Yeni Bir Başlangıç';
             btn.innerText = 'YENİ HESAP AÇ';
+            btn.classList.add('register-mode');
+            logo.classList.add('register-mode');
             toggle.innerText = 'Zaten hesabın var mı? Giriş Yap';
+            
+            // Kutuları yumuşakça aç
+            usernameField.classList.add('show');
+            passHint.classList.add('show');
         } else {
+            // GİRİŞ YAP MODU
             title.innerText = 'GİRİŞ YAP';
+            subtitle.innerText = 'Sisteme Hoş Geldin';
             btn.innerText = 'GİRİŞ YAP';
+            btn.classList.remove('register-mode');
+            logo.classList.remove('register-mode');
             toggle.innerText = 'Hesabın yok mu? Yeni Kayıt Oluştur';
+            
+            // Kutuları yumuşakça kapat
+            usernameField.classList.remove('show');
+            passHint.classList.remove('show');
         }
     }
 
+    // Güçlü Şifre Kontrolü (En az 6 karakter, En az 1 harf ve 1 rakam)
+    function isStrongPassword(password) {
+        const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&._-]{6,}$/;
+        return regex.test(password);
+    }
+
     function handleAuth() {
-        const email = document.getElementById('authEmail').value;
+        const username = document.getElementById('authUsername').value.trim();
+        const email = document.getElementById('authEmail').value.trim();
         const pass = document.getElementById('authPass').value;
-        const isRegister = document.getElementById('authTitleText').innerText === 'KAYIT OL';
-        const errorDiv = document.getElementById('authError');
         
-        if(!email || !pass) { showError("Lütfen e-posta ve şifre girin."); return; }
-        if(pass.length < 6) { showError("Şifre en az 6 haneli olmalıdır."); return; }
+        if(isRegisterMode && !username) { showError("Lütfen bir kullanıcı adı belirleyin."); return; }
+        if(!email || !pass) { showError("Lütfen e-posta ve şifre alanlarını doldurun."); return; }
+        
+        // Güçlü şifre kontrolü sadece kayıt olurken yapılır
+        if(isRegisterMode && !isStrongPassword(pass)) { 
+            showError("Şifreniz zayıf! En az 6 hane olmalı, hem harf hem de rakam içermelidir."); 
+            return; 
+        }
 
         btnLoading(true);
 
-        if(isRegister) {
+        if(isRegisterMode) {
+            // Kayıt işlemi
             auth.createUserWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    // Kullanıcı adını Firebase profiline kaydet
+                    return userCredential.user.updateProfile({ displayName: username });
+                })
+                .then(() => {
+                    // Profil güncellendikten sonra UI'ı yenilemek için sayfayı tetikle
+                    document.getElementById('userNameDisplay').innerText = username;
+                })
                 .catch(e => { showError(hataCevir(e.code)); btnLoading(false); });
         } else {
+            // Giriş işlemi
             auth.signInWithEmailAndPassword(email, pass)
                 .catch(e => { showError(hataCevir(e.code)); btnLoading(false); });
         }
@@ -410,7 +469,6 @@
 
     function logoutUser() {
         auth.signOut();
-        // Profil menüsünü kapat
         const p = document.getElementById('profileModal');
         p.classList.remove('profile-open');
         setTimeout(() => p.style.display = 'none', 400);
@@ -426,6 +484,7 @@
         if(code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') return "E-posta veya şifre hatalı.";
         if(code === 'auth/email-already-in-use') return "Bu e-posta zaten kullanımda.";
         if(code === 'auth/invalid-email') return "Geçersiz e-posta formatı.";
+        if(code === 'auth/weak-password') return "Şifreniz çok zayıf.";
         return "Bir hata oluştu. Lütfen tekrar deneyin.";
     }
 
@@ -442,7 +501,7 @@
                     localStorage.setItem('lastSavedDate', data.lastDate);
                 }
             }
-        } catch(e) { console.log("Firestore henüz aktif değil. Yerel veriler kullanılıyor."); }
+        } catch(e) { console.log("Firestore hatası veya veritabanı boş."); }
         
         loadSettings(); generateWeightInputs(); checkDateAndLoadProgress();
     }
@@ -454,7 +513,7 @@
             const w = JSON.parse(localStorage.getItem('userWeights')) || {};
             const d = localStorage.getItem('lastSavedDate') || new Date().toDateString();
             await db.collection("users").doc(currentUser.uid).set({ progress: p, weights: w, lastDate: d }, { merge: true });
-        } catch(e) { console.log("Buluta yazma başarısız, ama telefona kaydedildi."); }
+        } catch(e) { console.log("Buluta yazma başarısız."); }
     }
 
     // --- 4. TEMEL UYGULAMA İŞLEVLERİ ---
