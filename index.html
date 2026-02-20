@@ -16,7 +16,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>Pro Antrenman (v27 - Cloud Auth)</title>
+    <title>Pro Antrenman (v28 - Profile & UI)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -32,39 +32,54 @@
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); opacity: 0.94; z-index: -1; }
         .container { width: 100%; max-width: 850px; padding-bottom: 40px; position: relative; padding-top: 30px; }
         
-        /* --- GİRİŞ / KAYIT EKRANI (AUTH) --- */
+        /* --- GİRİŞ / KAYIT EKRANI (AUTH YENİLENDİ) --- */
         #authScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.5s ease; }
-        .auth-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--border-color); padding: 40px 30px; border-radius: var(--radius); width: 100%; max-width: 400px; box-shadow: var(--shadow); text-align: center; animation: float 4s ease-in-out infinite; }
+        .auth-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--border-color); padding: 50px 35px; border-radius: 30px; width: 100%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); text-align: center; animation: float 4s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .auth-title { font-size: 2rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; letter-spacing: -1px; }
-        .auth-subtitle { color: var(--primary); font-size: 0.9rem; font-weight: 600; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
-        .auth-input { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); color: var(--text-main); font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.3s; }
-        .auth-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(187, 134, 252, 0.3); background: rgba(0,0,0,0.4); }
-        .auth-btn { width: 100%; padding: 16px; background: var(--primary); color: #000; border: none; font-weight: 800; border-radius: 14px; cursor: pointer; font-size: 1.05rem; margin-top: 10px; margin-bottom: 20px; transition: all 0.3s; box-shadow: 0 5px 20px -5px var(--primary); }
-        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px var(--primary); }
-        .auth-toggle { color: var(--text-muted); font-size: 0.9rem; cursor: pointer; transition: color 0.3s; }
-        .auth-toggle span { color: var(--secondary); font-weight: 700; text-decoration: none; }
-        #authError { color: var(--danger); font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; min-height: 20px; display: block; }
+        .auth-icon { font-size: 3.5rem; margin-bottom: 10px; display: block; animation: pulse-glow 3s infinite; }
+        .auth-title { font-size: 2.2rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; letter-spacing: -1px; }
+        .auth-subtitle { color: var(--primary); font-size: 0.85rem; font-weight: 700; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 3px; }
+        .auth-input-group { position: relative; margin-bottom: 20px; }
+        .auth-input { width: 100%; padding: 18px 20px; border-radius: 16px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); color: var(--text-main); font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.3s; }
+        .auth-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 20px rgba(187, 134, 252, 0.2); background: rgba(0,0,0,0.5); }
+        .auth-input::placeholder { color: rgba(255,255,255,0.3); }
+        body.light-mode .auth-input { background: rgba(255,255,255,0.5); color: #000; }
+        body.light-mode .auth-input::placeholder { color: rgba(0,0,0,0.4); }
+        .auth-btn { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; font-size: 1.1rem; margin-top: 5px; margin-bottom: 25px; transition: all 0.3s; box-shadow: 0 5px 20px -5px var(--primary); letter-spacing: 1px; }
+        .auth-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px var(--primary); }
+        .auth-toggle { color: var(--text-muted); font-size: 0.95rem; cursor: pointer; transition: color 0.3s; font-weight: 500; }
+        .auth-toggle span { color: var(--secondary); font-weight: 800; text-decoration: none; border-bottom: 1px dashed var(--secondary); padding-bottom: 2px; }
+        #authError { color: var(--danger); font-size: 0.85rem; font-weight: 700; margin-bottom: 15px; min-height: 20px; display: block; background: rgba(239, 68, 68, 0.1); border-radius: 8px; padding: 5px; opacity: 0; transition: opacity 0.3s; }
+        #authError.show { opacity: 1; }
 
-        /* --- UI ELEMANLARI (Önceki Sürümle Aynı Estetik) --- */
+        /* --- UI ELEMANLARI VE MENÜLER --- */
         .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.3); z-index: 9999; }
         .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 15px var(--success); }
-        .menu-bar { position: absolute; top: 15px; right: 0; z-index: 200; }
+        
+        /* SAĞ VE SOL BUTONLAR */
+        .menu-bar-right { position: absolute; top: 15px; right: 0; z-index: 200; }
+        .menu-bar-left { position: absolute; top: 15px; left: 0; z-index: 200; }
         .menu-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-main); font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; backdrop-filter: blur(10px); }
-        .menu-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); transform: rotate(90deg) scale(1.05); }
+        .menu-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); transform: scale(1.1); }
+        
         header { text-align: center; margin-bottom: 30px; margin-top: 15px; }
         .main-title { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
         .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; transition: background 0.3s; }
+        
         .navigation-wrapper { margin-bottom: 30px; display: flex; flex-direction: column; gap: 15px; }
-        .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; gap: 10px; animation: pulse-glow 2s infinite; }
+        .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; gap: 10px; animation: pulse-glow-red 2s infinite; }
         .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); animation: none; border:none; transform: scale(1.02); }
-        @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        @keyframes pulse-glow-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        
         .sub-menu { display: flex; justify-content: space-between; gap: 12px; background: rgba(0,0,0,0.1); padding: 6px; border-radius: 20px; border: 1px solid var(--border-color); }
         .tab-btn { background: transparent; color: var(--text-muted); border: none; padding: 12px 10px; border-radius: 14px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); flex: 1; text-align: center; }
         .tab-btn.active { background: var(--primary); color: #000; box-shadow: 0 5px 20px -5px var(--primary); transform: translateY(-2px); }
         body.light-mode .sub-menu { background: rgba(0,0,0,0.03); } body.light-mode .tab-btn.active { color: #fff; }
+        
         .tab-content { display: none; animation: fadeIn 0.4s ease-out; } .tab-content.active-content { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- KARTLAR --- */
         .day-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border-radius: var(--radius); margin-bottom: 25px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
         .day-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
         .day-header h2 { font-size: 1.2rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
@@ -76,9 +91,11 @@
         .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; display: block; margin-bottom: 4px; transition: color 0.3s; }
         .workout-note { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
         .weight-badge { display: inline-block; color: var(--primary); font-weight: 800; font-size: 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 8px; transition: all 0.3s; }
+        
         .video-btn, .timer-btn { padding: 10px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; display: flex; justify-content: center; align-items: center; border: none; font-weight: 700; width: 100%; transition: all 0.3s ease; }
         .video-btn { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid transparent; } .video-btn:hover { background: var(--text-main); color: var(--bg-body); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,255,255,0.1); }
         .timer-btn { background: rgba(255, 152, 0, 0.1); color: #fbbf24; border: 1px solid rgba(255, 152, 0, 0.2); } .timer-btn:hover { background: #fbbf24; color: #000; transform: translateY(-2px); }
+        
         .check-container { display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; width: 26px; height: 26px; }
         .check-container:active .checkmark { transform: scale(0.8); }
         .check-input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
@@ -90,34 +107,47 @@
         @keyframes fadeInCheck { from { opacity: 0; transform: rotate(45deg) scale(0); } to { opacity: 1; transform: rotate(45deg) scale(1); } }
         tr.completed .workout-name { text-decoration: line-through; opacity: 0.4; }
 
-        /* --- AYARLAR MENÜSÜ --- */
-        .settings-modal { position: fixed; top: 0; right: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; display: none; justify-content: flex-end; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-        .settings-panel { width: 100%; max-width: 360px; height: 100%; background: var(--bg-body); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: -20px 0 50px rgba(0,0,0,0.5); }
-        .settings-open .settings-panel { transform: translateX(0); }
+        /* --- MODALLAR (AYARLAR VE PROFIL) --- */
+        .settings-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; display: none; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .settings-panel { width: 100%; max-width: 360px; height: 100%; background: var(--bg-body); display: flex; flex-direction: column; transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        
+        /* Sağdan Açılan (Ayarlar) */
+        .settings-right { position: absolute; right: 0; border-left: 1px solid var(--border-color); transform: translateX(100%); }
+        .settings-open .settings-right { transform: translateX(0); }
+        
+        /* Soldan Açılan (Profil) */
+        .settings-left { position: absolute; left: 0; border-right: 1px solid var(--border-color); transform: translateX(-100%); }
+        .profile-open .settings-left { transform: translateX(0); }
+
         .settings-header { padding: 30px 25px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .settings-header h3 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
         .settings-content { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 25px; }
         .section-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; }
+        
         .theme-toggle-group { display: flex; background: rgba(255,255,255,0.05); border-radius: 14px; padding: 5px; border: 1px solid var(--border-color); }
         .theme-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); border-radius: 10px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; font-size: 0.9rem; }
         .theme-btn.active { background: var(--primary); color: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transform: scale(1.02); }
         body.light-mode .theme-toggle-group { background: rgba(0,0,0,0.05); } body.light-mode .theme-btn.active { color: #fff; }
+        
         .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
         .color-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; position: relative; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .color-btn:hover { transform: scale(1.15); } .color-btn.active { transform: scale(1.1); box-shadow: 0 0 15px currentColor; border-color: #fff; }
         .color-btn.active::after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        
         .weight-input-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--border-color); }
         .weight-input-group span { font-weight: 600; font-size: 0.95rem; }
         .weight-input { width: 70px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1rem; transition: all 0.3s; font-family: 'JetBrains Mono', monospace; }
         .weight-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(187, 134, 252, 0.3); background: rgba(0,0,0,0.4); }
         body.light-mode .weight-input { background: rgba(255,255,255,0.5); } body.light-mode .weight-input:focus { background: #fff; }
+        
         .reset-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; cursor: pointer; border-radius: 14px; transition: all 0.3s; margin-top: 10px; }
         .reset-btn:hover { background: var(--danger); color: #fff; box-shadow: 0 5px 15px rgba(239,68,68,0.3); }
-        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; cursor: pointer; border-radius: 16px; font-size: 1.05rem; transition: all 0.3s; box-shadow: 0 5px 20px -5px var(--primary); margin-bottom: 10px; }
+        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; cursor: pointer; border-radius: 16px; font-size: 1.05rem; transition: all 0.3s; box-shadow: 0 5px 20px -5px var(--primary); }
         .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px var(--primary); }
         body.light-mode .btn-save { color: #fff; }
-        .logout-btn { width: 100%; padding: 15px; background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); font-weight: 700; cursor: pointer; border-radius: 14px; transition: all 0.3s; }
-        .logout-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+        
+        .logout-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; cursor: pointer; border-radius: 14px; transition: all 0.3s; margin-top: auto; margin-bottom: 20px; }
+        .logout-btn:hover { background: var(--danger); color: #fff; box-shadow: 0 5px 15px rgba(239,68,68,0.3); }
 
         /* --- VİDEO MODAL --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 4000; }
@@ -132,13 +162,18 @@
 
 <div id="authScreen">
     <div class="auth-card">
+        <span class="auth-icon">⚡</span>
         <h1 class="auth-title" id="authTitleText">GİRİŞ YAP</h1>
         <p class="auth-subtitle">PRO ANTRENMAN</p>
         
         <span id="authError"></span>
 
-        <input type="email" id="authEmail" class="auth-input" placeholder="E-posta Adresi" required>
-        <input type="password" id="authPass" class="auth-input" placeholder="Şifre (En az 6 hane)" required>
+        <div class="auth-input-group">
+            <input type="email" id="authEmail" class="auth-input" placeholder="E-posta Adresi" required>
+        </div>
+        <div class="auth-input-group">
+            <input type="password" id="authPass" class="auth-input" placeholder="Şifre (En az 6 hane)" required>
+        </div>
         
         <button id="authSubmitBtn" class="auth-btn" onclick="handleAuth()">GİRİŞ YAP</button>
         
@@ -152,7 +187,9 @@
 <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
 
 <div class="container" id="mainContainer" style="display:none;">
-    <div class="menu-bar"><button class="menu-btn" onclick="toggleSettings()">⚙️</button></div>
+    <div class="menu-bar-left"><button class="menu-btn" onclick="toggleProfile()">👤</button></div>
+    <div class="menu-bar-right"><button class="menu-btn" onclick="toggleSettings()">⚙️</button></div>
+    
     <header><h1 class="main-title">Spor Planı</h1><div class="header-line"></div></header>
 
     <div class="navigation-wrapper">
@@ -164,8 +201,24 @@
         </div>
     </div>
 
-    <div id="settingsModal" class="settings-modal" onclick="toggleSettings()">
-        <div class="settings-panel" onclick="event.stopPropagation()">
+    <div id="profileModal" class="settings-modal" style="justify-content: flex-start;" onclick="toggleProfile()">
+        <div class="settings-panel settings-left" onclick="event.stopPropagation()">
+            <div class="settings-header">
+                <h3>Profilim</h3>
+                <button class="menu-btn" style="border:none; width: 36px; height: 36px;" onclick="toggleProfile()">✕</button>
+            </div>
+            <div class="settings-content" style="align-items: center; text-align: center; padding-top: 40px;">
+                <div style="font-size: 5rem; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary);">👤</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Giriş Yapılan Hesap</div>
+                <div id="userEmailDisplay" style="font-weight: 800; color: var(--text-main); font-size: 1.1rem; margin-bottom: 30px; word-break: break-all;">bekleniyor...</div>
+                
+                <button class="logout-btn" onclick="logoutUser()">ÇIKIŞ YAP</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="settings-modal" style="justify-content: flex-end;" onclick="toggleSettings()">
+        <div class="settings-panel settings-right" onclick="event.stopPropagation()">
             <div class="settings-header">
                 <h3>Ayarlar</h3>
                 <button class="menu-btn" style="border:none; width: 36px; height: 36px;" onclick="toggleSettings()">✕</button>
@@ -203,7 +256,6 @@
             
             <div style="padding:25px; border-top:1px solid var(--border-color); background: var(--bg-card);">
                 <button class="btn-save" onclick="saveAllSettings()">KAYDET & KAPAT</button>
-                <button class="logout-btn" onclick="logoutUser()">ÇIKIŞ YAP</button>
             </div>
         </div>
     </div>
@@ -262,7 +314,7 @@
         </div>
     </div>
 
-    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN v27 (Cloud Edition)</p></footer>
+    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN v28 (Profile Update)</p></footer>
 </div>
 
 <div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">✕</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-btn" style="width:auto; padding:8px 15px;">BAŞLAT</button><button onclick="resetTimer()" class="timer-btn" style="width:auto; padding:8px 15px;">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
@@ -287,18 +339,29 @@
     // --- 2. KİMLİK DOĞRULAMA (AUTH) SİSTEMİ ---
     auth.onAuthStateChanged((user) => {
         if (user) {
-            // Kullanıcı giriş yaptıysa
             currentUser = user;
+            // Giriş başarılıysa butonu eski haline getir ve ekranı gizle
+            btnLoading(false);
+            document.getElementById('userEmailDisplay').innerText = user.email;
+            
             document.getElementById('authScreen').style.opacity = '0';
-            setTimeout(() => document.getElementById('authScreen').style.display = 'none', 500);
+            setTimeout(() => { document.getElementById('authScreen').style.display = 'none'; }, 500);
+            
             document.getElementById('mainContainer').style.display = 'block';
-            syncFromCloud(); // Buluttan verileri çek
+            syncFromCloud(); 
         } else {
-            // Giriş yapmadıysa
             currentUser = null;
+            // Çıkış yapıldığında ana ekranı gizle, giriş ekranını göster
             document.getElementById('mainContainer').style.display = 'none';
             document.getElementById('authScreen').style.display = 'flex';
-            setTimeout(() => document.getElementById('authScreen').style.opacity = '1', 50);
+            
+            // Kutuları ve hataları temizle ki temiz bir ekran gelsin
+            document.getElementById('authEmail').value = '';
+            document.getElementById('authPass').value = '';
+            document.getElementById('authError').classList.remove('show');
+            btnLoading(false); // Buton kilitli kalmasın
+            
+            setTimeout(() => { document.getElementById('authScreen').style.opacity = '1'; }, 50);
         }
     });
 
@@ -306,7 +369,7 @@
         const title = document.getElementById('authTitleText');
         const btn = document.getElementById('authSubmitBtn');
         const toggle = document.getElementById('authToggleText');
-        document.getElementById('authError').innerText = ''; // Hataları temizle
+        document.getElementById('authError').classList.remove('show'); 
 
         if(title.innerText === 'GİRİŞ YAP') {
             title.innerText = 'KAYIT OL';
@@ -325,24 +388,32 @@
         const isRegister = document.getElementById('authTitleText').innerText === 'KAYIT OL';
         const errorDiv = document.getElementById('authError');
         
-        if(!email || !pass) { errorDiv.innerText = "Lütfen e-posta ve şifre girin."; return; }
-        if(pass.length < 6) { errorDiv.innerText = "Şifre en az 6 haneli olmalıdır."; return; }
+        if(!email || !pass) { showError("Lütfen e-posta ve şifre girin."); return; }
+        if(pass.length < 6) { showError("Şifre en az 6 haneli olmalıdır."); return; }
 
         btnLoading(true);
 
         if(isRegister) {
             auth.createUserWithEmailAndPassword(email, pass)
-                .catch(e => { errorDiv.innerText = hataCevir(e.code); btnLoading(false); });
+                .catch(e => { showError(hataCevir(e.code)); btnLoading(false); });
         } else {
             auth.signInWithEmailAndPassword(email, pass)
-                .catch(e => { errorDiv.innerText = hataCevir(e.code); btnLoading(false); });
+                .catch(e => { showError(hataCevir(e.code)); btnLoading(false); });
         }
+    }
+
+    function showError(msg) {
+        const err = document.getElementById('authError');
+        err.innerText = msg;
+        err.classList.add('show');
     }
 
     function logoutUser() {
         auth.signOut();
-        document.getElementById('settingsModal').classList.remove('settings-open');
-        document.getElementById('settingsModal').style.display = 'none';
+        // Profil menüsünü kapat
+        const p = document.getElementById('profileModal');
+        p.classList.remove('profile-open');
+        setTimeout(() => p.style.display = 'none', 400);
     }
 
     function btnLoading(isLoading) {
@@ -361,30 +432,19 @@
     // --- 3. BULUT SENKRONİZASYON (VERİTABANI) ---
     async function syncFromCloud() {
         try {
-            // Firestore veritabanından kullanıcı belgesini al
             const docRef = await db.collection("users").doc(currentUser.uid).get();
             if (docRef.exists) {
                 const data = docRef.data();
-                
-                // Ağırlıkları buluttan telefona aktar
                 if(data.weights) localStorage.setItem('userWeights', JSON.stringify(data.weights));
-                
-                // İlerlemeyi buluttan telefona aktar (Tarih aynıysa)
                 const today = new Date().toDateString();
                 if(data.progress && data.lastDate === today) {
                     localStorage.setItem('userProgress', JSON.stringify(data.progress));
                     localStorage.setItem('lastSavedDate', data.lastDate);
                 }
-                console.log("Bulut verisi başarıyla çekildi.");
             }
-        } catch(e) {
-            console.log("Firestore henüz aktif değil veya hata. Yerel veriler kullanılıyor.");
-        }
+        } catch(e) { console.log("Firestore henüz aktif değil. Yerel veriler kullanılıyor."); }
         
-        // Veriler çekildikten sonra arayüzü güncelle
-        loadSettings(); 
-        generateWeightInputs(); 
-        checkDateAndLoadProgress();
+        loadSettings(); generateWeightInputs(); checkDateAndLoadProgress();
     }
 
     async function syncToCloud() {
@@ -393,18 +453,9 @@
             const p = JSON.parse(localStorage.getItem('userProgress')) || {};
             const w = JSON.parse(localStorage.getItem('userWeights')) || {};
             const d = localStorage.getItem('lastSavedDate') || new Date().toDateString();
-            
-            // Veritabanına kaydet
-            await db.collection("users").doc(currentUser.uid).set({
-                progress: p,
-                weights: w,
-                lastDate: d
-            }, { merge: true }); // Merge: Mevcut verileri ezmez, üstüne yazar
-        } catch(e) {
-            console.log("Buluta yazma başarısız, ama telefona kaydedildi.");
-        }
+            await db.collection("users").doc(currentUser.uid).set({ progress: p, weights: w, lastDate: d }, { merge: true });
+        } catch(e) { console.log("Buluta yazma başarısız, ama telefona kaydedildi."); }
     }
-
 
     // --- 4. TEMEL UYGULAMA İŞLEVLERİ ---
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Hata:', err)); }
@@ -416,9 +467,8 @@
             localStorage.removeItem('userProgress'); 
             localStorage.setItem('lastSavedDate', today); 
             updateProgressBar();
-            syncToCloud(); // Yeni günü buluta bildir
-        } 
-        else { loadProgress(); }
+            syncToCloud();
+        } else { loadProgress(); }
     }
 
     function openTab(id) {
@@ -442,7 +492,7 @@
         localStorage.setItem('lastSavedDate', new Date().toDateString());
         
         updateProgressBar();
-        syncToCloud(); // Her tiklemede buluta kaydet!
+        syncToCloud(); 
     }
 
     function loadProgress() {
@@ -469,15 +519,21 @@
     function resetProgress() { 
         if(confirm("Bugünü sıfırlamak istediğine emin misin?")) { 
             localStorage.setItem('userProgress', '{}'); 
-            syncToCloud().then(() => location.reload()); // Önce bulutu sıfırla, sonra sayfayı yenile
+            syncToCloud().then(() => location.reload()); 
         } 
     }
 
-    // --- AYARLAR ---
+    // --- MODALLAR (AYARLAR VE PROFIL) ---
     function toggleSettings() {
         const m = document.getElementById('settingsModal');
         if(m.classList.contains('settings-open')) { m.classList.remove('settings-open'); setTimeout(()=>m.style.display='none',400); }
         else { m.style.display='flex'; setTimeout(()=>m.classList.add('settings-open'),10); }
+    }
+    
+    function toggleProfile() {
+        const p = document.getElementById('profileModal');
+        if(p.classList.contains('profile-open')) { p.classList.remove('profile-open'); setTimeout(()=>p.style.display='none',400); }
+        else { p.style.display='flex'; setTimeout(()=>p.classList.add('profile-open'),10); }
     }
 
     function generateWeightInputs() {
@@ -499,7 +555,7 @@
             w[id] = val + "kg";
         });
         localStorage.setItem('userWeights', JSON.stringify(w));
-        syncToCloud(); // Ağırlıkları buluta gönder!
+        syncToCloud(); 
         toggleSettings();
     }
 
