@@ -4,93 +4,156 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <meta name="theme-color" content="#bb86fc">
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" href="/icon.png">
+    <meta name="theme-color" content="#bb86fc">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Antrenman">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon.png">
     <link rel="apple-touch-icon" href="/icon.png">
 
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>ANTRENMAN TAKVİMİ (Güncel)</title>
+    <title>Pro Antrenman (v27 - Cloud Auth)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
     <style>
-        /* CSS AYNIDIR */
+        /* --- RENKLER VE TEMEL AYARLAR --- */
         :root { --bg-body: #09090b; --bg-card: rgba(30, 30, 35, 0.6); --text-main: #e0e0e0; --text-muted: #9CA3AF; --border-color: rgba(255, 255, 255, 0.08); --primary: #bb86fc; --secondary: #03dac6; --danger: #ef4444; --success: #10b981; --glass-blur: 16px; --shadow: 0 10px 40px -10px rgba(0,0,0,0.5); --radius: 24px; }
         body.light-mode { --bg-body: #f3f4f6; --bg-card: rgba(255, 255, 255, 0.8); --text-main: #1f2937; --text-muted: #6b7280; --border-color: rgba(0, 0, 0, 0.06); }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-body); background-image: radial-gradient(circle at 10% 10%, var(--primary), transparent 40%), radial-gradient(circle at 90% 90%, var(--secondary), transparent 40%); background-size: 100% 100%; background-attachment: fixed; color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; padding: 20px; min-height: 100vh; transition: background 0.5s ease, color 0.3s ease; }
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); opacity: 0.94; z-index: -1; }
         .container { width: 100%; max-width: 850px; padding-bottom: 40px; position: relative; padding-top: 30px; }
+        
+        /* --- GİRİŞ / KAYIT EKRANI (AUTH) --- */
+        #authScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.5s ease; }
+        .auth-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--border-color); padding: 40px 30px; border-radius: var(--radius); width: 100%; max-width: 400px; box-shadow: var(--shadow); text-align: center; animation: float 4s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .auth-title { font-size: 2rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; letter-spacing: -1px; }
+        .auth-subtitle { color: var(--primary); font-size: 0.9rem; font-weight: 600; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
+        .auth-input { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); color: var(--text-main); font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.3s; }
+        .auth-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(187, 134, 252, 0.3); background: rgba(0,0,0,0.4); }
+        .auth-btn { width: 100%; padding: 16px; background: var(--primary); color: #000; border: none; font-weight: 800; border-radius: 14px; cursor: pointer; font-size: 1.05rem; margin-top: 10px; margin-bottom: 20px; transition: all 0.3s; box-shadow: 0 5px 20px -5px var(--primary); }
+        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px var(--primary); }
+        .auth-toggle { color: var(--text-muted); font-size: 0.9rem; cursor: pointer; transition: color 0.3s; }
+        .auth-toggle span { color: var(--secondary); font-weight: 700; text-decoration: none; }
+        #authError { color: var(--danger); font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; min-height: 20px; display: block; }
+
+        /* --- UI ELEMANLARI (Önceki Sürümle Aynı Estetik) --- */
         .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.3); z-index: 9999; }
-        .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.5s ease; box-shadow: 0 0 10px var(--success); }
+        .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 15px var(--success); }
         .menu-bar { position: absolute; top: 15px; right: 0; z-index: 200; }
-        .menu-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-main); font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; backdrop-filter: blur(10px); }
+        .menu-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-main); font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; backdrop-filter: blur(10px); }
+        .menu-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); transform: rotate(90deg) scale(1.05); }
         header { text-align: center; margin-bottom: 30px; margin-top: 15px; }
         .main-title { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-        .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; }
+        .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; transition: background 0.3s; }
         .navigation-wrapper { margin-bottom: 30px; display: flex; flex-direction: column; gap: 15px; }
-        .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; transition: all 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; animation: pulse-glow 2s infinite; }
-        .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); animation: none; border:none; }
+        .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; gap: 10px; animation: pulse-glow 2s infinite; }
+        .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); animation: none; border:none; transform: scale(1.02); }
         @keyframes pulse-glow { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        .sub-menu { display: flex; justify-content: space-between; gap: 10px; }
-        .tab-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); padding: 15px 10px; border-radius: 16px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: all 0.3s; flex: 1; text-align: center; }
-        .tab-btn.active { background: var(--primary); color: #000; border-color: var(--primary); box-shadow: 0 5px 20px -5px var(--primary); transform: translateY(-2px); }
-        body.light-mode .tab-btn.active { color: #fff; }
-        .tab-content { display: none; animation: fadeIn 0.4s ease-out; }
-        .tab-content.active-content { display: block; }
+        .sub-menu { display: flex; justify-content: space-between; gap: 12px; background: rgba(0,0,0,0.1); padding: 6px; border-radius: 20px; border: 1px solid var(--border-color); }
+        .tab-btn { background: transparent; color: var(--text-muted); border: none; padding: 12px 10px; border-radius: 14px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); flex: 1; text-align: center; }
+        .tab-btn.active { background: var(--primary); color: #000; box-shadow: 0 5px 20px -5px var(--primary); transform: translateY(-2px); }
+        body.light-mode .sub-menu { background: rgba(0,0,0,0.03); } body.light-mode .tab-btn.active { color: #fff; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease-out; } .tab-content.active-content { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .day-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border-radius: var(--radius); margin-bottom: 25px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
         .day-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
         .day-header h2 { font-size: 1.2rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
         .h-purple h2 { color: var(--primary); } .h-red h2 { color: var(--danger); }
         .workout-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
-        .workout-table td, .workout-table th { padding: 20px 15px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
-        .workout-table tr:last-child td { border-bottom: none; }
+        .workout-table td, .workout-table th { padding: 20px 15px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; transition: background 0.3s; }
+        .workout-table tr:hover td { background: rgba(255,255,255,0.02); } .workout-table tr:last-child td { border-bottom: none; }
         .col-check { width: 12%; text-align: center; } .col-name { width: 43%; } .col-stats { width: 20%; } .col-actions { width: 25%; }
-        .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; display: block; margin-bottom: 4px; }
+        .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; display: block; margin-bottom: 4px; transition: color 0.3s; }
         .workout-note { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
-        .weight-badge { display: inline-block; color: var(--primary); font-weight: 800; font-size: 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 8px; }
-        .video-btn, .timer-btn { padding: 10px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; display: flex; justify-content: center; align-items: center; border: none; font-weight: 700; width: 100%; transition: all 0.2s; }
-        .video-btn { background: rgba(255,255,255,0.05); color: var(--text-main); } .video-btn:hover { background: var(--text-main); color: var(--bg-body); }
-        .timer-btn { background: rgba(255, 152, 0, 0.1); color: #fbbf24; border: 1px solid rgba(255, 152, 0, 0.2); }
-        .check-container { display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; width: 24px; height: 24px; }
+        .weight-badge { display: inline-block; color: var(--primary); font-weight: 800; font-size: 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 8px; transition: all 0.3s; }
+        .video-btn, .timer-btn { padding: 10px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; display: flex; justify-content: center; align-items: center; border: none; font-weight: 700; width: 100%; transition: all 0.3s ease; }
+        .video-btn { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid transparent; } .video-btn:hover { background: var(--text-main); color: var(--bg-body); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,255,255,0.1); }
+        .timer-btn { background: rgba(255, 152, 0, 0.1); color: #fbbf24; border: 1px solid rgba(255, 152, 0, 0.2); } .timer-btn:hover { background: #fbbf24; color: #000; transform: translateY(-2px); }
+        .check-container { display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; width: 26px; height: 26px; }
+        .check-container:active .checkmark { transform: scale(0.8); }
         .check-input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
-        .checkmark { position: absolute; top: 0; left: 0; height: 24px; width: 24px; background: rgba(255,255,255,0.1); border-radius: 6px; border: 1px solid var(--border-color); }
-        .check-input:checked ~ .checkmark { background: var(--success); border-color: var(--success); }
+        .checkmark { position: absolute; top: 0; left: 0; height: 26px; width: 26px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 2px solid var(--border-color); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .check-input:checked ~ .checkmark { background: var(--success); border-color: var(--success); animation: popCheck 0.4s ease forwards; }
         .checkmark:after { content: ""; position: absolute; display: none; left: 8px; top: 4px; width: 6px; height: 12px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
-        .check-input:checked ~ .checkmark:after { display: block; }
-        tr.completed .workout-name { text-decoration: line-through; opacity: 0.5; }
-        .settings-modal { position: fixed; top: 0; right: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; justify-content: flex-end; backdrop-filter: blur(5px); }
-        .settings-panel { width: 100%; max-width: 360px; height: 100%; background: var(--bg-body); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.3s; }
+        .check-input:checked ~ .checkmark:after { display: block; animation: fadeInCheck 0.3s ease; }
+        @keyframes popCheck { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        @keyframes fadeInCheck { from { opacity: 0; transform: rotate(45deg) scale(0); } to { opacity: 1; transform: rotate(45deg) scale(1); } }
+        tr.completed .workout-name { text-decoration: line-through; opacity: 0.4; }
+
+        /* --- AYARLAR MENÜSÜ --- */
+        .settings-modal { position: fixed; top: 0; right: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 3000; display: none; justify-content: flex-end; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .settings-panel { width: 100%; max-width: 360px; height: 100%; background: var(--bg-body); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: -20px 0 50px rgba(0,0,0,0.5); }
         .settings-open .settings-panel { transform: translateX(0); }
-        .settings-header { padding: 25px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .settings-content { flex: 1; overflow-y: auto; padding: 25px; }
-        .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .color-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; position: relative; }
-        .color-btn.active::after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; }
-        .weight-input-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
-        .weight-input { width: 60px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-main); padding: 5px; border-radius: 5px; text-align: center; }
-        .btn-save { width: 100%; padding: 15px; background: var(--primary); color: #000; border: none; font-weight: 800; cursor: pointer; border-radius: 12px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .settings-header { padding: 30px 25px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .settings-header h3 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+        .settings-content { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 25px; }
+        .section-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; }
+        .theme-toggle-group { display: flex; background: rgba(255,255,255,0.05); border-radius: 14px; padding: 5px; border: 1px solid var(--border-color); }
+        .theme-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); border-radius: 10px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; font-size: 0.9rem; }
+        .theme-btn.active { background: var(--primary); color: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transform: scale(1.02); }
+        body.light-mode .theme-toggle-group { background: rgba(0,0,0,0.05); } body.light-mode .theme-btn.active { color: #fff; }
+        .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .color-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; position: relative; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .color-btn:hover { transform: scale(1.15); } .color-btn.active { transform: scale(1.1); box-shadow: 0 0 15px currentColor; border-color: #fff; }
+        .color-btn.active::after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .weight-input-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--border-color); }
+        .weight-input-group span { font-weight: 600; font-size: 0.95rem; }
+        .weight-input { width: 70px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1rem; transition: all 0.3s; font-family: 'JetBrains Mono', monospace; }
+        .weight-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(187, 134, 252, 0.3); background: rgba(0,0,0,0.4); }
+        body.light-mode .weight-input { background: rgba(255,255,255,0.5); } body.light-mode .weight-input:focus { background: #fff; }
+        .reset-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; cursor: pointer; border-radius: 14px; transition: all 0.3s; margin-top: 10px; }
+        .reset-btn:hover { background: var(--danger); color: #fff; box-shadow: 0 5px 15px rgba(239,68,68,0.3); }
+        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; cursor: pointer; border-radius: 16px; font-size: 1.05rem; transition: all 0.3s; box-shadow: 0 5px 20px -5px var(--primary); margin-bottom: 10px; }
+        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px var(--primary); }
+        body.light-mode .btn-save { color: #fff; }
+        .logout-btn { width: 100%; padding: 15px; background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); font-weight: 700; cursor: pointer; border-radius: 14px; transition: all 0.3s; }
+        .logout-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+
+        /* --- VİDEO MODAL --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 4000; }
         .modal-content { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
-        .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2100; border: 1px solid rgba(255,255,255,0.2); }
-        .integrated-timer-bar { width: 100%; height: 80px; background: #09090b; display: none; align-items: center; justify-content: space-between; padding: 0 20px; padding-right: 80px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 2005; }
-        .video-wrapper { flex-grow: 1; position: relative; background: #000; width: 100%; }
-        iframe { width: 100%; height: 100%; border: none; }
+        .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 4100; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); }
+        .integrated-timer-bar { width: 100%; height: 80px; background: #09090b; display: none; align-items: center; justify-content: space-between; padding: 0 20px; padding-right: 80px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 4005; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .video-wrapper { flex-grow: 1; position: relative; background: #000; width: 100%; } iframe { width: 100%; height: 100%; border: none; }
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; }
     </style>
 </head>
 <body>
 
+<div id="authScreen">
+    <div class="auth-card">
+        <h1 class="auth-title" id="authTitleText">GİRİŞ YAP</h1>
+        <p class="auth-subtitle">PRO ANTRENMAN</p>
+        
+        <span id="authError"></span>
+
+        <input type="email" id="authEmail" class="auth-input" placeholder="E-posta Adresi" required>
+        <input type="password" id="authPass" class="auth-input" placeholder="Şifre (En az 6 hane)" required>
+        
+        <button id="authSubmitBtn" class="auth-btn" onclick="handleAuth()">GİRİŞ YAP</button>
+        
+        <p class="auth-toggle" onclick="toggleAuthMode()">
+            <span id="authToggleText">Hesabın yok mu? Yeni Kayıt Oluştur</span>
+        </p>
+    </div>
+</div>
+
 <canvas id="confetti-canvas"></canvas>
 <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
 
-<div class="container">
+<div class="container" id="mainContainer" style="display:none;">
     <div class="menu-bar"><button class="menu-btn" onclick="toggleSettings()">⚙️</button></div>
-    <header><h1 class="main-title">Antrenman Takvimi</h1><div class="header-line"></div></header>
+    <header><h1 class="main-title">Spor Planı</h1><div class="header-line"></div></header>
 
     <div class="navigation-wrapper">
         <button id="btn-warmup" class="warmup-hero-btn active" onclick="openTab('warmup')"><span>🔥</span> ISINMA</button>
@@ -103,29 +166,45 @@
 
     <div id="settingsModal" class="settings-modal" onclick="toggleSettings()">
         <div class="settings-panel" onclick="event.stopPropagation()">
-            <div class="settings-header"><h3>Ayarlar</h3><button class="menu-btn" style="border:none;" onclick="toggleSettings()">×</button></div>
+            <div class="settings-header">
+                <h3>Ayarlar</h3>
+                <button class="menu-btn" style="border:none; width: 36px; height: 36px;" onclick="toggleSettings()">✕</button>
+            </div>
+            
             <div class="settings-content">
-                <div class="settings-section">
-                    <div class="section-label">Mod</div>
-                    <div style="display:flex; gap:10px;"><button onclick="setTheme('dark')" class="timer-mini-btn">🌙 Koyu</button><button onclick="setTheme('light')" class="timer-mini-btn">☀️ Açık</button></div>
-                </div>
-                <div class="settings-section">
-                    <div class="section-label">Renk</div>
-                    <div class="color-grid">
-                        <button onclick="setAccent('#bb86fc')" class="color-btn" style="background:#bb86fc"></button>
-                        <button onclick="setAccent('#3b82f6')" class="color-btn" style="background:#3b82f6"></button>
-                        <button onclick="setAccent('#f59e0b')" class="color-btn" style="background:#f59e0b"></button>
-                        <button onclick="setAccent('#10b981')" class="color-btn" style="background:#10b981"></button>
-                        <button onclick="setAccent('#ec4899')" class="color-btn" style="background:#ec4899"></button>
+                <div>
+                    <div class="section-label">Görünüm Modu</div>
+                    <div class="theme-toggle-group">
+                        <button onclick="setTheme('dark')" class="theme-btn active" id="btn-dark">🌙 Koyu</button>
+                        <button onclick="setTheme('light')" class="theme-btn" id="btn-light">☀️ Açık</button>
                     </div>
                 </div>
-                <div class="settings-section">
+
+                <div>
+                    <div class="section-label">Vurgu Rengi</div>
+                    <div class="color-grid">
+                        <button onclick="setAccent('#bb86fc', this)" class="color-btn active" style="background:#bb86fc"></button>
+                        <button onclick="setAccent('#3b82f6', this)" class="color-btn" style="background:#3b82f6"></button>
+                        <button onclick="setAccent('#f59e0b', this)" class="color-btn" style="background:#f59e0b"></button>
+                        <button onclick="setAccent('#10b981', this)" class="color-btn" style="background:#10b981"></button>
+                        <button onclick="setAccent('#ec4899', this)" class="color-btn" style="background:#ec4899"></button>
+                    </div>
+                </div>
+
+                <div>
                     <div class="section-label">Ağırlıklar (Kg)</div>
                     <div id="weightSettingsContainer"></div>
                 </div>
-                <div class="settings-section"><button onclick="resetProgress()" class="timer-mini-btn" style="width:100%; background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4);">İLERLEMEYİ SIFIRLA</button></div>
+
+                <div>
+                    <button onclick="resetProgress()" class="reset-btn">İLERLEMEYİ SIFIRLA</button>
+                </div>
             </div>
-            <div style="padding:20px; border-top:1px solid var(--border-color);"><button class="btn-save" onclick="saveAllSettings()">KAYDET & KAPAT</button></div>
+            
+            <div style="padding:25px; border-top:1px solid var(--border-color); background: var(--bg-card);">
+                <button class="btn-save" onclick="saveAllSettings()">KAYDET & KAPAT</button>
+                <button class="logout-btn" onclick="logoutUser()">ÇIKIŞ YAP</button>
+            </div>
         </div>
     </div>
 
@@ -183,32 +262,165 @@
         </div>
     </div>
 
-    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>2026 Güncel</p></footer>
+    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN v27 (Cloud Edition)</p></footer>
 </div>
 
-<div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">×</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-mini-btn">BAŞLAT</button><button onclick="resetTimer()" class="timer-mini-btn">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
-
+<div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">✕</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-btn" style="width:auto; padding:8px 15px;">BAŞLAT</button><button onclick="resetTimer()" class="timer-btn" style="width:auto; padding:8px 15px;">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => { loadSettings(); generateWeightInputs(); checkDateAndLoadProgress(); });
+    // --- 1. FIREBASE BAĞLANTISI ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyD-Z52hOb0dZHJTk713Vfo9sK9YGNYVpys",
+      authDomain: "pro-ant.firebaseapp.com",
+      projectId: "pro-ant",
+      storageBucket: "pro-ant.firebasestorage.app",
+      messagingSenderId: "202303332802",
+      appId: "1:202303332802:web:c6fb1121941630b685b65b"
+    };
+    
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    let currentUser = null;
 
-    // SERVICE WORKER KAYIT (Kesin Mutlak Yol İle)
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js')
-        .then(() => console.log('SW Registered'))
-        .catch((err) => console.log('SW Error:', err));
+    // --- 2. KİMLİK DOĞRULAMA (AUTH) SİSTEMİ ---
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            // Kullanıcı giriş yaptıysa
+            currentUser = user;
+            document.getElementById('authScreen').style.opacity = '0';
+            setTimeout(() => document.getElementById('authScreen').style.display = 'none', 500);
+            document.getElementById('mainContainer').style.display = 'block';
+            syncFromCloud(); // Buluttan verileri çek
+        } else {
+            // Giriş yapmadıysa
+            currentUser = null;
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('authScreen').style.display = 'flex';
+            setTimeout(() => document.getElementById('authScreen').style.opacity = '1', 50);
+        }
+    });
+
+    function toggleAuthMode() {
+        const title = document.getElementById('authTitleText');
+        const btn = document.getElementById('authSubmitBtn');
+        const toggle = document.getElementById('authToggleText');
+        document.getElementById('authError').innerText = ''; // Hataları temizle
+
+        if(title.innerText === 'GİRİŞ YAP') {
+            title.innerText = 'KAYIT OL';
+            btn.innerText = 'YENİ HESAP AÇ';
+            toggle.innerText = 'Zaten hesabın var mı? Giriş Yap';
+        } else {
+            title.innerText = 'GİRİŞ YAP';
+            btn.innerText = 'GİRİŞ YAP';
+            toggle.innerText = 'Hesabın yok mu? Yeni Kayıt Oluştur';
+        }
     }
 
-    // GÜNLÜK SIFIRLAMA
+    function handleAuth() {
+        const email = document.getElementById('authEmail').value;
+        const pass = document.getElementById('authPass').value;
+        const isRegister = document.getElementById('authTitleText').innerText === 'KAYIT OL';
+        const errorDiv = document.getElementById('authError');
+        
+        if(!email || !pass) { errorDiv.innerText = "Lütfen e-posta ve şifre girin."; return; }
+        if(pass.length < 6) { errorDiv.innerText = "Şifre en az 6 haneli olmalıdır."; return; }
+
+        btnLoading(true);
+
+        if(isRegister) {
+            auth.createUserWithEmailAndPassword(email, pass)
+                .catch(e => { errorDiv.innerText = hataCevir(e.code); btnLoading(false); });
+        } else {
+            auth.signInWithEmailAndPassword(email, pass)
+                .catch(e => { errorDiv.innerText = hataCevir(e.code); btnLoading(false); });
+        }
+    }
+
+    function logoutUser() {
+        auth.signOut();
+        document.getElementById('settingsModal').classList.remove('settings-open');
+        document.getElementById('settingsModal').style.display = 'none';
+    }
+
+    function btnLoading(isLoading) {
+        const btn = document.getElementById('authSubmitBtn');
+        if(isLoading) { btn.innerText = "BEKLEYİN..."; btn.disabled = true; } 
+        else { btn.innerText = document.getElementById('authTitleText').innerText; btn.disabled = false; }
+    }
+
+    function hataCevir(code) {
+        if(code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') return "E-posta veya şifre hatalı.";
+        if(code === 'auth/email-already-in-use') return "Bu e-posta zaten kullanımda.";
+        if(code === 'auth/invalid-email') return "Geçersiz e-posta formatı.";
+        return "Bir hata oluştu. Lütfen tekrar deneyin.";
+    }
+
+    // --- 3. BULUT SENKRONİZASYON (VERİTABANI) ---
+    async function syncFromCloud() {
+        try {
+            // Firestore veritabanından kullanıcı belgesini al
+            const docRef = await db.collection("users").doc(currentUser.uid).get();
+            if (docRef.exists) {
+                const data = docRef.data();
+                
+                // Ağırlıkları buluttan telefona aktar
+                if(data.weights) localStorage.setItem('userWeights', JSON.stringify(data.weights));
+                
+                // İlerlemeyi buluttan telefona aktar (Tarih aynıysa)
+                const today = new Date().toDateString();
+                if(data.progress && data.lastDate === today) {
+                    localStorage.setItem('userProgress', JSON.stringify(data.progress));
+                    localStorage.setItem('lastSavedDate', data.lastDate);
+                }
+                console.log("Bulut verisi başarıyla çekildi.");
+            }
+        } catch(e) {
+            console.log("Firestore henüz aktif değil veya hata. Yerel veriler kullanılıyor.");
+        }
+        
+        // Veriler çekildikten sonra arayüzü güncelle
+        loadSettings(); 
+        generateWeightInputs(); 
+        checkDateAndLoadProgress();
+    }
+
+    async function syncToCloud() {
+        if(!currentUser) return;
+        try {
+            const p = JSON.parse(localStorage.getItem('userProgress')) || {};
+            const w = JSON.parse(localStorage.getItem('userWeights')) || {};
+            const d = localStorage.getItem('lastSavedDate') || new Date().toDateString();
+            
+            // Veritabanına kaydet
+            await db.collection("users").doc(currentUser.uid).set({
+                progress: p,
+                weights: w,
+                lastDate: d
+            }, { merge: true }); // Merge: Mevcut verileri ezmez, üstüne yazar
+        } catch(e) {
+            console.log("Buluta yazma başarısız, ama telefona kaydedildi.");
+        }
+    }
+
+
+    // --- 4. TEMEL UYGULAMA İŞLEVLERİ ---
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Hata:', err)); }
+
     function checkDateAndLoadProgress() {
         const today = new Date().toDateString(); 
         const last = localStorage.getItem('lastSavedDate');
-        if (last !== today) { localStorage.removeItem('userProgress'); localStorage.setItem('lastSavedDate', today); updateProgressBar(); } 
+        if (last !== today) { 
+            localStorage.removeItem('userProgress'); 
+            localStorage.setItem('lastSavedDate', today); 
+            updateProgressBar();
+            syncToCloud(); // Yeni günü buluta bildir
+        } 
         else { loadProgress(); }
     }
 
-    // FONKSİYONLAR
     function openTab(id) {
         document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active-content"));
         document.getElementById("btn-warmup").classList.remove("active");
@@ -223,11 +435,14 @@
         const row = document.getElementById(id);
         const checked = row.querySelector('.check-input').checked;
         checked ? row.classList.add('completed') : row.classList.remove('completed');
+        
         let p = JSON.parse(localStorage.getItem('userProgress')) || {};
         p[id] = checked;
         localStorage.setItem('userProgress', JSON.stringify(p));
         localStorage.setItem('lastSavedDate', new Date().toDateString());
+        
         updateProgressBar();
+        syncToCloud(); // Her tiklemede buluta kaydet!
     }
 
     function loadProgress() {
@@ -247,17 +462,24 @@
         else {
             const pct = (checked / total) * 100;
             bar.style.width = pct + '%';
-            if(pct === 100) confetti({particleCount: 100, spread: 70, origin: { y: 0.6 }});
+            if(pct === 100) confetti({particleCount: 120, spread: 80, origin: { y: 0.6 }});
         }
     }
 
-    function resetProgress() { if(confirm("Bugünü sıfırla?")) { localStorage.setItem('userProgress', '{}'); location.reload(); } }
+    function resetProgress() { 
+        if(confirm("Bugünü sıfırlamak istediğine emin misin?")) { 
+            localStorage.setItem('userProgress', '{}'); 
+            syncToCloud().then(() => location.reload()); // Önce bulutu sıfırla, sonra sayfayı yenile
+        } 
+    }
 
+    // --- AYARLAR ---
     function toggleSettings() {
         const m = document.getElementById('settingsModal');
-        if(m.classList.contains('settings-open')) { m.classList.remove('settings-open'); setTimeout(()=>m.style.display='none',300); }
+        if(m.classList.contains('settings-open')) { m.classList.remove('settings-open'); setTimeout(()=>m.style.display='none',400); }
         else { m.style.display='flex'; setTimeout(()=>m.classList.add('settings-open'),10); }
     }
+
     function generateWeightInputs() {
         const c = document.getElementById('weightSettingsContainer'); c.innerHTML = '';
         document.querySelectorAll('.weight-badge[id]').forEach(el => {
@@ -267,6 +489,7 @@
             }
         });
     }
+
     function saveAllSettings() {
         const w = {};
         document.querySelectorAll('.weight-input').forEach(i => {
@@ -276,17 +499,41 @@
             w[id] = val + "kg";
         });
         localStorage.setItem('userWeights', JSON.stringify(w));
+        syncToCloud(); // Ağırlıkları buluta gönder!
         toggleSettings();
     }
+
+    function setTheme(m) { 
+        document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+        if(m === 'light') {
+            document.body.classList.add('light-mode'); 
+            localStorage.setItem('themeMode','light');
+            document.getElementById('btn-light').classList.add('active');
+        } else {
+            document.body.classList.remove('light-mode'); 
+            localStorage.setItem('themeMode','dark');
+            document.getElementById('btn-dark').classList.add('active');
+        }
+    }
+
+    function setAccent(c, btnElement) { 
+        document.documentElement.style.setProperty('--primary', c); 
+        localStorage.setItem('accentColor', c); 
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+        if(btnElement) btnElement.classList.add('active');
+        else { document.querySelectorAll('.color-btn').forEach(b => { if(b.style.background.includes(c) || b.style.backgroundColor === c) b.classList.add('active'); }); }
+    }
+
     function loadSettings() {
-        if(localStorage.getItem('themeMode')==='light') setTheme('light');
-        if(localStorage.getItem('accentColor')) setAccent(localStorage.getItem('accentColor'));
+        if(localStorage.getItem('themeMode')==='light') setTheme('light'); else setTheme('dark');
+        let savedColor = localStorage.getItem('accentColor');
+        if(savedColor) setAccent(savedColor, null);
+        else setAccent('#bb86fc', document.querySelector('.color-btn')); 
         const w = JSON.parse(localStorage.getItem('userWeights'));
         if(w) for(const [k,v] of Object.entries(w)) { const e = document.getElementById(k); if(e) e.innerText = v; }
     }
-    function setTheme(m) { m==='light' ? (document.body.classList.add('light-mode'), localStorage.setItem('themeMode','light')) : (document.body.classList.remove('light-mode'), localStorage.setItem('themeMode','dark')); }
-    function setAccent(c) { document.documentElement.style.setProperty('--primary', c); localStorage.setItem('accentColor', c); }
 
+    // --- VİDEO VE SAYAÇ ---
     let tInt, sec = 0;
     function openVideo(id) {
         document.getElementById('videoModal').style.display = 'flex';
