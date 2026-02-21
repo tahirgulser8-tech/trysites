@@ -16,8 +16,8 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>Pro Antrenman (v30 - Splash Screen)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <title>Pro Antrenman (v32 - Landing & Features)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
@@ -28,94 +28,118 @@
         :root { --bg-body: #09090b; --bg-card: rgba(30, 30, 35, 0.6); --text-main: #e0e0e0; --text-muted: #9CA3AF; --border-color: rgba(255, 255, 255, 0.08); --primary: #bb86fc; --secondary: #03dac6; --danger: #ef4444; --success: #10b981; --glass-blur: 16px; --shadow: 0 10px 40px -10px rgba(0,0,0,0.5); --radius: 24px; }
         body.light-mode { --bg-body: #f3f4f6; --bg-card: rgba(255, 255, 255, 0.8); --text-main: #1f2937; --text-muted: #6b7280; --border-color: rgba(0, 0, 0, 0.06); }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-body); background-image: radial-gradient(circle at 10% 10%, var(--primary), transparent 40%), radial-gradient(circle at 90% 90%, var(--secondary), transparent 40%); background-size: 100% 100%; background-attachment: fixed; color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; padding: 20px; min-height: 100vh; transition: background 0.5s ease, color 0.3s ease; }
+        body { background-color: var(--bg-body); background-image: radial-gradient(circle at 10% 10%, var(--primary), transparent 40%), radial-gradient(circle at 90% 90%, var(--secondary), transparent 40%); background-size: 100% 100%; background-attachment: fixed; color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; transition: background 0.5s ease, color 0.3s ease; overflow-x: hidden;}
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); opacity: 0.94; z-index: -1; }
-        .container { width: 100%; max-width: 850px; padding-bottom: 40px; position: relative; padding-top: 30px; }
+        
+        .container { width: 100%; max-width: 850px; padding: 20px; padding-bottom: 60px; position: relative; padding-top: 30px; }
         
         /* --- SPLASH EKRANI (AÇILIŞ) --- */
         #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease, visibility 0.5s; }
         
-        /* --- GİRİŞ / KAYIT EKRANI --- */
-        #authScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.5s ease; }
-        .auth-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--border-color); padding: 45px 35px; border-radius: 30px; width: 100%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); text-align: center; animation: float 4s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        /* --- LANDING PAGE (TANITIM SAYFASI) --- */
+        #landingPage { width: 100%; max-width: 850px; padding: 40px 20px; text-align: center; display: none; animation: fadeIn 0.8s ease-out; }
+        .hero-title { font-size: 3rem; font-weight: 900; line-height: 1.1; margin-bottom: 15px; letter-spacing: -2px; background: linear-gradient(135deg, #fff 20%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 40px; line-height: 1.6; font-weight: 400; padding: 0 10px; }
+        .feature-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--border-color); padding: 25px; border-radius: 20px; margin-bottom: 20px; text-align: left; box-shadow: var(--shadow); transition: transform 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .feature-icon { font-size: 2.5rem; margin-bottom: 15px; display: inline-block; }
+        .feature-title { font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
+        .feature-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+        .cta-btn-wrapper { position: sticky; bottom: 30px; margin-top: 40px; z-index: 100; }
+        .cta-btn { width: 100%; max-width: 350px; padding: 20px; background: var(--primary); color: #000; font-size: 1.2rem; font-weight: 900; border: none; border-radius: 20px; cursor: pointer; box-shadow: 0 10px 30px -5px var(--primary); transition: all 0.3s; letter-spacing: 1px; animation: pulse-glow-logo 2s infinite; }
+        .cta-btn:hover { transform: scale(1.02); }
+
+        /* --- GİRİŞ / KAYIT MODALI (Artık tam ekran değil, Landing üzerine açılan bir popup) --- */
+        #authModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.4s ease; }
+        .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 40px 30px; border-radius: 30px; width: 100%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); text-align: center; position: relative; }
+        .close-auth-btn { position: absolute; top: 15px; right: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; transition: color 0.3s; }
+        .close-auth-btn:hover { color: var(--danger); }
         
-        .auth-logo { width: 70px; height: 70px; background: var(--primary); color: #000; margin: 0 auto 15px; border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: 900; transform: rotate(-5deg); box-shadow: 0 10px 25px rgba(187, 134, 252, 0.4); letter-spacing: -1px; transition: background 0.4s; }
-        .splash-logo { animation: pulse-glow-logo 2s infinite; transform: rotate(-5deg) scale(1.2); margin-bottom: 25px; }
+        .auth-logo { width: 60px; height: 60px; background: var(--primary); color: #000; margin: 0 auto 15px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: 900; transform: rotate(-5deg); box-shadow: 0 10px 25px rgba(187, 134, 252, 0.4); letter-spacing: -1px; transition: background 0.4s; }
+        .splash-logo { animation: pulse-glow-logo 2s infinite; transform: rotate(-5deg) scale(1.5); margin-bottom: 25px; }
         @keyframes pulse-glow-logo { 0% { box-shadow: 0 0 0 0 rgba(187, 134, 252, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(187, 134, 252, 0); } 100% { box-shadow: 0 0 0 0 rgba(187, 134, 252, 0); } }
         
-        .auth-title { font-size: 2.2rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; letter-spacing: -1px; transition: color 0.3s; }
-        .auth-subtitle { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
+        .auth-title { font-size: 2rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; letter-spacing: -1px; }
+        .auth-subtitle { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
         
-        .expandable-field { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); margin-bottom: 0; transform: translateY(-10px); }
+        .expandable-field { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease; margin-bottom: 0; transform: translateY(-10px); }
         .expandable-field.show { max-height: 80px; opacity: 1; margin-bottom: 20px; transform: translateY(0); }
         
-        .auth-input-group { position: relative; margin-bottom: 20px; }
-        .auth-input { width: 100%; padding: 18px 20px; border-radius: 16px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); color: var(--text-main); font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.3s; }
-        .auth-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 20px rgba(187, 134, 252, 0.2); background: rgba(0,0,0,0.5); }
+        .auth-input-group { position: relative; margin-bottom: 15px; }
+        .auth-input { width: 100%; padding: 16px 20px; border-radius: 16px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); color: var(--text-main); font-size: 1rem; font-family: 'Inter', sans-serif; transition: all 0.3s; }
+        .auth-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(187, 134, 252, 0.2); background: rgba(0,0,0,0.5); }
         .auth-input::placeholder { color: rgba(255,255,255,0.3); }
         body.light-mode .auth-input { background: rgba(255,255,255,0.5); color: #000; } body.light-mode .auth-input::placeholder { color: rgba(0,0,0,0.4); }
         
         .pass-hint { font-size: 0.75rem; color: var(--text-muted); text-align: left; margin-top: 6px; padding-left: 10px; opacity: 0; max-height: 0; transition: all 0.4s; overflow: hidden; }
-        .pass-hint.show { opacity: 1; max-height: 20px; }
+        .pass-hint.show { opacity: 1; max-height: 30px; margin-bottom: 10px;}
 
-        .auth-btn { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; font-size: 1.1rem; margin-top: 5px; margin-bottom: 25px; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 5px 20px -5px var(--primary); letter-spacing: 1px; }
-        .auth-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px var(--primary); }
-        
+        .forgot-pass { text-align: right; margin-top: -5px; margin-bottom: 20px; padding-right: 5px; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--primary); transition: all 0.3s; }
+        .forgot-pass:hover { color: var(--text-main); text-decoration: underline; }
+        .forgot-pass.hide { display: none; }
+
+        .auth-btn { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; font-size: 1.1rem; margin-top: 5px; margin-bottom: 20px; transition: all 0.3s; box-shadow: 0 5px 20px -5px var(--primary); letter-spacing: 1px; }
         .auth-btn.register-mode { background: var(--success); box-shadow: 0 5px 20px -5px var(--success); }
-        .auth-btn.register-mode:hover { box-shadow: 0 10px 25px -5px var(--success); }
         .auth-logo.register-mode { background: var(--success); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); }
 
-        .auth-toggle { color: var(--text-muted); font-size: 0.95rem; cursor: pointer; transition: color 0.3s; font-weight: 500; }
-        .auth-toggle span { color: var(--secondary); font-weight: 800; text-decoration: none; border-bottom: 1px dashed var(--secondary); padding-bottom: 2px; }
-        #authError { color: var(--danger); font-size: 0.85rem; font-weight: 700; margin-bottom: 15px; min-height: 20px; display: block; background: rgba(239, 68, 68, 0.1); border-radius: 8px; padding: 5px; opacity: 0; transition: opacity 0.3s; }
-        #authError.show { opacity: 1; }
+        .auth-toggle { color: var(--text-muted); font-size: 0.9rem; cursor: pointer; font-weight: 500; }
+        .auth-toggle span { color: var(--secondary); font-weight: 800; border-bottom: 1px dashed var(--secondary); padding-bottom: 2px; }
+        #authMessage { font-size: 0.85rem; font-weight: 700; margin-bottom: 15px; display: none; border-radius: 8px; padding: 10px; }
+        #authMessage.show { display: block; animation: fadeIn 0.3s; }
 
-        /* --- UI ELEMANLARI VE MENÜLER --- */
+        /* --- SWITCH (TOGGLE) TASARIMI --- */
+        .toggle-container { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 15px 20px; border-radius: 14px; border: 1px solid var(--border-color); margin-bottom: 20px; }
+        .toggle-label { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 34px; border: 1px solid var(--border-color); }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: var(--text-muted); transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary); border-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(22px); background-color: #000; }
+
+        /* --- UI ELEMANLARI (ANA UYGULAMA) --- */
         .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.3); z-index: 9999; }
         .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 15px var(--success); }
-        .menu-bar-right { position: absolute; top: 15px; right: 0; z-index: 200; }
-        .menu-bar-left { position: absolute; top: 15px; left: 0; z-index: 200; }
+        .menu-bar-right { position: absolute; top: 15px; right: 20px; z-index: 200; }
+        .menu-bar-left { position: absolute; top: 15px; left: 20px; z-index: 200; }
         .menu-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-main); font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; backdrop-filter: blur(10px); }
         .menu-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); transform: scale(1.1); }
         header { text-align: center; margin-bottom: 30px; margin-top: 15px; }
         .main-title { font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-        .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; transition: background 0.3s; }
+        .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; }
         .navigation-wrapper { margin-bottom: 30px; display: flex; flex-direction: column; gap: 15px; }
-        .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; justify-content: center; align-items: center; gap: 10px; animation: pulse-glow-red 2s infinite; }
-        .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); animation: none; border:none; transform: scale(1.02); }
-        @keyframes pulse-glow-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        
+        .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; transition: all 0.4s; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); border:none; transform: scale(1.02); }
+        
         .sub-menu { display: flex; justify-content: space-between; gap: 12px; background: rgba(0,0,0,0.1); padding: 6px; border-radius: 20px; border: 1px solid var(--border-color); }
-        .tab-btn { background: transparent; color: var(--text-muted); border: none; padding: 12px 10px; border-radius: 14px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); flex: 1; text-align: center; }
+        .tab-btn { background: transparent; color: var(--text-muted); border: none; padding: 12px 10px; border-radius: 14px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: all 0.3s; flex: 1; text-align: center; }
         .tab-btn.active { background: var(--primary); color: #000; box-shadow: 0 5px 20px -5px var(--primary); transform: translateY(-2px); }
         body.light-mode .sub-menu { background: rgba(0,0,0,0.03); } body.light-mode .tab-btn.active { color: #fff; }
         .tab-content { display: none; animation: fadeIn 0.4s ease-out; } .tab-content.active-content { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- KARTLAR --- */
+        /* --- KARTLAR & TABLO --- */
         .day-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border-radius: var(--radius); margin-bottom: 25px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
         .day-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
         .day-header h2 { font-size: 1.2rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
         .h-purple h2 { color: var(--primary); } .h-red h2 { color: var(--danger); }
         .workout-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
-        .workout-table td, .workout-table th { padding: 20px 15px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; transition: background 0.3s; }
+        .workout-table td, .workout-table th { padding: 20px 15px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .workout-table tr:hover td { background: rgba(255,255,255,0.02); } .workout-table tr:last-child td { border-bottom: none; }
         .col-check { width: 12%; text-align: center; } .col-name { width: 43%; } .col-stats { width: 20%; } .col-actions { width: 25%; }
-        .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; display: block; margin-bottom: 4px; transition: color 0.3s; }
+        .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; display: block; margin-bottom: 4px; }
         .workout-note { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
-        .weight-badge { display: inline-block; color: var(--primary); font-weight: 800; font-size: 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 8px; transition: all 0.3s; }
-        .video-btn, .timer-btn { padding: 10px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; display: flex; justify-content: center; align-items: center; border: none; font-weight: 700; width: 100%; transition: all 0.3s ease; }
-        .video-btn { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid transparent; } .video-btn:hover { background: var(--text-main); color: var(--bg-body); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,255,255,0.1); }
+        .weight-badge { display: inline-block; color: var(--primary); font-weight: 800; font-size: 0.85rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 8px; }
+        .video-btn, .timer-btn { padding: 10px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; display: flex; justify-content: center; align-items: center; border: none; font-weight: 700; width: 100%; transition: all 0.3s; }
+        .video-btn { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid transparent; } .video-btn:hover { background: var(--text-main); color: var(--bg-body); transform: translateY(-2px); }
         .timer-btn { background: rgba(255, 152, 0, 0.1); color: #fbbf24; border: 1px solid rgba(255, 152, 0, 0.2); } .timer-btn:hover { background: #fbbf24; color: #000; transform: translateY(-2px); }
         .check-container { display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; width: 26px; height: 26px; }
-        .check-container:active .checkmark { transform: scale(0.8); }
         .check-input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
-        .checkmark { position: absolute; top: 0; left: 0; height: 26px; width: 26px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 2px solid var(--border-color); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .check-input:checked ~ .checkmark { background: var(--success); border-color: var(--success); animation: popCheck 0.4s ease forwards; }
+        .checkmark { position: absolute; top: 0; left: 0; height: 26px; width: 26px; background: rgba(255,255,255,0.05); border-radius: 8px; border: 2px solid var(--border-color); transition: all 0.3s; }
+        .check-input:checked ~ .checkmark { background: var(--success); border-color: var(--success); }
         .checkmark:after { content: ""; position: absolute; display: none; left: 8px; top: 4px; width: 6px; height: 12px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
-        .check-input:checked ~ .checkmark:after { display: block; animation: fadeInCheck 0.3s ease; }
-        @keyframes popCheck { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-        @keyframes fadeInCheck { from { opacity: 0; transform: rotate(45deg) scale(0); } to { opacity: 1; transform: rotate(45deg) scale(1); } }
+        .check-input:checked ~ .checkmark:after { display: block; }
         tr.completed .workout-name { text-decoration: line-through; opacity: 0.4; }
 
         /* --- MODALLAR --- */
@@ -124,35 +148,26 @@
         .settings-right { position: absolute; right: 0; border-left: 1px solid var(--border-color); transform: translateX(100%); } .settings-open .settings-right { transform: translateX(0); }
         .settings-left { position: absolute; left: 0; border-right: 1px solid var(--border-color); transform: translateX(-100%); } .profile-open .settings-left { transform: translateX(0); }
         .settings-header { padding: 30px 25px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .settings-header h3 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
-        .settings-content { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 25px; }
-        .section-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; }
+        .settings-content { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
+        .section-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; }
         .theme-toggle-group { display: flex; background: rgba(255,255,255,0.05); border-radius: 14px; padding: 5px; border: 1px solid var(--border-color); }
-        .theme-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); border-radius: 10px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; font-size: 0.9rem; }
-        .theme-btn.active { background: var(--primary); color: #000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transform: scale(1.02); }
-        body.light-mode .theme-toggle-group { background: rgba(0,0,0,0.05); } body.light-mode .theme-btn.active { color: #fff; }
+        .theme-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); border-radius: 10px; cursor: pointer; font-weight: 700; transition: all 0.3s; }
+        .theme-btn.active { background: var(--primary); color: #000; }
         .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-        .color-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; position: relative; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .color-btn:hover { transform: scale(1.15); } .color-btn.active { transform: scale(1.1); box-shadow: 0 0 15px currentColor; border-color: #fff; }
-        .color-btn.active::after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .color-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: all 0.3s; }
+        .color-btn.active { transform: scale(1.1); border-color: #fff; }
         .weight-input-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--border-color); }
-        .weight-input-group span { font-weight: 600; font-size: 0.95rem; }
-        .weight-input { width: 70px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 10px; text-align: center; font-weight: 800; font-size: 1rem; transition: all 0.3s; font-family: 'JetBrains Mono', monospace; }
-        .weight-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(187, 134, 252, 0.3); background: rgba(0,0,0,0.4); }
-        body.light-mode .weight-input { background: rgba(255,255,255,0.5); } body.light-mode .weight-input:focus { background: #fff; }
-        .reset-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; cursor: pointer; border-radius: 14px; transition: all 0.3s; margin-top: 10px; }
-        .reset-btn:hover { background: var(--danger); color: #fff; box-shadow: 0 5px 15px rgba(239,68,68,0.3); }
-        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; cursor: pointer; border-radius: 16px; font-size: 1.05rem; transition: all 0.3s; box-shadow: 0 5px 20px -5px var(--primary); }
-        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px var(--primary); }
-        body.light-mode .btn-save { color: #fff; }
-        .logout-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; cursor: pointer; border-radius: 14px; transition: all 0.3s; margin-top: auto; margin-bottom: 20px; }
-        .logout-btn:hover { background: var(--danger); color: #fff; box-shadow: 0 5px 15px rgba(239,68,68,0.3); }
+        .weight-input { width: 70px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 10px; text-align: center; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+        .weight-input:focus { border-color: var(--primary); outline: none; }
+        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; font-size: 1.05rem; cursor: pointer; transition: all 0.3s; }
+        .reset-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; border-radius: 14px; cursor: pointer; }
+        .logout-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; border-radius: 14px; cursor: pointer; margin-top: auto; margin-bottom: 20px;}
 
         /* VİDEO MODAL */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 4000; }
         .modal-content { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
-        .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 4100; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); }
-        .integrated-timer-bar { width: 100%; height: 80px; background: #09090b; display: none; align-items: center; justify-content: space-between; padding: 0 20px; padding-right: 80px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 4005; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 4100; border: 1px solid rgba(255,255,255,0.2); }
+        .integrated-timer-bar { width: 100%; height: 80px; background: #09090b; display: none; align-items: center; justify-content: space-between; padding: 0 20px; padding-right: 80px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 4005; }
         .video-wrapper { flex-grow: 1; position: relative; background: #000; width: 100%; } iframe { width: 100%; height: 100%; border: none; }
         #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; }
     </style>
@@ -164,16 +179,46 @@
     <div style="color: var(--primary); font-weight: 800; letter-spacing: 2px; font-size: 0.9rem; margin-top: 10px;">YÜKLENİYOR...</div>
 </div>
 
-<div id="authScreen">
+<div id="landingPage">
+    <div class="auth-logo" style="margin-top: 20px;">PRO</div>
+    <h1 class="hero-title">Evde<br>Profesyonel<br>Antrenman</h1>
+    <p class="hero-subtitle">Kendi vücut ağırlığın ve dambıllarla en iyi forma ulaş. Özel 3 günlük program ve akıllı takip sistemi ile sınırlarını zorla.</p>
+    
+    <div class="feature-card">
+        <span class="feature-icon">🎯</span>
+        <h3 class="feature-title">Akıllı Takip</h3>
+        <p class="feature-desc">Hangi gün, hangi ağırlıkta kaldığını düşünme. Günlük ilerlemen buluta kaydedilir, yarım kalan işleri senin yerine biz hatırlarız.</p>
+    </div>
+    
+    <div class="feature-card">
+        <span class="feature-icon">📺</span>
+        <h3 class="feature-title">Video Rehber & Sayaç</h3>
+        <p class="feature-desc">Tüm hareketler için entegre YouTube rehberi ve plank gibi süreli hareketler için dahili kronometre elinin altında.</p>
+    </div>
+
+    <div class="feature-card">
+        <span class="feature-icon">☁️</span>
+        <h3 class="feature-title">Bulut Senkronizasyonu</h3>
+        <p class="feature-desc">Telefonunu değiştirsen bile verilerin kaybolmaz. Firebase altyapısı ile her şey güvende ve sana özel.</p>
+    </div>
+
+    <div class="cta-btn-wrapper">
+        <button class="cta-btn" onclick="openAuthModal()">HEMEN BAŞLA</button>
+    </div>
+</div>
+
+<div id="authModal">
     <div class="auth-card">
-        <div class="auth-logo" id="authLogoBox">PRO</div>
+        <button class="close-auth-btn" onclick="closeAuthModal()">✕</button>
         <h1 class="auth-title" id="authTitleText">GİRİŞ YAP</h1>
         <p class="auth-subtitle" id="authSubtitleText">Sisteme Hoş Geldin</p>
         
-        <span id="authError"></span>
+        <span id="authMessage"></span>
 
         <div class="expandable-field" id="usernameField">
-            <input type="text" id="authUsername" class="auth-input" placeholder="Kendine bir Kullanıcı Adı belirle">
+            <div class="auth-input-group">
+                <input type="text" id="authUsername" class="auth-input" placeholder="Kullanıcı Adı Belirle">
+            </div>
         </div>
 
         <div class="auth-input-group">
@@ -183,7 +228,9 @@
         <div class="auth-input-group" style="margin-bottom: 10px;">
             <input type="password" id="authPass" class="auth-input" placeholder="Şifre" required>
         </div>
-        <p class="pass-hint" id="passHintText">⚠️ Şifre en az 6 karakter olmalı ve hem harf hem de rakam içermelidir.</p>
+        
+        <div class="forgot-pass" id="forgotPassBtn" onclick="resetPassword()">Şifremi Unuttum?</div>
+        <p class="pass-hint" id="passHintText">Şifre en az 6 hane olmalı, harf ve rakam içermelidir.</p>
         
         <button id="authSubmitBtn" class="auth-btn" onclick="handleAuth()">GİRİŞ YAP</button>
         
@@ -193,12 +240,10 @@
     </div>
 </div>
 
-<canvas id="confetti-canvas"></canvas>
-<div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
-
 <div class="container" id="mainContainer" style="display:none;">
     <div class="menu-bar-left"><button class="menu-btn" onclick="toggleProfile()">👤</button></div>
     <div class="menu-bar-right"><button class="menu-btn" onclick="toggleSettings()">⚙️</button></div>
+    <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
     
     <header><h1 class="main-title">Spor Planı</h1><div class="header-line"></div></header>
 
@@ -215,17 +260,14 @@
         <div class="settings-panel settings-left" onclick="event.stopPropagation()">
             <div class="settings-header">
                 <h3>Profilim</h3>
-                <button class="menu-btn" style="border:none; width: 36px; height: 36px;" onclick="toggleProfile()">✕</button>
+                <button class="menu-btn" style="border:none;" onclick="toggleProfile()">✕</button>
             </div>
             <div class="settings-content" style="align-items: center; text-align: center; padding-top: 40px;">
                 <div style="font-size: 5rem; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary);">👤</div>
-                
                 <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Kullanıcı Adı</div>
-                <div id="userNameDisplay" style="font-weight: 900; color: var(--primary); font-size: 1.5rem; margin-bottom: 15px; letter-spacing:-0.5px;">Bilinmiyor</div>
-
-                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;">Bağlı E-posta</div>
-                <div id="userEmailDisplay" style="font-weight: 600; color: var(--text-main); font-size: 0.9rem; margin-bottom: 30px; word-break: break-all; opacity: 0.8;">bekleniyor...</div>
-                
+                <div id="userNameDisplay" style="font-weight: 900; color: var(--primary); font-size: 1.5rem; margin-bottom: 15px;">Bilinmiyor</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px;">Bağlı E-posta</div>
+                <div id="userEmailDisplay" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 30px; opacity: 0.8;">bekleniyor...</div>
                 <button class="logout-btn" onclick="logoutUser()">ÇIKIŞ YAP</button>
             </div>
         </div>
@@ -235,10 +277,21 @@
         <div class="settings-panel settings-right" onclick="event.stopPropagation()">
             <div class="settings-header">
                 <h3>Ayarlar</h3>
-                <button class="menu-btn" style="border:none; width: 36px; height: 36px;" onclick="toggleSettings()">✕</button>
+                <button class="menu-btn" style="border:none;" onclick="toggleSettings()">✕</button>
             </div>
             
             <div class="settings-content">
+                <div>
+                    <div class="section-label">Özellikler</div>
+                    <div class="toggle-container">
+                        <span class="toggle-label">Isınma Adımını Göster</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleWarmupSwitch" onchange="handleWarmupToggle()">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
                 <div>
                     <div class="section-label">Görünüm Modu</div>
                     <div class="theme-toggle-group">
@@ -262,10 +315,8 @@
                     <div class="section-label">Ağırlıklar (Kg)</div>
                     <div id="weightSettingsContainer"></div>
                 </div>
-
-                <div>
-                    <button onclick="resetProgress()" class="reset-btn">İLERLEMEYİ SIFIRLA</button>
-                </div>
+                
+                <button onclick="resetProgress()" class="reset-btn" style="margin-bottom: 20px;">İLERLEMEYİ SIFIRLA</button>
             </div>
             
             <div style="padding:25px; border-top:1px solid var(--border-color); background: var(--bg-card);">
@@ -328,7 +379,6 @@
         </div>
     </div>
 
-    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN v30 (Splash Edit)</p></footer>
 </div>
 
 <div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">✕</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-btn" style="width:auto; padding:8px 15px;">BAŞLAT</button><button onclick="resetTimer()" class="timer-btn" style="width:auto; padding:8px 15px;">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
@@ -350,12 +400,14 @@
     const db = firebase.firestore();
     let currentUser = null;
     let isRegisterMode = false;
+    let showWarmupStatus = true; // Isınma ayarı durumu
 
-    // --- 2. KİMLİK DOĞRULAMA (AUTH) SİSTEMİ ---
+    // --- 2. KİMLİK DOĞRULAMA (AUTH) & EKRAN YÖNETİMİ ---
     auth.onAuthStateChanged((user) => {
         const splash = document.getElementById('splashScreen');
-        const authScr = document.getElementById('authScreen');
+        const landing = document.getElementById('landingPage');
         const mainCon = document.getElementById('mainContainer');
+        const authMod = document.getElementById('authModal');
 
         if (user) {
             currentUser = user;
@@ -364,11 +416,12 @@
             document.getElementById('userEmailDisplay').innerText = user.email;
             document.getElementById('userNameDisplay').innerText = user.displayName || "Sporcu";
             
-            // Eğer giriş sayfasındaysa yavaşça gizle, değilse direkt ana ekranı aç
-            authScr.style.opacity = '0';
-            setTimeout(() => { authScr.style.display = 'none'; }, 500);
-            
+            // Kullanıcı içerideyse landing ve modalları kapat, ana ekranı aç
+            authMod.style.opacity = '0';
+            setTimeout(() => { authMod.style.display = 'none'; }, 400);
+            landing.style.display = 'none';
             mainCon.style.display = 'block';
+            
             syncFromCloud(); 
         } else {
             currentUser = null;
@@ -378,21 +431,33 @@
             document.getElementById('authUsername').value = '';
             document.getElementById('authEmail').value = '';
             document.getElementById('authPass').value = '';
-            document.getElementById('authError').classList.remove('show');
+            document.getElementById('authMessage').classList.remove('show');
             btnLoading(false); 
-            
             if(isRegisterMode) toggleAuthMode();
             
-            authScr.style.display = 'flex';
-            setTimeout(() => { authScr.style.opacity = '1'; }, 50);
+            // Kullanıcı dışarıdaysa LANDING PAGE'i göster
+            landing.style.display = 'block';
         }
 
-        // Firebase kontrolünü bitirdi, SPLASH EKRANINI YAVAŞÇA KAPAT
+        // Firebase kontrolü bitti, Splash Ekranını Gizle
         if(splash) {
             splash.style.opacity = '0';
             setTimeout(() => { splash.style.display = 'none'; }, 500);
         }
     });
+
+    // Landing Page üzerinden Modal Aç/Kapat
+    function openAuthModal() {
+        const modal = document.getElementById('authModal');
+        modal.style.display = 'flex';
+        setTimeout(() => modal.style.opacity = '1', 50);
+    }
+    
+    function closeAuthModal() {
+        const modal = document.getElementById('authModal');
+        modal.style.opacity = '0';
+        setTimeout(() => modal.style.display = 'none', 400);
+    }
 
     function toggleAuthMode() {
         isRegisterMode = !isRegisterMode;
@@ -400,114 +465,104 @@
         const subtitle = document.getElementById('authSubtitleText');
         const btn = document.getElementById('authSubmitBtn');
         const toggle = document.getElementById('authToggleText');
-        const logo = document.getElementById('authLogoBox');
-        
         const usernameField = document.getElementById('usernameField');
         const passHint = document.getElementById('passHintText');
-
-        document.getElementById('authError').classList.remove('show'); 
+        const forgotBtn = document.getElementById('forgotPassBtn');
+        document.getElementById('authMessage').classList.remove('show'); 
 
         if(isRegisterMode) {
-            title.innerText = 'KAYIT OL';
-            subtitle.innerText = 'Yeni Bir Başlangıç';
-            btn.innerText = 'YENİ HESAP AÇ';
-            btn.classList.add('register-mode');
-            logo.classList.add('register-mode');
+            title.innerText = 'KAYIT OL'; subtitle.innerText = 'Yeni Bir Başlangıç';
+            btn.innerText = 'YENİ HESAP AÇ'; btn.classList.add('register-mode');
             toggle.innerText = 'Zaten hesabın var mı? Giriş Yap';
-            
-            usernameField.classList.add('show');
-            passHint.classList.add('show');
+            usernameField.classList.add('show'); passHint.classList.add('show');
+            forgotBtn.classList.add('hide');
         } else {
-            title.innerText = 'GİRİŞ YAP';
-            subtitle.innerText = 'Sisteme Hoş Geldin';
-            btn.innerText = 'GİRİŞ YAP';
-            btn.classList.remove('register-mode');
-            logo.classList.remove('register-mode');
+            title.innerText = 'GİRİŞ YAP'; subtitle.innerText = 'Sisteme Hoş Geldin';
+            btn.innerText = 'GİRİŞ YAP'; btn.classList.remove('register-mode');
             toggle.innerText = 'Hesabın yok mu? Yeni Kayıt Oluştur';
-            
-            usernameField.classList.remove('show');
-            passHint.classList.remove('show');
+            usernameField.classList.remove('show'); passHint.classList.remove('show');
+            forgotBtn.classList.remove('hide');
         }
     }
 
-    function isStrongPassword(password) {
-        const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&._-]{6,}$/;
-        return regex.test(password);
-    }
+    function isStrongPassword(password) { return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&._-]{6,}$/.test(password); }
 
     function handleAuth() {
         const username = document.getElementById('authUsername').value.trim();
         const email = document.getElementById('authEmail').value.trim();
         const pass = document.getElementById('authPass').value;
         
-        if(isRegisterMode && !username) { showError("Lütfen bir kullanıcı adı belirleyin."); return; }
-        if(!email || !pass) { showError("Lütfen e-posta ve şifre alanlarını doldurun."); return; }
-        
-        if(isRegisterMode && !isStrongPassword(pass)) { 
-            showError("Şifreniz zayıf! En az 6 hane olmalı, hem harf hem de rakam içermelidir."); 
-            return; 
-        }
+        if(isRegisterMode && !username) { showMessage("Kullanıcı adı belirleyin.", false); return; }
+        if(!email || !pass) { showMessage("Boş alan bırakmayın.", false); return; }
+        if(isRegisterMode && !isStrongPassword(pass)) { showMessage("Şifreniz zayıf! En az 6 hane, harf ve rakam içermelidir.", false); return; }
 
         btnLoading(true);
 
         if(isRegisterMode) {
             auth.createUserWithEmailAndPassword(email, pass)
-                .then((userCredential) => {
-                    return userCredential.user.updateProfile({ displayName: username });
-                })
-                .then(() => {
-                    document.getElementById('userNameDisplay').innerText = username;
-                })
-                .catch(e => { showError(hataCevir(e.code)); btnLoading(false); });
+                .then((cred) => cred.user.updateProfile({ displayName: username }))
+                .then(() => document.getElementById('userNameDisplay').innerText = username)
+                .catch(e => { showMessage(hataCevir(e.code), false); btnLoading(false); });
         } else {
-            auth.signInWithEmailAndPassword(email, pass)
-                .catch(e => { showError(hataCevir(e.code)); btnLoading(false); });
+            auth.signInWithEmailAndPassword(email, pass).catch(e => { showMessage(hataCevir(e.code), false); btnLoading(false); });
         }
     }
 
-    function showError(msg) {
-        const err = document.getElementById('authError');
-        err.innerText = msg;
-        err.classList.add('show');
+    function resetPassword() {
+        const email = document.getElementById('authEmail').value.trim();
+        if(!email) { showMessage("Sıfırlamak için önce e-posta adresinizi yazın.", false); return; }
+        btnLoading(true);
+        auth.sendPasswordResetEmail(email)
+            .then(() => { showMessage("Bağlantı e-posta adresinize gönderildi!", true); btnLoading(false); })
+            .catch((err) => { showMessage(hataCevir(err.code), false); btnLoading(false); });
+    }
+
+    function showMessage(msg, isSuccess) {
+        const msgDiv = document.getElementById('authMessage');
+        msgDiv.innerText = msg;
+        msgDiv.style.background = isSuccess ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+        msgDiv.style.color = isSuccess ? 'var(--success)' : 'var(--danger)';
+        msgDiv.style.border = isSuccess ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)';
+        msgDiv.classList.add('show');
     }
 
     function logoutUser() {
         auth.signOut();
-        const p = document.getElementById('profileModal');
-        p.classList.remove('profile-open');
-        setTimeout(() => p.style.display = 'none', 400);
+        document.getElementById('profileModal').classList.remove('profile-open');
+        setTimeout(() => document.getElementById('profileModal').style.display = 'none', 400);
     }
 
-    function btnLoading(isLoading) {
+    function btnLoading(isLoad) {
         const btn = document.getElementById('authSubmitBtn');
-        if(isLoading) { btn.innerText = "BEKLEYİN..."; btn.disabled = true; } 
-        else { btn.innerText = document.getElementById('authTitleText').innerText; btn.disabled = false; }
+        btn.innerText = isLoad ? "BEKLEYİN..." : document.getElementById('authTitleText').innerText;
+        btn.disabled = isLoad;
     }
 
     function hataCevir(code) {
-        if(code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') return "E-posta veya şifre hatalı.";
+        if(code === 'auth/invalid-credential' || code === 'auth/wrong-password') return "E-posta veya şifre hatalı.";
         if(code === 'auth/email-already-in-use') return "Bu e-posta zaten kullanımda.";
         if(code === 'auth/invalid-email') return "Geçersiz e-posta formatı.";
-        if(code === 'auth/weak-password') return "Şifreniz çok zayıf.";
-        return "Bir hata oluştu. Lütfen tekrar deneyin.";
+        return "Bir hata oluştu.";
     }
 
-    // --- 3. BULUT SENKRONİZASYON (VERİTABANI) ---
+    // --- 3. BULUT SENKRONİZASYON VE ISINMA TOGGLE YÖNETİMİ ---
     async function syncFromCloud() {
         try {
             const docRef = await db.collection("users").doc(currentUser.uid).get();
             if (docRef.exists) {
                 const data = docRef.data();
                 if(data.weights) localStorage.setItem('userWeights', JSON.stringify(data.weights));
+                if(data.showWarmup !== undefined) localStorage.setItem('showWarmup', data.showWarmup); // Isınma tercihini çek
+                
                 const today = new Date().toDateString();
                 if(data.progress && data.lastDate === today) {
                     localStorage.setItem('userProgress', JSON.stringify(data.progress));
                     localStorage.setItem('lastSavedDate', data.lastDate);
                 }
             }
-        } catch(e) { console.log("Firestore hatası veya veritabanı boş."); }
+        } catch(e) { console.log("Buluttan çekilemedi."); }
         
-        loadSettings(); generateWeightInputs(); checkDateAndLoadProgress();
+        loadSettings(); generateWeightInputs(); checkDateAndLoadProgress(); applyWarmupSetting();
     }
 
     async function syncToCloud() {
@@ -516,9 +571,40 @@
             const p = JSON.parse(localStorage.getItem('userProgress')) || {};
             const w = JSON.parse(localStorage.getItem('userWeights')) || {};
             const d = localStorage.getItem('lastSavedDate') || new Date().toDateString();
-            await db.collection("users").doc(currentUser.uid).set({ progress: p, weights: w, lastDate: d }, { merge: true });
-        } catch(e) { console.log("Buluta yazma başarısız."); }
+            const sW = localStorage.getItem('showWarmup') !== 'false';
+            
+            await db.collection("users").doc(currentUser.uid).set({ progress: p, weights: w, lastDate: d, showWarmup: sW }, { merge: true });
+        } catch(e) { console.log("Buluta yazılamadı."); }
     }
+
+    // YENİ: ISINMA GÖSTER/GİZLE FONKSİYONU
+    function handleWarmupToggle() {
+        showWarmupStatus = document.getElementById('toggleWarmupSwitch').checked;
+        localStorage.setItem('showWarmup', showWarmupStatus);
+        applyWarmupSetting();
+        syncToCloud(); // Buluta kaydet
+    }
+
+    function applyWarmupSetting() {
+        const wBtn = document.getElementById('btn-warmup');
+        const wTab = document.getElementById('warmup');
+        
+        // LocalStorage'dan değeri oku, eğer yoksa varsayılan true kabul et
+        showWarmupStatus = localStorage.getItem('showWarmup') !== 'false'; 
+        document.getElementById('toggleWarmupSwitch').checked = showWarmupStatus;
+
+        if(!showWarmupStatus) {
+            // ISINMAYI GİZLE
+            wBtn.style.display = 'none';
+            // Eğer şu an Isınma sekmesi açıksa, zorla 1. Gün'e geçir
+            if(wTab.classList.contains('active-content')) openTab('day1');
+        } else {
+            // ISINMAYI GÖSTER
+            wBtn.style.display = 'flex';
+        }
+        updateProgressBar();
+    }
+
 
     // --- 4. TEMEL UYGULAMA İŞLEVLERİ ---
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Hata:', err)); }
@@ -529,8 +615,7 @@
         if (last !== today) { 
             localStorage.removeItem('userProgress'); 
             localStorage.setItem('lastSavedDate', today); 
-            updateProgressBar();
-            syncToCloud();
+            updateProgressBar(); syncToCloud();
         } else { loadProgress(); }
     }
 
@@ -548,14 +633,11 @@
         const row = document.getElementById(id);
         const checked = row.querySelector('.check-input').checked;
         checked ? row.classList.add('completed') : row.classList.remove('completed');
-        
         let p = JSON.parse(localStorage.getItem('userProgress')) || {};
         p[id] = checked;
         localStorage.setItem('userProgress', JSON.stringify(p));
         localStorage.setItem('lastSavedDate', new Date().toDateString());
-        
-        updateProgressBar();
-        syncToCloud(); 
+        updateProgressBar(); syncToCloud(); 
     }
 
     function loadProgress() {
@@ -579,14 +661,8 @@
         }
     }
 
-    function resetProgress() { 
-        if(confirm("Bugünü sıfırlamak istediğine emin misin?")) { 
-            localStorage.setItem('userProgress', '{}'); 
-            syncToCloud().then(() => location.reload()); 
-        } 
-    }
+    function resetProgress() { if(confirm("Bugünü sıfırla?")) { localStorage.setItem('userProgress', '{}'); syncToCloud().then(() => location.reload()); } }
 
-    // --- MODALLAR (AYARLAR VE PROFIL) ---
     function toggleSettings() {
         const m = document.getElementById('settingsModal');
         if(m.classList.contains('settings-open')) { m.classList.remove('settings-open'); setTimeout(()=>m.style.display='none',400); }
@@ -624,60 +700,30 @@
 
     function setTheme(m) { 
         document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
-        if(m === 'light') {
-            document.body.classList.add('light-mode'); 
-            localStorage.setItem('themeMode','light');
-            document.getElementById('btn-light').classList.add('active');
-        } else {
-            document.body.classList.remove('light-mode'); 
-            localStorage.setItem('themeMode','dark');
-            document.getElementById('btn-dark').classList.add('active');
-        }
+        if(m === 'light') { document.body.classList.add('light-mode'); localStorage.setItem('themeMode','light'); document.getElementById('btn-light').classList.add('active');
+        } else { document.body.classList.remove('light-mode'); localStorage.setItem('themeMode','dark'); document.getElementById('btn-dark').classList.add('active'); }
     }
 
     function setAccent(c, btnElement) { 
-        document.documentElement.style.setProperty('--primary', c); 
-        localStorage.setItem('accentColor', c); 
+        document.documentElement.style.setProperty('--primary', c); localStorage.setItem('accentColor', c); 
         document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
         if(btnElement) btnElement.classList.add('active');
-        else { document.querySelectorAll('.color-btn').forEach(b => { if(b.style.background.includes(c) || b.style.backgroundColor === c) b.classList.add('active'); }); }
+        else document.querySelectorAll('.color-btn').forEach(b => { if(b.style.background.includes(c) || b.style.backgroundColor === c) b.classList.add('active'); });
     }
 
     function loadSettings() {
         if(localStorage.getItem('themeMode')==='light') setTheme('light'); else setTheme('dark');
         let savedColor = localStorage.getItem('accentColor');
-        if(savedColor) setAccent(savedColor, null);
-        else setAccent('#bb86fc', document.querySelector('.color-btn')); 
+        if(savedColor) setAccent(savedColor, null); else setAccent('#bb86fc', document.querySelector('.color-btn')); 
         const w = JSON.parse(localStorage.getItem('userWeights'));
         if(w) for(const [k,v] of Object.entries(w)) { const e = document.getElementById(k); if(e) e.innerText = v; }
     }
 
     // --- VİDEO VE SAYAÇ ---
     let tInt, sec = 0;
-    function openVideo(id) {
-        document.getElementById('videoModal').style.display = 'flex';
-        document.getElementById('integratedTimerBar').style.display = 'none';
-        document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-    }
-    function openTimer(s, id) {
-        document.getElementById('videoModal').style.display = 'flex';
-        document.getElementById('integratedTimerBar').style.display = 'flex';
-        sec = s;
-        document.getElementById('integratedTimerDisplay').innerText = fmt(sec);
-        document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-        clearInterval(tInt);
-    }
-    function toggleTimer() {
-        const btn = document.getElementById('btnTimerToggle');
-        if(tInt) { clearInterval(tInt); tInt=null; btn.innerText = "DEVAM"; }
-        else {
-            btn.innerText = "DURAKLAT";
-            tInt = setInterval(() => {
-                sec--; document.getElementById('integratedTimerDisplay').innerText = fmt(sec);
-                if(sec<=0) { clearInterval(tInt); tInt=null; document.getElementById('integratedTimerDisplay').style.color='red'; btn.innerText="BİTTİ"; }
-            }, 1000);
-        }
-    }
+    function openVideo(id) { document.getElementById('videoModal').style.display = 'flex'; document.getElementById('integratedTimerBar').style.display = 'none'; document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; }
+    function openTimer(s, id) { document.getElementById('videoModal').style.display = 'flex'; document.getElementById('integratedTimerBar').style.display = 'flex'; sec = s; document.getElementById('integratedTimerDisplay').innerText = fmt(sec); document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; clearInterval(tInt); }
+    function toggleTimer() { const btn = document.getElementById('btnTimerToggle'); if(tInt) { clearInterval(tInt); tInt=null; btn.innerText = "DEVAM"; } else { btn.innerText = "DURAKLAT"; tInt = setInterval(() => { sec--; document.getElementById('integratedTimerDisplay').innerText = fmt(sec); if(sec<=0) { clearInterval(tInt); tInt=null; document.getElementById('integratedTimerDisplay').style.color='red'; btn.innerText="BİTTİ"; } }, 1000); } }
     function resetTimer() { clearInterval(tInt); tInt=null; sec=60; document.getElementById('integratedTimerDisplay').innerText = "01:00"; document.getElementById('btnTimerToggle').innerText="BAŞLAT"; document.getElementById('integratedTimerDisplay').style.color='#fff'; }
     function closeVideo() { document.getElementById('videoModal').style.display='none'; document.getElementById('playerContainer').innerHTML=''; clearInterval(tInt); tInt=null; }
     function fmt(s) { return new Date(s*1000).toISOString().substr(14, 5); }
