@@ -16,7 +16,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>Pro Antrenman (v29 - Secure Auth)</title>
+    <title>Pro Antrenman (v30 - Splash Screen)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -32,18 +32,21 @@
         body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); opacity: 0.94; z-index: -1; }
         .container { width: 100%; max-width: 850px; padding-bottom: 40px; position: relative; padding-top: 30px; }
         
-        /* --- GİRİŞ / KAYIT EKRANI YEPYENİ TASARIM --- */
-        #authScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 10000; display: flex; justify-content: center; align-items: center; padding: 20px; transition: opacity 0.5s ease; }
+        /* --- SPLASH EKRANI (AÇILIŞ) --- */
+        #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease, visibility 0.5s; }
+        
+        /* --- GİRİŞ / KAYIT EKRANI --- */
+        #authScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.5s ease; }
         .auth-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--border-color); padding: 45px 35px; border-radius: 30px; width: 100%; max-width: 380px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); text-align: center; animation: float 4s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         
-        /* Yeni Şık Logo Tasarımı */
         .auth-logo { width: 70px; height: 70px; background: var(--primary); color: #000; margin: 0 auto 15px; border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: 900; transform: rotate(-5deg); box-shadow: 0 10px 25px rgba(187, 134, 252, 0.4); letter-spacing: -1px; transition: background 0.4s; }
+        .splash-logo { animation: pulse-glow-logo 2s infinite; transform: rotate(-5deg) scale(1.2); margin-bottom: 25px; }
+        @keyframes pulse-glow-logo { 0% { box-shadow: 0 0 0 0 rgba(187, 134, 252, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(187, 134, 252, 0); } 100% { box-shadow: 0 0 0 0 rgba(187, 134, 252, 0); } }
         
         .auth-title { font-size: 2.2rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; letter-spacing: -1px; transition: color 0.3s; }
         .auth-subtitle { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
         
-        /* Yumuşak Açılan Input Alanı */
         .expandable-field { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); margin-bottom: 0; transform: translateY(-10px); }
         .expandable-field.show { max-height: 80px; opacity: 1; margin-bottom: 20px; transform: translateY(0); }
         
@@ -53,14 +56,12 @@
         .auth-input::placeholder { color: rgba(255,255,255,0.3); }
         body.light-mode .auth-input { background: rgba(255,255,255,0.5); color: #000; } body.light-mode .auth-input::placeholder { color: rgba(0,0,0,0.4); }
         
-        /* Güçlü Şifre İpucu (Kayıt ekranında görünür) */
         .pass-hint { font-size: 0.75rem; color: var(--text-muted); text-align: left; margin-top: 6px; padding-left: 10px; opacity: 0; max-height: 0; transition: all 0.4s; overflow: hidden; }
         .pass-hint.show { opacity: 1; max-height: 20px; }
 
         .auth-btn { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; font-size: 1.1rem; margin-top: 5px; margin-bottom: 25px; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 5px 20px -5px var(--primary); letter-spacing: 1px; }
         .auth-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px var(--primary); }
         
-        /* Kayıt Olma Modunda Butonun Rengi Değişir */
         .auth-btn.register-mode { background: var(--success); box-shadow: 0 5px 20px -5px var(--success); }
         .auth-btn.register-mode:hover { box-shadow: 0 10px 25px -5px var(--success); }
         .auth-logo.register-mode { background: var(--success); box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); }
@@ -157,6 +158,11 @@
     </style>
 </head>
 <body>
+
+<div id="splashScreen">
+    <div class="auth-logo splash-logo">PRO</div>
+    <div style="color: var(--primary); font-weight: 800; letter-spacing: 2px; font-size: 0.9rem; margin-top: 10px;">YÜKLENİYOR...</div>
+</div>
 
 <div id="authScreen">
     <div class="auth-card">
@@ -322,7 +328,7 @@
         </div>
     </div>
 
-    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN v29 (Secure Profile)</p></footer>
+    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN v30 (Splash Edit)</p></footer>
 </div>
 
 <div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">✕</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-btn" style="width:auto; padding:8px 15px;">BAŞLAT</button><button onclick="resetTimer()" class="timer-btn" style="width:auto; padding:8px 15px;">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
@@ -347,23 +353,26 @@
 
     // --- 2. KİMLİK DOĞRULAMA (AUTH) SİSTEMİ ---
     auth.onAuthStateChanged((user) => {
+        const splash = document.getElementById('splashScreen');
+        const authScr = document.getElementById('authScreen');
+        const mainCon = document.getElementById('mainContainer');
+
         if (user) {
             currentUser = user;
             btnLoading(false);
             
-            // Profil bilgilerini güncelle
             document.getElementById('userEmailDisplay').innerText = user.email;
             document.getElementById('userNameDisplay').innerText = user.displayName || "Sporcu";
             
-            document.getElementById('authScreen').style.opacity = '0';
-            setTimeout(() => { document.getElementById('authScreen').style.display = 'none'; }, 500);
+            // Eğer giriş sayfasındaysa yavaşça gizle, değilse direkt ana ekranı aç
+            authScr.style.opacity = '0';
+            setTimeout(() => { authScr.style.display = 'none'; }, 500);
             
-            document.getElementById('mainContainer').style.display = 'block';
+            mainCon.style.display = 'block';
             syncFromCloud(); 
         } else {
             currentUser = null;
-            document.getElementById('mainContainer').style.display = 'none';
-            document.getElementById('authScreen').style.display = 'flex';
+            mainCon.style.display = 'none';
             
             // Çıkış yapıldığında form kutularını temizle
             document.getElementById('authUsername').value = '';
@@ -372,10 +381,16 @@
             document.getElementById('authError').classList.remove('show');
             btnLoading(false); 
             
-            // Eğer kayıt modunda kaldıysa Giriş moduna döndür
             if(isRegisterMode) toggleAuthMode();
             
-            setTimeout(() => { document.getElementById('authScreen').style.opacity = '1'; }, 50);
+            authScr.style.display = 'flex';
+            setTimeout(() => { authScr.style.opacity = '1'; }, 50);
+        }
+
+        // Firebase kontrolünü bitirdi, SPLASH EKRANINI YAVAŞÇA KAPAT
+        if(splash) {
+            splash.style.opacity = '0';
+            setTimeout(() => { splash.style.display = 'none'; }, 500);
         }
     });
 
@@ -387,14 +402,12 @@
         const toggle = document.getElementById('authToggleText');
         const logo = document.getElementById('authLogoBox');
         
-        // Animasyonlu alanlar
         const usernameField = document.getElementById('usernameField');
         const passHint = document.getElementById('passHintText');
 
         document.getElementById('authError').classList.remove('show'); 
 
         if(isRegisterMode) {
-            // KAYIT OL MODU
             title.innerText = 'KAYIT OL';
             subtitle.innerText = 'Yeni Bir Başlangıç';
             btn.innerText = 'YENİ HESAP AÇ';
@@ -402,11 +415,9 @@
             logo.classList.add('register-mode');
             toggle.innerText = 'Zaten hesabın var mı? Giriş Yap';
             
-            // Kutuları yumuşakça aç
             usernameField.classList.add('show');
             passHint.classList.add('show');
         } else {
-            // GİRİŞ YAP MODU
             title.innerText = 'GİRİŞ YAP';
             subtitle.innerText = 'Sisteme Hoş Geldin';
             btn.innerText = 'GİRİŞ YAP';
@@ -414,13 +425,11 @@
             logo.classList.remove('register-mode');
             toggle.innerText = 'Hesabın yok mu? Yeni Kayıt Oluştur';
             
-            // Kutuları yumuşakça kapat
             usernameField.classList.remove('show');
             passHint.classList.remove('show');
         }
     }
 
-    // Güçlü Şifre Kontrolü (En az 6 karakter, En az 1 harf ve 1 rakam)
     function isStrongPassword(password) {
         const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&._-]{6,}$/;
         return regex.test(password);
@@ -434,7 +443,6 @@
         if(isRegisterMode && !username) { showError("Lütfen bir kullanıcı adı belirleyin."); return; }
         if(!email || !pass) { showError("Lütfen e-posta ve şifre alanlarını doldurun."); return; }
         
-        // Güçlü şifre kontrolü sadece kayıt olurken yapılır
         if(isRegisterMode && !isStrongPassword(pass)) { 
             showError("Şifreniz zayıf! En az 6 hane olmalı, hem harf hem de rakam içermelidir."); 
             return; 
@@ -443,19 +451,15 @@
         btnLoading(true);
 
         if(isRegisterMode) {
-            // Kayıt işlemi
             auth.createUserWithEmailAndPassword(email, pass)
                 .then((userCredential) => {
-                    // Kullanıcı adını Firebase profiline kaydet
                     return userCredential.user.updateProfile({ displayName: username });
                 })
                 .then(() => {
-                    // Profil güncellendikten sonra UI'ı yenilemek için sayfayı tetikle
                     document.getElementById('userNameDisplay').innerText = username;
                 })
                 .catch(e => { showError(hataCevir(e.code)); btnLoading(false); });
         } else {
-            // Giriş işlemi
             auth.signInWithEmailAndPassword(email, pass)
                 .catch(e => { showError(hataCevir(e.code)); btnLoading(false); });
         }
