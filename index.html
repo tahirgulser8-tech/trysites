@@ -16,7 +16,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>Pro Antrenman (Beta v1.3)</title>
+    <title>Pro Antrenman (Beta v1.4)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -29,24 +29,18 @@
         body.light-mode { --bg-body: #f3f4f6; --bg-card: rgba(255, 255, 255, 0.85); --text-main: #1f2937; --text-muted: #6b7280; --border-color: rgba(0, 0, 0, 0.06); }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        /* --- HAREKETLİ GÖKKUŞAĞI ARKA PLAN --- */
+        /* --- KUSURSUZ HAREKETLİ ARKA PLAN (Siyah Flaş Önlendi) --- */
         @keyframes auroraBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        body { 
+        html, body { 
             color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; 
-            background-color: var(--bg-body);
-        }
-        
-        /* Tam ekran canlı arka plan kutusu */
-        .background-anim {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: linear-gradient(-45deg, #09090b, #1d0f33, #0a1128, #09090b);
             background-size: 400% 400%;
             animation: auroraBG 12s ease infinite;
-            z-index: -2;
+            background-color: #09090b; /* Fallback */
         }
-        body.light-mode .background-anim { background: linear-gradient(-45deg, #f3f4f6, #e2e8f0, #d8b4fe, #f3f4f6); }
+        body.light-mode { background: linear-gradient(-45deg, #f3f4f6, #e2e8f0, #d8b4fe, #f3f4f6); background-color: #f3f4f6; }
         
-        .container { width: 100%; max-width: 850px; padding: 20px; padding-bottom: 60px; position: relative; padding-top: 20px; z-index: 10; }
+        .container { width: 100%; max-width: 850px; padding: 20px; padding-bottom: 60px; position: relative; z-index: 10; }
         
         /* --- ŞIK BİLDİRİM (TOAST) SİSTEMİ --- */
         .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--bg-card); color: var(--text-main); padding: 15px 25px; border-radius: 16px; font-weight: 700; font-size: 0.95rem; z-index: 999999; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); backdrop-filter: blur(10px); border: 1px solid var(--border-color); opacity: 0; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
@@ -54,7 +48,7 @@
         .toast-success { border-left: 4px solid var(--success); }
         .toast-error { border-left: 4px solid var(--danger); }
 
-        /* --- SPLASH EKRANI (Buzlu Cam Efektli) --- */
+        /* --- SPLASH EKRANI --- */
         #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease, visibility 0.5s; }
         body.light-mode #splashScreen { background: rgba(243, 244, 246, 0.7); }
         
@@ -79,13 +73,18 @@
         @keyframes pulse-glow-logo { 0% { box-shadow: 0 0 0 0 rgba(187, 134, 252, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(187, 134, 252, 0); } 100% { box-shadow: 0 0 0 0 rgba(187, 134, 252, 0); } }
         .auth-title { font-size: 2rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; }
         .auth-subtitle { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
-        .expandable-field { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease; margin-bottom: 0; transform: translateY(-10px); }
-        .expandable-field.show { max-height: 80px; opacity: 1; margin-bottom: 20px; transform: translateY(0); }
+        .expandable-field { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease; transform: translateY(-10px); margin-bottom: 0; }
+        .expandable-field.show { max-height: 80px; opacity: 1; margin-bottom: 15px; transform: translateY(0); }
+        
         .auth-input { width: 100%; padding: 16px 20px; border-radius: 16px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.4); color: var(--text-main); font-size: 1rem; margin-bottom: 15px; font-family: 'Inter', sans-serif;}
         .auth-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(187, 134, 252, 0.2); background: rgba(0,0,0,0.6); }
         body.light-mode .auth-input { background: rgba(255,255,255,0.7); color: #000; }
+        
+        .pass-hint { font-size: 0.75rem; color: var(--text-muted); text-align: left; padding-left: 10px; margin-top: -5px; margin-bottom: 15px; display: none; }
+        .pass-hint.show { display: block; }
         .forgot-pass { text-align: right; margin-top: -5px; margin-bottom: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--primary); }
         .forgot-pass.hide { display: none; }
+        
         .auth-btn { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; font-size: 1.1rem; margin-bottom: 20px; transition: all 0.3s;}
         .auth-btn.register-mode { background: var(--success); box-shadow: 0 5px 20px -5px var(--success); }
         .auth-toggle { color: var(--text-muted); font-size: 0.9rem; cursor: pointer; font-weight: 500; }
@@ -99,25 +98,27 @@
         .day-select-btn.selected { background: var(--primary); color: #000; border-color: var(--primary); transform: scale(1.05); box-shadow: 0 5px 15px rgba(187, 134, 252, 0.4); }
         .day-select-btn:disabled:not(.selected) { opacity: 0.3; cursor: not-allowed; }
 
-        /* --- KUSURSUZ ÜST MENÜ TASARIMI (YENİ) --- */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 0 5px; }
+        /* --- ÜST MENÜ (Aşağı Alındı) --- */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 20px 5px 0; }
         .menu-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); font-size: 1.3rem; width: 46px; height: 46px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: all 0.3s ease; flex-shrink: 0; }
         .menu-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); transform: scale(1.1); }
         .top-bar header { text-align: center; flex-grow: 1; padding: 0 10px; }
         .main-title { font-size: 2.1rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; }
         
-        /* --- DİĞER UI ELEMANLARI --- */
+        /* --- DİĞER UI ELEMANLARI VE DİNAMİK SEKME KİLİTLERİ --- */
         .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.3); z-index: 9999; }
         .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 15px var(--success); }
         
         .navigation-wrapper { margin-bottom: 30px; display: flex; flex-direction: column; gap: 15px; }
         .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; transition: all 0.4s; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); border:none; transform: scale(1.02); }
+        .warmup-hero-btn.locked { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; }
+
         .sub-menu { display: flex; justify-content: space-between; gap: 12px; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 20px; border: 1px solid var(--border-color); backdrop-filter: blur(10px); }
         .tab-btn { background: transparent; color: var(--text-muted); border: none; padding: 12px 10px; border-radius: 14px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: all 0.3s; flex: 1; text-align: center; }
         .tab-btn.active { background: var(--primary); color: #000; box-shadow: 0 5px 20px -5px var(--primary); transform: translateY(-2px); }
-        .tab-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+        .tab-btn.locked { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
         body.light-mode .sub-menu { background: rgba(0,0,0,0.05); } body.light-mode .tab-btn.active { color: #fff; }
         
         .tab-content { display: none; animation: fadeIn 0.4s ease-out; } .tab-content.active-content { display: block; }
@@ -190,13 +191,11 @@
 </head>
 <body>
 
-<div class="background-anim"></div>
-
 <div id="toastNotification" class="toast">✨ Başarılı!</div>
 
 <div id="splashScreen">
     <div class="auth-logo splash-logo">PRO</div>
-    <div style="color: var(--primary); font-weight: 800; letter-spacing: 2px; font-size: 0.9rem; margin-top: 10px;">YÜKLENİYOR...</div>
+    <div style="color: var(--primary); font-weight: 800; letter-spacing: 2px; font-size: 0.9rem; margin-top: 10px;">BETA v1.4</div>
 </div>
 
 <div id="landingPage">
@@ -217,12 +216,15 @@
         <h1 class="auth-title" id="authTitleText">GİRİŞ YAP</h1>
         <p class="auth-subtitle" id="authSubtitleText">Sisteme Hoş Geldin</p>
 
-        <div class="expandable-field" id="usernameField"><input type="text" id="authUsername" class="auth-input" placeholder="Kullanıcı Adı Belirle"></div>
+        <div class="expandable-field" id="usernameField"><input type="text" id="authUsername" class="auth-input" style="margin-bottom:0;" placeholder="Kullanıcı Adı Belirle"></div>
+        
         <input type="email" id="authEmail" class="auth-input" placeholder="E-posta Adresi" required>
-        <input type="password" id="authPass" class="auth-input" placeholder="Şifre" required style="margin-bottom: 10px;">
+        <input type="password" id="authPass" class="auth-input" placeholder="Şifre" required>
+        
+        <div class="expandable-field" id="passConfirmField"><input type="password" id="authPassConfirm" class="auth-input" style="margin-bottom:0;" placeholder="Şifre (Tekrar)"></div>
+        <p class="pass-hint" id="passHintText">⚠️ Şifre en az 6 hane olmalı, harf ve rakam içermelidir.</p>
         
         <div class="forgot-pass" id="forgotPassBtn" onclick="resetPassword()">Şifremi Unuttum?</div>
-        <p class="pass-hint" id="passHintText">Şifre en az 6 hane olmalı, harf ve rakam içermelidir.</p>
         
         <button id="authSubmitBtn" class="auth-btn" onclick="handleAuth()">GİRİŞ YAP</button>
         <p class="auth-toggle" onclick="toggleAuthMode()"><span id="authToggleText">Hesabın yok mu? Yeni Kayıt Oluştur</span></p>
@@ -233,7 +235,7 @@
     <div class="onb-card">
         <h1 class="auth-title" style="font-size: 1.8rem;">Antrenman Günleri</h1>
         <p class="auth-subtitle" style="margin-bottom: 10px;">Haftada tam 3 gün seçmelisin</p>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Seçtiğin günler 1. Gün, 2. Gün ve 3. Gün olarak otomatik sıralanacaktır.</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Seçtiğin günler sekmelerde isimleriyle otomatik yer alacaktır.</p>
         
         <div class="days-grid" id="daysGrid">
             <button class="day-select-btn" data-day="1" onclick="toggleDay(this)">PZT</button>
@@ -262,11 +264,11 @@
     </div>
 
     <div class="navigation-wrapper">
-        <button id="btn-warmup" class="warmup-hero-btn active" onclick="openTab('warmup')"><span>🔥</span> ISINMA</button>
+        <button id="btn-warmup" class="warmup-hero-btn"><span>🔥</span> ISINMA</button>
         <div class="sub-menu">
-            <button id="btn-day1" class="tab-btn" onclick="openTab('day1')">1. GÜN</button>
-            <button id="btn-day2" class="tab-btn" onclick="openTab('day2')">2. GÜN</button>
-            <button id="btn-day3" class="tab-btn" onclick="openTab('day3')">3. GÜN</button>
+            <button id="btn-day1" class="tab-btn">GÜN 1</button>
+            <button id="btn-day2" class="tab-btn">GÜN 2</button>
+            <button id="btn-day3" class="tab-btn">GÜN 3</button>
         </div>
     </div>
 
@@ -395,14 +397,14 @@
         </div>
     </div>
 
-    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN (Beta v1.3)</p></footer>
+    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN (Beta v1.4)</p></footer>
 </div>
 
 <div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">✕</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-btn" style="width:auto; padding:8px 15px;">BAŞLAT</button><button onclick="resetTimer()" class="timer-btn" style="width:auto; padding:8px 15px;">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-    // --- YENİ: ŞIK BİLDİRİM (TOAST) FONKSİYONU ---
+    // --- ŞIK BİLDİRİM (TOAST) FONKSİYONU ---
     function showToast(msg, isError = false) {
         const toast = document.getElementById('toastNotification');
         toast.innerHTML = isError ? `⚠️ ${msg}` : `✨ ${msg}`;
@@ -429,37 +431,22 @@
     let userWorkoutDays = []; 
     let notificationTime = ""; 
 
-    // --- 2. KİMLİK DOĞRULAMA (AUTH) ---
+    // --- 2. KİMLİK DOĞRULAMA ---
     auth.onAuthStateChanged((user) => {
-        const splash = document.getElementById('splashScreen');
-        const landing = document.getElementById('landingPage');
-        const mainCon = document.getElementById('mainContainer');
-        const authMod = document.getElementById('authModal');
-
+        const splash = document.getElementById('splashScreen'), landing = document.getElementById('landingPage'), mainCon = document.getElementById('mainContainer'), authMod = document.getElementById('authModal');
         if (user) {
-            currentUser = user;
-            btnLoading(false);
-            document.getElementById('userEmailDisplay').innerText = user.email;
-            document.getElementById('userNameDisplay').innerText = user.displayName || "Sporcu";
-            
-            authMod.style.opacity = '0';
-            setTimeout(() => { authMod.style.display = 'none'; }, 400);
-            landing.style.display = 'none';
-            mainCon.style.display = 'block';
-            
+            currentUser = user; btnLoading(false);
+            document.getElementById('userEmailDisplay').innerText = user.email; document.getElementById('userNameDisplay').innerText = user.displayName || "Sporcu";
+            authMod.style.opacity = '0'; setTimeout(() => { authMod.style.display = 'none'; }, 400);
+            landing.style.display = 'none'; mainCon.style.display = 'block';
             syncFromCloud(); 
         } else {
-            currentUser = null;
-            mainCon.style.display = 'none';
-            document.getElementById('authUsername').value = '';
-            document.getElementById('authEmail').value = '';
-            document.getElementById('authPass').value = '';
-            btnLoading(false); 
-            if(isRegisterMode) toggleAuthMode();
-            landing.style.display = 'block';
-            clearInterval(notificationInterval); 
+            currentUser = null; mainCon.style.display = 'none';
+            document.getElementById('authUsername').value = ''; document.getElementById('authEmail').value = ''; 
+            document.getElementById('authPass').value = ''; document.getElementById('authPassConfirm').value = '';
+            btnLoading(false); if(isRegisterMode) toggleAuthMode();
+            landing.style.display = 'block'; clearInterval(notificationInterval); 
         }
-
         if(splash) { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 500); }
     });
 
@@ -468,21 +455,27 @@
 
     function toggleAuthMode() {
         isRegisterMode = !isRegisterMode;
-        const title = document.getElementById('authTitleText'), sub = document.getElementById('authSubtitleText'), btn = document.getElementById('authSubmitBtn'), tog = document.getElementById('authToggleText'), usr = document.getElementById('usernameField'), hint = document.getElementById('passHintText'), frg = document.getElementById('forgotPassBtn');
+        const title = document.getElementById('authTitleText'), sub = document.getElementById('authSubtitleText'), btn = document.getElementById('authSubmitBtn'), tog = document.getElementById('authToggleText'), usr = document.getElementById('usernameField'), passConf = document.getElementById('passConfirmField'), hint = document.getElementById('passHintText'), frg = document.getElementById('forgotPassBtn');
         if(isRegisterMode) {
-            title.innerText = 'KAYIT OL'; sub.innerText = 'Yeni Bir Başlangıç'; btn.innerText = 'YENİ HESAP AÇ'; btn.classList.add('register-mode'); tog.innerText = 'Zaten hesabın var mı? Giriş Yap'; usr.classList.add('show'); hint.classList.add('show'); frg.classList.add('hide');
+            title.innerText = 'KAYIT OL'; sub.innerText = 'Yeni Bir Başlangıç'; btn.innerText = 'YENİ HESAP AÇ'; btn.classList.add('register-mode'); tog.innerText = 'Zaten hesabın var mı? Giriş Yap'; 
+            usr.classList.add('show'); passConf.classList.add('show'); hint.classList.add('show'); frg.classList.add('hide');
         } else {
-            title.innerText = 'GİRİŞ YAP'; sub.innerText = 'Sisteme Hoş Geldin'; btn.innerText = 'GİRİŞ YAP'; btn.classList.remove('register-mode'); tog.innerText = 'Hesabın yok mu? Yeni Kayıt Oluştur'; usr.classList.remove('show'); hint.classList.remove('show'); frg.classList.remove('hide');
+            title.innerText = 'GİRİŞ YAP'; sub.innerText = 'Sisteme Hoş Geldin'; btn.innerText = 'GİRİŞ YAP'; btn.classList.remove('register-mode'); tog.innerText = 'Hesabın yok mu? Yeni Kayıt Oluştur'; 
+            usr.classList.remove('show'); passConf.classList.remove('show'); hint.classList.remove('show'); frg.classList.remove('hide');
         }
     }
 
     function isStrongPassword(p) { return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&._-]{6,}$/.test(p); }
 
     function handleAuth() {
-        const u = document.getElementById('authUsername').value.trim(), e = document.getElementById('authEmail').value.trim(), p = document.getElementById('authPass').value;
+        const u = document.getElementById('authUsername').value.trim(), e = document.getElementById('authEmail').value.trim(), p = document.getElementById('authPass').value, pC = document.getElementById('authPassConfirm').value;
         if(isRegisterMode && !u) { showToast("Kullanıcı adı belirleyin.", true); return; }
         if(!e || !p) { showToast("Boş alan bırakmayın.", true); return; }
-        if(isRegisterMode && !isStrongPassword(p)) { showToast("Şifre zayıf! En az 6 hane, harf ve rakam içermeli.", true); return; }
+        
+        if(isRegisterMode) {
+            if(p !== pC) { showToast("Şifreler uyuşmuyor!", true); return; }
+            if(!isStrongPassword(p)) { showToast("Şifre zayıf! En az 6 hane, harf ve rakam içermeli.", true); return; }
+        }
         
         btnLoading(true);
         if(isRegisterMode) {
@@ -512,10 +505,7 @@
                 if(data.weights) localStorage.setItem('userWeights', JSON.stringify(data.weights));
                 if(data.showWarmup !== undefined) localStorage.setItem('showWarmup', data.showWarmup);
                 if(data.workoutDays) userWorkoutDays = data.workoutDays;
-                if(data.reminderTime) {
-                    notificationTime = data.reminderTime;
-                    document.getElementById('reminderTimeInput').value = notificationTime;
-                }
+                if(data.reminderTime) { notificationTime = data.reminderTime; document.getElementById('reminderTimeInput').value = notificationTime; }
                 const today = new Date().toDateString();
                 if(data.progress && data.lastDate === today) {
                     localStorage.setItem('userProgress', JSON.stringify(data.progress));
@@ -524,37 +514,33 @@
             }
         } catch(e) { console.log("Buluttan çekilemedi."); }
         
-        loadSettings(); generateWeightInputs(); checkDateAndLoadProgress(); applyWarmupSetting(); startNotificationEngine();
+        loadSettings(); generateWeightInputs(); checkDateAndLoadProgress(); startNotificationEngine();
         
-        if(userWorkoutDays.length !== 3) reopenOnboarding(); else checkCalendarAndOpenTab();
+        // Takvimi Ayarla
+        if(userWorkoutDays.length !== 3) reopenOnboarding(); else setupTabs();
     }
 
     async function syncToCloud() {
         if(!currentUser) return;
         try {
-            const p = JSON.parse(localStorage.getItem('userProgress')) || {};
-            const w = JSON.parse(localStorage.getItem('userWeights')) || {};
-            const d = localStorage.getItem('lastSavedDate') || new Date().toDateString();
-            const sW = localStorage.getItem('showWarmup') !== 'false';
+            const p = JSON.parse(localStorage.getItem('userProgress')) || {}; const w = JSON.parse(localStorage.getItem('userWeights')) || {}; const d = localStorage.getItem('lastSavedDate') || new Date().toDateString(); const sW = localStorage.getItem('showWarmup') !== 'false';
             await db.collection("users").doc(currentUser.uid).set({ progress: p, weights: w, lastDate: d, showWarmup: sW, workoutDays: userWorkoutDays, reminderTime: notificationTime }, { merge: true });
         } catch(e) { console.log("Buluta yazılamadı."); }
     }
 
-    // --- 4. GÜN SEÇİMİ VE AKILLI TAKVİM ---
+    // --- 4. GÜN SEÇİMİ VE DİNAMİK SEKMELER (YENİ) ---
     let tempSelectedDays = [];
+    const dayNamesMap = ["PAZ", "PZT", "SAL", "ÇAR", "PER", "CUM", "CMT"];
+
     function reopenOnboarding() {
         tempSelectedDays = [...userWorkoutDays];
-        document.getElementById('settingsModal').classList.remove('settings-open');
-        setTimeout(() => document.getElementById('settingsModal').style.display='none', 400);
-        
+        document.getElementById('settingsModal').classList.remove('settings-open'); setTimeout(() => document.getElementById('settingsModal').style.display='none', 400);
         document.querySelectorAll('.day-select-btn').forEach(b => {
             b.classList.remove('selected'); b.disabled = false;
             if(tempSelectedDays.includes(parseInt(b.dataset.day))) b.classList.add('selected');
         });
-        
         updateOnboardingBtn();
-        const modal = document.getElementById('onboardingModal');
-        modal.style.display = 'flex'; setTimeout(() => modal.style.opacity = '1', 50);
+        const modal = document.getElementById('onboardingModal'); modal.style.display = 'flex'; setTimeout(() => modal.style.opacity = '1', 50);
     }
 
     function toggleDay(btn) {
@@ -577,24 +563,44 @@
     }
 
     function saveSelectedDays() {
-        userWorkoutDays = tempSelectedDays.sort(); syncToCloud();
-        const modal = document.getElementById('onboardingModal');
-        modal.style.opacity = '0';
-        setTimeout(() => { modal.style.display = 'none'; checkCalendarAndOpenTab(); showToast("Günler başarıyla kaydedildi!"); }, 400);
+        userWorkoutDays = tempSelectedDays.sort((a,b) => a-b); syncToCloud();
+        const modal = document.getElementById('onboardingModal'); modal.style.opacity = '0';
+        setTimeout(() => { modal.style.display = 'none'; setupTabs(); showToast("Günler başarıyla kaydedildi!"); }, 400);
     }
 
-    function checkCalendarAndOpenTab() {
-        const todayStr = new Date().getDay();
-        document.getElementById('btn-day1').classList.remove('disabled');
-        document.getElementById('btn-day2').classList.remove('disabled');
-        document.getElementById('btn-day3').classList.remove('disabled');
-
-        if(userWorkoutDays.includes(todayStr)) {
-            const index = userWorkoutDays.indexOf(todayStr); 
-            if(index === 0) openTab('day1'); else if(index === 1) openTab('day2'); else if(index === 2) openTab('day3');
-        } else {
+    // DINAMIK TAB KILIT SİSTEMİ
+    function setupTabs() {
+        if(userWorkoutDays.length !== 3) return;
+        const todayIdx = new Date().getDay();
+        
+        // Sekmelerin isimlerini güncelle ve Kilitleri ayarla
+        for(let i = 0; i < 3; i++) {
+            const btn = document.getElementById(`btn-day${i+1}`);
+            const dayNum = userWorkoutDays[i];
+            btn.innerText = dayNamesMap[dayNum]; // Örn: PZT yazar
+            
+            if(dayNum === todayIdx) {
+                // BUGÜNÜN ANTRENMANI (Kilit Açık)
+                btn.classList.remove('locked');
+                btn.onclick = () => openTab(`day${i+1}`);
+            } else {
+                // BAŞKA GÜNÜN ANTRENMANI (Kilitli)
+                btn.classList.add('locked');
+                btn.onclick = () => showToast(`Sadece bugünün antrenmanına girebilirsin! (${dayNamesMap[dayNum]})`, true);
+            }
+        }
+        
+        // Dinlenme günündeysek her şey kilitlenir
+        const wBtn = document.getElementById('btn-warmup');
+        if(!userWorkoutDays.includes(todayIdx)) {
             openTab('restDay');
-            document.getElementById('btn-day1').classList.add('disabled'); document.getElementById('btn-day2').classList.add('disabled'); document.getElementById('btn-day3').classList.add('disabled');
+            if(wBtn) { wBtn.classList.add('locked'); wBtn.onclick = () => showToast("Bugün dinlenme günün, ısınma yok!", true); }
+        } else {
+            // Antrenman günündeysek, mevcut günün sekmesini aç
+            if(wBtn) { wBtn.classList.remove('locked'); wBtn.onclick = () => openTab('warmup'); }
+            applyWarmupSetting(); // Ayarlardan ısınma kapalıysa gizler
+            const activeIndex = userWorkoutDays.indexOf(todayIdx);
+            openTab(`day${activeIndex+1}`);
         }
     }
 
@@ -609,9 +615,7 @@
     }
 
     function saveNotificationSetting() {
-        notificationTime = document.getElementById('reminderTimeInput').value;
-        syncToCloud();
-        showToast("Hatırlatıcı " + notificationTime + " olarak ayarlandı.");
+        notificationTime = document.getElementById('reminderTimeInput').value; syncToCloud(); showToast("Hatırlatıcı " + notificationTime + " olarak ayarlandı.");
     }
 
     function startNotificationEngine() {
@@ -636,7 +640,7 @@
         const wBtn = document.getElementById('btn-warmup');
         showWarmupStatus = localStorage.getItem('showWarmup') !== 'false'; 
         document.getElementById('toggleWarmupSwitch').checked = showWarmupStatus;
-        wBtn.style.display = showWarmupStatus ? 'flex' : 'none';
+        if(wBtn && !wBtn.classList.contains('locked')) { wBtn.style.display = showWarmupStatus ? 'flex' : 'none'; }
         updateProgressBar();
     }
 
