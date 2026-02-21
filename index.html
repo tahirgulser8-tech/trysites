@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <script>
-        const APP_VERSION = "1.6"; 
+        const APP_VERSION = "1.7"; 
         if (localStorage.getItem('app_version') !== APP_VERSION) {
             localStorage.setItem('app_version', APP_VERSION);
             if ('caches' in window) caches.keys().then(n => n.forEach(c => caches.delete(c)));
@@ -26,7 +26,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>Pro Antrenman (Beta v1.6)</title>
+    <title>Pro Antrenman (Beta v1.7)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -34,51 +34,37 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <style>
-        /* --- RENKLER VE TEMEL AYARLAR --- */
         :root { --bg-body: #09090b; --bg-card: rgba(30, 30, 35, 0.65); --text-main: #e0e0e0; --text-muted: #9CA3AF; --border-color: rgba(255, 255, 255, 0.08); --primary: #bb86fc; --secondary: #03dac6; --danger: #ef4444; --success: #10b981; --glass-blur: 16px; --shadow: 0 10px 40px -10px rgba(0,0,0,0.5); --radius: 24px; }
         body.light-mode { --bg-body: #f3f4f6; --bg-card: rgba(255, 255, 255, 0.85); --text-main: #1f2937; --text-muted: #6b7280; --border-color: rgba(0, 0, 0, 0.06); }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        /* --- SİYAH FLAŞI ÖNLEYEN GPU DESTEKLİ ARKA PLAN --- */
         @keyframes auroraBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        body { color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; background-color: var(--bg-body); }
-        
-        body::before { 
-            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
-            background: linear-gradient(-45deg, #2b1055, #09090b, #1a0b2e, #09090b); background-size: 400% 400%;
-            animation: auroraBG 15s ease infinite; transform: translateZ(0); /* GPU Hızlandırma - Siyah ekranı engeller */
-        }
-        body.light-mode::before { background: linear-gradient(-45deg, #f3f4f6, #e2e8f0, #d8b4fe, #f3f4f6); }
+        html, body { color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; background: linear-gradient(-45deg, #2b1055, #09090b, #1a0b2e, #09090b); background-size: 400% 400%; animation: auroraBG 15s ease infinite; background-color: #09090b; }
+        body.light-mode { background: linear-gradient(-45deg, #f3f4f6, #e2e8f0, #d8b4fe, #f3f4f6); background-color: #f3f4f6; }
         
         .container { width: 100%; max-width: 850px; padding: 20px; padding-bottom: 60px; position: relative; z-index: 10; }
         
-        /* --- YUMUŞAK GEÇİŞLER İÇİN (Siyah ekranı çözen hamle) --- */
-        #mainContainer, #landingPage { transition: opacity 0.5s ease-in-out; }
-        #mainContainer { opacity: 0; } /* CSS ile baştan görünmez yapıyoruz, JS ile yavaşça açacağız */
+        #mainContainer, #landingPage { transition: opacity 0.4s ease-in-out; }
+        #mainContainer { opacity: 0; }
 
-        /* --- ŞIK BİLDİRİM (TOAST) --- */
         .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--bg-card); color: var(--text-main); padding: 15px 25px; border-radius: 16px; font-weight: 700; font-size: 0.95rem; z-index: 999999; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); backdrop-filter: blur(10px); border: 1px solid var(--border-color); opacity: 0; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .toast.show { bottom: 40px; opacity: 1; }
         .toast-success { border-left: 4px solid var(--success); }
         .toast-error { border-left: 4px solid var(--danger); }
 
-        /* --- SPLASH EKRANI --- */
-        #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.5); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s ease; }
+        #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.5); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
         body.light-mode #splashScreen { background: rgba(243, 244, 246, 0.6); }
         
-        /* --- LANDING PAGE --- */
         #landingPage { width: 100%; max-width: 850px; padding: 40px 20px; text-align: center; display: none; }
         .hero-title { font-size: 3rem; font-weight: 900; line-height: 1.1; margin-bottom: 15px; letter-spacing: -2px; background: linear-gradient(135deg, var(--text-main) 20%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .hero-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 40px; line-height: 1.6; }
-        .feature-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--border-color); padding: 25px; border-radius: 20px; margin-bottom: 20px; text-align: left; box-shadow: var(--shadow); transition: transform 0.3s; }
-        .feature-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .feature-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--border-color); padding: 25px; border-radius: 20px; margin-bottom: 20px; text-align: left; box-shadow: var(--shadow); transition: transform 0.3s; }
         .feature-icon { font-size: 2.5rem; margin-bottom: 15px; display: inline-block; }
         .feature-title { font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
         .feature-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
         .cta-btn-wrapper { position: sticky; bottom: 30px; margin-top: 40px; z-index: 100; }
         .cta-btn { width: 100%; max-width: 350px; padding: 20px; background: var(--primary); color: #000; font-size: 1.2rem; font-weight: 900; border: none; border-radius: 20px; cursor: pointer; box-shadow: 0 10px 30px -5px var(--primary); transition: all 0.3s; animation: pulse-glow-logo 2s infinite; }
         
-        /* --- GİRİŞ / KAYIT MODALI --- */
         #authModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.4s ease; }
         .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 40px 30px; border-radius: 30px; width: 100%; max-width: 380px; text-align: center; position: relative; }
         .close-auth-btn { position: absolute; top: 15px; right: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
@@ -87,65 +73,56 @@
         @keyframes pulse-glow-logo { 0% { box-shadow: 0 0 0 0 rgba(187, 134, 252, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(187, 134, 252, 0); } 100% { box-shadow: 0 0 0 0 rgba(187, 134, 252, 0); } }
         .auth-title { font-size: 2rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; }
         .auth-subtitle { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
-        .expandable-field { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s ease; transform: translateY(-10px); margin-bottom: 0; }
+        .expandable-field { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.3s ease; transform: translateY(-5px); margin-bottom: 0; }
         .expandable-field.show { max-height: 80px; opacity: 1; margin-bottom: 15px; transform: translateY(0); }
         .auth-input { width: 100%; padding: 16px 20px; border-radius: 16px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.4); color: var(--text-main); font-size: 1rem; margin-bottom: 15px; font-family: 'Inter', sans-serif;}
         .auth-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(187, 134, 252, 0.2); }
         body.light-mode .auth-input { background: rgba(255,255,255,0.7); color: #000; }
-        
         .pass-hint { font-size: 0.75rem; color: var(--text-muted); text-align: left; padding-left: 10px; margin-top: -5px; margin-bottom: 15px; display: none; }
         .pass-hint.show { display: block; }
         .forgot-pass { text-align: right; margin-top: -5px; margin-bottom: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--primary); }
         .forgot-pass.hide { display: none; }
-        
         .auth-btn { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; font-size: 1.1rem; margin-bottom: 20px; transition: all 0.3s;}
         .auth-btn.register-mode { background: var(--success); box-shadow: 0 5px 20px -5px var(--success); }
         .auth-toggle { color: var(--text-muted); font-size: 0.9rem; cursor: pointer; font-weight: 500; }
         .auth-toggle span { color: var(--secondary); font-weight: 800; border-bottom: 1px dashed var(--secondary); }
 
-        /* --- ONBOARDING (GÜN SEÇİM) MODALI --- */
         #onboardingModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); z-index: 15000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.4s; }
         .onb-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 40px 30px; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; }
         .days-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; margin-top: 20px; }
-        .day-select-btn { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border-color); padding: 15px 5px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: all 0.3s; }
+        .day-select-btn { background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border-color); padding: 15px 5px; border-radius: 14px; font-weight: 800; cursor: pointer; transition: all 0.2s; }
         .day-select-btn.selected { background: var(--primary); color: #000; border-color: var(--primary); transform: scale(1.05); box-shadow: 0 5px 15px rgba(187, 134, 252, 0.4); }
         .day-select-btn:disabled:not(.selected) { opacity: 0.3; cursor: not-allowed; }
 
-        /* --- ÜST MENÜ (AŞAĞI İNDİRİLDİ - KESİN ÇÖZÜM) --- */
-        .top-bar { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-top: 55px; /* PRO ANTRENMAN YAZISI ZORLA AŞAĞI İTİLDİ */
-            margin-bottom: 30px; padding: 0 5px; 
-        }
-        .menu-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); font-size: 1.3rem; width: 46px; height: 46px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: all 0.3s ease; flex-shrink: 0; }
-        .menu-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); transform: scale(1.1); }
-        .top-bar header { text-align: center; flex-grow: 1; padding: 0 10px; }
-        .main-title { font-size: 2.1rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* --- SADELEŞTİRİLMİŞ ÜST MENÜ & BAŞLIK YERLEŞİMİ --- */
+        .menu-btn { position: absolute; top: 20px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); font-size: 1.3rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); z-index: 200; }
+        .menu-btn-left { left: 20px; }
+        .menu-btn-right { right: 20px; }
+        header { text-align: center; margin-top: 65px; margin-bottom: 30px; } /* BAŞLIK ZORLA AŞAĞI İNDİRİLDİ */
+        .main-title { font-size: 2.3rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
         .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; }
         
-        /* --- DİĞER UI ELEMANLARI --- */
         .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.3); z-index: 9999; }
         .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 15px var(--success); }
         
         .navigation-wrapper { margin-bottom: 30px; display: flex; flex-direction: column; gap: 15px; }
-        .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; transition: all 0.4s; display: flex; justify-content: center; align-items: center; gap: 10px; }
-        .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); border:none; transform: scale(1.02); }
+        .warmup-hero-btn { width: 100%; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05)); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 20px; border-radius: 20px; cursor: pointer; font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .warmup-hero-btn.active { background: var(--danger); color: #fff; box-shadow: 0 10px 30px -5px rgba(239, 68, 68, 0.5); border:none; }
         .warmup-hero-btn.locked { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; }
 
         .sub-menu { display: flex; justify-content: space-between; gap: 12px; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 20px; border: 1px solid var(--border-color); backdrop-filter: blur(10px); }
-        .tab-btn { background: transparent; color: var(--text-muted); border: none; padding: 12px 10px; border-radius: 14px; cursor: pointer; font-size: 0.95rem; font-weight: 700; transition: all 0.3s; flex: 1; text-align: center; }
-        .tab-btn.active { background: var(--primary); color: #000; box-shadow: 0 5px 20px -5px var(--primary); transform: translateY(-2px); }
-        .tab-btn.locked { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+        .tab-btn { background: transparent; color: var(--text-muted); border: none; padding: 12px 10px; border-radius: 14px; cursor: pointer; font-size: 0.95rem; font-weight: 700; flex: 1; text-align: center; }
+        .tab-btn.active { background: var(--primary); color: #000; box-shadow: 0 5px 20px -5px var(--primary); }
+        .tab-btn.locked { opacity: 0.3; cursor: not-allowed; }
         body.light-mode .sub-menu { background: rgba(0,0,0,0.05); } body.light-mode .tab-btn.active { color: #fff; }
         
-        .tab-content { display: none; animation: fadeIn 0.4s ease-out; } .tab-content.active-content { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-out; } .tab-content.active-content { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        #restDayContent { text-align: center; padding: 40px 20px; background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); border-radius: 24px; border: 1px dashed var(--border-color); box-shadow: var(--shadow); }
+        #restDayContent { text-align: center; padding: 40px 20px; background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); border-radius: 24px; border: 1px dashed var(--border-color); }
         .rest-icon { font-size: 4rem; margin-bottom: 20px; display: inline-block; animation: float 4s infinite; }
 
-        /* --- KARTLAR & TABLO --- */
-        .day-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); border-radius: var(--radius); margin-bottom: 25px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
+        .day-card { background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); border-radius: var(--radius); margin-bottom: 25px; overflow: hidden; border: 1px solid var(--border-color); }
         .day-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
         .day-header h2 { font-size: 1.2rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.5px; }
         .h-purple h2 { color: var(--primary); } .h-red h2 { color: var(--danger); }
@@ -159,15 +136,14 @@
         .video-btn { background: rgba(255,255,255,0.1); color: var(--text-main); } .timer-btn { background: rgba(255, 152, 0, 0.15); color: #fbbf24; }
         .check-container { display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; width: 26px; height: 26px; }
         .check-input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
-        .checkmark { position: absolute; top: 0; left: 0; height: 26px; width: 26px; background: rgba(255,255,255,0.08); border-radius: 8px; border: 2px solid var(--border-color); transition: all 0.3s; }
+        .checkmark { position: absolute; top: 0; left: 0; height: 26px; width: 26px; background: rgba(255,255,255,0.08); border-radius: 8px; border: 2px solid var(--border-color); }
         .check-input:checked ~ .checkmark { background: var(--success); border-color: var(--success); }
         .checkmark:after { content: ""; position: absolute; display: none; left: 8px; top: 4px; width: 6px; height: 12px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
         .check-input:checked ~ .checkmark:after { display: block; }
         tr.completed .workout-name { text-decoration: line-through; opacity: 0.4; }
 
-        /* --- AYARLAR VE MODALLAR --- */
-        .settings-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-        .settings-panel { width: 100%; max-width: 360px; height: 100%; background: var(--bg-body); display: flex; flex-direction: column; transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        .settings-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; backdrop-filter: blur(10px); }
+        .settings-panel { width: 100%; max-width: 360px; height: 100%; background: var(--bg-body); display: flex; flex-direction: column; transition: transform 0.3s; }
         .settings-right { position: absolute; right: 0; border-left: 1px solid var(--border-color); transform: translateX(100%); } .settings-open .settings-right { transform: translateX(0); }
         .settings-left { position: absolute; left: 0; border-right: 1px solid var(--border-color); transform: translateX(-100%); } .profile-open .settings-left { transform: translateX(0); }
         .settings-header { padding: 30px 25px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
@@ -177,24 +153,23 @@
         .toggle-container { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 15px 20px; border-radius: 14px; border: 1px solid var(--border-color); margin-bottom: 10px; }
         .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 34px; border: 1px solid var(--border-color); }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: var(--text-muted); transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); border-radius: 34px; border: 1px solid var(--border-color); }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: var(--text-muted); border-radius: 50%; transition: .2s; }
         input:checked + .slider { background-color: var(--primary); border-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(22px); background-color: #000; }
 
         .theme-toggle-group { display: flex; background: rgba(255,255,255,0.08); border-radius: 14px; padding: 5px; border: 1px solid var(--border-color); }
-        .theme-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); border-radius: 10px; font-weight: 700; transition: all 0.3s; }
+        .theme-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); border-radius: 10px; font-weight: 700; }
         .theme-btn.active { background: var(--primary); color: #000; }
         .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-        .color-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: transform 0.3s; }
-        .color-btn.active { transform: scale(1.15); border-color: #fff; box-shadow: 0 0 15px currentColor; }
+        .color-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .color-btn.active { transform: scale(1.15); border-color: #fff; box-shadow: 0 0 10px currentColor; }
         
         .weight-input-group { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed var(--border-color); }
         .weight-input { width: 70px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 10px; text-align: center; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
         .weight-input:focus { border-color: var(--primary); outline: none; }
         
-        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; transition: transform 0.3s; }
-        .btn-save:hover { transform: translateY(-2px); }
+        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; }
         .reset-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; border-radius: 14px; cursor: pointer; }
         .logout-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; border-radius: 14px; margin-top: auto; margin-bottom: 20px;}
 
@@ -203,26 +178,27 @@
         .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); z-index:4100;}
         .integrated-timer-bar { width: 100%; height: 80px; background: #09090b; display: none; align-items: center; justify-content: space-between; padding: 0 20px; padding-right: 80px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 4005; }
         .video-wrapper { flex-grow: 1; position: relative; background: #000; width: 100%; } iframe { width: 100%; height: 100%; border: none; }
-        #confetti-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99999; }
     </style>
 </head>
 <body>
 
-<div id="toastNotification" class="toast">✨ Başarılı!</div>
+<script>
+    if(localStorage.getItem('themeMode') === 'light') { document.body.classList.add('light-mode'); }
+</script>
+
+<div id="toastNotification" class="toast"></div>
 
 <div id="splashScreen">
-    <div class="auth-logo splash-logo">PRO</div>
-    <div style="color: #fff; font-weight: 800; letter-spacing: 2px; font-size: 0.9rem; margin-top: 10px;">BETA v1.6</div>
+    <div class="auth-logo splash-logo" style="width: 70px; height: 70px; background: var(--primary); color: #000; border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: 900; transform: rotate(-5deg);">PRO</div>
 </div>
 
 <div id="landingPage" class="container" style="padding-top: 50px;">
-    <div class="auth-logo" style="margin: 0 auto 20px;">PRO</div>
+    <div class="auth-logo" style="width: 70px; height: 70px; background: var(--primary); color: #000; margin: 0 auto 20px; border-radius: 20px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; font-weight: 900; transform: rotate(-5deg);">PRO</div>
     <h1 class="hero-title">Evde<br>Profesyonel<br>Antrenman</h1>
-    <p class="hero-subtitle">Kendi vücut ağırlığın ve dambıllarla en iyi forma ulaş. Özel 3 günlük program ve akıllı takip sistemi ile sınırlarını zorla.</p>
+    <p class="hero-subtitle">Özel 3 günlük program ve akıllı takip sistemi ile sınırlarını zorla.</p>
     
-    <div class="feature-card"><span class="feature-icon">📅</span><h3 class="feature-title">Akıllı Takvim</h3><p class="feature-desc">Spor günlerini seç, gerisini sisteme bırak. Hangi gün ne çalışacağını uygulama senin yerine takip etsin.</p></div>
-    <div class="feature-card"><span class="feature-icon">🔔</span><h3 class="feature-title">Hatırlatıcı</h3><p class="feature-desc">Sen saatini belirle, biz sana bildirim gönderelim. Antrenmanı bir daha asla erteleme.</p></div>
-    <div class="feature-card"><span class="feature-icon">☁️</span><h3 class="feature-title">Bulut Senkronizasyonu</h3><p class="feature-desc">Telefonunu değiştirsen bile verilerin kaybolmaz. Firebase altyapısı ile her şey güvende.</p></div>
+    <div class="feature-card"><span class="feature-icon">📅</span><h3 class="feature-title">Akıllı Takvim</h3><p class="feature-desc">Spor günlerini seç, gerisini sisteme bırak.</p></div>
+    <div class="feature-card"><span class="feature-icon">🔔</span><h3 class="feature-title">Hatırlatıcı</h3><p class="feature-desc">Sen saatini belirle, biz sana bildirim gönderelim.</p></div>
 
     <div class="cta-btn-wrapper"><button class="cta-btn" onclick="openAuthModal()">HEMEN BAŞLA</button></div>
 </div>
@@ -234,13 +210,10 @@
         <p class="auth-subtitle" id="authSubtitleText">Sisteme Hoş Geldin</p>
 
         <div class="expandable-field" id="usernameField"><input type="text" id="authUsername" class="auth-input" style="margin-bottom:0;" placeholder="Kullanıcı Adı Belirle"></div>
-        
         <input type="email" id="authEmail" class="auth-input" placeholder="E-posta Adresi" required>
         <input type="password" id="authPass" class="auth-input" placeholder="Şifre" required>
-        
         <div class="expandable-field" id="passConfirmField"><input type="password" id="authPassConfirm" class="auth-input" style="margin-bottom:0;" placeholder="Şifre (Tekrar)"></div>
-        <p class="pass-hint" id="passHintText">⚠️ Şifre en az 6 hane olmalı, harf ve rakam içermelidir.</p>
-        
+        <p class="pass-hint" id="passHintText">Şifre en az 6 hane olmalı, harf ve rakam içermelidir.</p>
         <div class="forgot-pass" id="forgotPassBtn" onclick="resetPassword()">Şifremi Unuttum?</div>
         
         <button id="authSubmitBtn" class="auth-btn" onclick="handleAuth()">GİRİŞ YAP</button>
@@ -252,8 +225,6 @@
     <div class="onb-card">
         <h1 class="auth-title" style="font-size: 1.8rem;">Antrenman Günleri</h1>
         <p class="auth-subtitle" style="margin-bottom: 10px;">Haftada tam 3 gün seçmelisin</p>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Seçtiğin günler sekmelerde isimleriyle otomatik yer alacaktır.</p>
-        
         <div class="days-grid" id="daysGrid">
             <button class="day-select-btn" data-day="1" onclick="toggleDay(this)">PZT</button>
             <button class="day-select-btn" data-day="2" onclick="toggleDay(this)">SAL</button>
@@ -263,22 +234,20 @@
             <button class="day-select-btn" data-day="6" onclick="toggleDay(this)">CMT</button>
             <button class="day-select-btn" data-day="0" onclick="toggleDay(this)" style="grid-column: 2 / 3;">PAZ</button>
         </div>
-        
         <button id="saveDaysBtn" class="auth-btn" style="background: var(--text-muted); color: #fff; cursor: not-allowed;" onclick="saveSelectedDays()" disabled>SEÇİMİ TAMAMLA (0/3)</button>
     </div>
 </div>
 
-<div class="container" id="mainContainer" style="display:none;">
+<div class="container" id="mainContainer">
     <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
     
-    <div class="top-bar">
-        <button class="menu-btn" onclick="toggleProfile()">👤</button>
-        <header>
-            <h1 class="main-title">Pro Antrenman</h1>
-            <div class="header-line"></div>
-        </header>
-        <button class="menu-btn" onclick="toggleSettings()">⚙️</button>
-    </div>
+    <button class="menu-btn menu-btn-left" onclick="toggleProfile()">👤</button>
+    <button class="menu-btn menu-btn-right" onclick="toggleSettings()">⚙️</button>
+    
+    <header>
+        <h1 class="main-title">Pro Antrenman</h1>
+        <div class="header-line"></div>
+    </header>
 
     <div class="navigation-wrapper">
         <button id="btn-warmup" class="warmup-hero-btn"><span>🔥</span> ISINMA</button>
@@ -291,7 +260,7 @@
 
     <div id="profileModal" class="settings-modal" style="justify-content: flex-start;" onclick="toggleProfile()">
         <div class="settings-panel settings-left" onclick="event.stopPropagation()">
-            <div class="settings-header"><h3>Profilim</h3><button class="menu-btn" style="border:none;" onclick="toggleProfile()">✕</button></div>
+            <div class="settings-header"><h3>Profilim</h3><button class="menu-btn" style="position:static;" onclick="toggleProfile()">✕</button></div>
             <div class="settings-content" style="align-items: center; text-align: center; padding-top: 40px;">
                 <div style="font-size: 5rem; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary);">👤</div>
                 <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Kullanıcı Adı</div>
@@ -305,8 +274,7 @@
 
     <div id="settingsModal" class="settings-modal" style="justify-content: flex-end;" onclick="toggleSettings()">
         <div class="settings-panel settings-right" onclick="event.stopPropagation()">
-            <div class="settings-header"><h3>Ayarlar</h3><button class="menu-btn" style="border:none;" onclick="toggleSettings()">✕</button></div>
-            
+            <div class="settings-header"><h3>Ayarlar</h3><button class="menu-btn" style="position:static;" onclick="toggleSettings()">✕</button></div>
             <div class="settings-content">
                 <div>
                     <div class="section-label">Özellikler & Bildirim</div>
@@ -320,11 +288,9 @@
                             <input type="time" id="reminderTimeInput" class="auth-input" style="margin-bottom: 0; padding: 10px;" onchange="saveNotificationSetting()">
                             <button onclick="requestNotificationPermission()" class="video-btn" style="width: auto; padding: 0 15px;">İzin Ver</button>
                         </div>
-                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 8px;">* Saat geldiğinde telefonuna bildirim düşer.</p>
                     </div>
                     <button onclick="reopenOnboarding()" class="video-btn" style="margin-top: 10px;">📅 Antrenman Günlerini Değiştir</button>
                 </div>
-
                 <div>
                     <div class="section-label">Görünüm Modu</div>
                     <div class="theme-toggle-group">
@@ -332,7 +298,6 @@
                         <button onclick="setTheme('light')" class="theme-btn" id="btn-light">☀️ Açık</button>
                     </div>
                 </div>
-
                 <div>
                     <div class="section-label">Vurgu Rengi</div>
                     <div class="color-grid">
@@ -343,11 +308,9 @@
                         <button onclick="setAccent('#ec4899', this)" class="color-btn" style="background:#ec4899"></button>
                     </div>
                 </div>
-
                 <div><div class="section-label">Ağırlıklar (Kg)</div><div id="weightSettingsContainer"></div></div>
                 <button onclick="resetProgress()" class="reset-btn" style="margin-bottom: 20px;">İLERLEMEYİ SIFIRLA</button>
             </div>
-            
             <div style="padding:25px; border-top:1px solid var(--border-color); background: var(--bg-card);"><button class="btn-save" onclick="saveAllSettings()">KAYDET & KAPAT</button></div>
         </div>
     </div>
@@ -413,15 +376,11 @@
             </table>
         </div>
     </div>
-
-    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN (Beta v1.6)</p></footer>
 </div>
 
 <div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">✕</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-btn" style="width:auto; padding:8px 15px;">BAŞLAT</button><button onclick="resetTimer()" class="timer-btn" style="width:auto; padding:8px 15px;">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
-    // --- ŞIK BİLDİRİM (TOAST) FONKSİYONU ---
     function showToast(msg, isError = false) {
         const toast = document.getElementById('toastNotification');
         toast.innerHTML = isError ? `⚠️ ${msg}` : `✨ ${msg}`;
@@ -429,7 +388,6 @@
         setTimeout(() => { toast.classList.remove('show'); }, 3000);
     }
 
-    // --- 1. FIREBASE BAĞLANTISI ---
     const firebaseConfig = {
       apiKey: "AIzaSyD-Z52hOb0dZHJTk713Vfo9sK9YGNYVpys",
       authDomain: "pro-ant.firebaseapp.com",
@@ -442,46 +400,33 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
     
-    let currentUser = null;
-    let isRegisterMode = false;
-    let showWarmupStatus = true;
-    let userWorkoutDays = []; 
-    let notificationTime = ""; 
+    let currentUser = null, isRegisterMode = false, showWarmupStatus = true, userWorkoutDays = [], notificationTime = ""; 
 
-    // --- 2. KİMLİK DOĞRULAMA & YUMUŞAK GEÇİŞ (SİYAH EKRANI ÇÖZEN KISIM) ---
     auth.onAuthStateChanged((user) => {
         const splash = document.getElementById('splashScreen'), landing = document.getElementById('landingPage'), mainCon = document.getElementById('mainContainer'), authMod = document.getElementById('authModal');
         if (user) {
             currentUser = user; btnLoading(false);
             document.getElementById('userEmailDisplay').innerText = user.email; document.getElementById('userNameDisplay').innerText = user.displayName || "Sporcu";
             
-            // FADE OUT (Yumuşak Kapanış)
             authMod.style.opacity = '0'; landing.style.opacity = '0';
-            
             setTimeout(() => { 
                 authMod.style.display = 'none'; landing.style.display = 'none'; 
                 mainCon.style.display = 'block'; 
-                
-                // Animasyon Frame'ini bekle ki render siyahlık yapmasın
-                requestAnimationFrame(() => { mainCon.style.opacity = '1'; });
-                
+                requestAnimationFrame(() => mainCon.style.opacity = '1');
                 syncFromCloud(); 
             }, 400);
 
         } else {
             currentUser = null; 
-            mainCon.style.opacity = '0'; 
-            setTimeout(() => { mainCon.style.display = 'none'; }, 400);
-            
+            mainCon.style.opacity = '0'; setTimeout(() => mainCon.style.display = 'none', 400);
             document.getElementById('authUsername').value = ''; document.getElementById('authEmail').value = ''; 
             document.getElementById('authPass').value = ''; document.getElementById('authPassConfirm').value = '';
             btnLoading(false); if(isRegisterMode) toggleAuthMode();
             
-            landing.style.display = 'block'; 
-            requestAnimationFrame(() => { landing.style.opacity = '1'; });
+            landing.style.display = 'block'; requestAnimationFrame(() => landing.style.opacity = '1');
             clearInterval(notificationInterval); 
         }
-        if(splash) { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 600); }
+        if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 500); }
     });
 
     function openAuthModal() { const m = document.getElementById('authModal'); m.style.display = 'flex'; setTimeout(() => m.style.opacity = '1', 50); }
@@ -505,32 +450,26 @@
         const u = document.getElementById('authUsername').value.trim(), e = document.getElementById('authEmail').value.trim(), p = document.getElementById('authPass').value, pC = document.getElementById('authPassConfirm').value;
         if(isRegisterMode && !u) { showToast("Kullanıcı adı belirleyin.", true); return; }
         if(!e || !p) { showToast("Boş alan bırakmayın.", true); return; }
-        
         if(isRegisterMode) {
             if(p !== pC) { showToast("Şifreler uyuşmuyor!", true); return; }
             if(!isStrongPassword(p)) { showToast("Şifre zayıf! En az 6 hane, harf ve rakam içermeli.", true); return; }
         }
-        
         btnLoading(true);
         if(isRegisterMode) {
             auth.createUserWithEmailAndPassword(e, p).then((c) => c.user.updateProfile({ displayName: u })).then(() => { document.getElementById('userNameDisplay').innerText = u; showToast("Hesap oluşturuldu!"); }).catch(err => { showToast(hataCevir(err.code), true); btnLoading(false); });
-        } else {
-            auth.signInWithEmailAndPassword(e, p).then(()=> showToast("Başarıyla giriş yapıldı!")).catch(err => { showToast(hataCevir(err.code), true); btnLoading(false); });
-        }
+        } else { auth.signInWithEmailAndPassword(e, p).then(()=> showToast("Başarıyla giriş yapıldı!")).catch(err => { showToast(hataCevir(err.code), true); btnLoading(false); }); }
     }
 
     function resetPassword() {
         const e = document.getElementById('authEmail').value.trim();
         if(!e) { showToast("Sıfırlamak için önce e-posta adresinizi yazın.", true); return; }
-        btnLoading(true);
-        auth.sendPasswordResetEmail(e).then(() => { showToast("Sıfırlama bağlantısı e-postanıza gönderildi!"); btnLoading(false); }).catch((err) => { showToast(hataCevir(err.code), true); btnLoading(false); });
+        btnLoading(true); auth.sendPasswordResetEmail(e).then(() => { showToast("Sıfırlama bağlantısı e-postanıza gönderildi!"); btnLoading(false); }).catch((err) => { showToast(hataCevir(err.code), true); btnLoading(false); });
     }
 
     function logoutUser() { auth.signOut(); document.getElementById('profileModal').classList.remove('profile-open'); setTimeout(() => document.getElementById('profileModal').style.display = 'none', 400); showToast("Çıkış yapıldı."); }
     function btnLoading(l) { const b = document.getElementById('authSubmitBtn'); b.innerText = l ? "BEKLEYİN..." : document.getElementById('authTitleText').innerText; b.disabled = l; }
-    function hataCevir(c) { if(c === 'auth/invalid-credential' || c === 'auth/wrong-password') return "Hatalı bilgi."; if(c === 'auth/email-already-in-use') return "Bu e-posta zaten kullanımda."; return "Bir hata oluştu."; }
+    function hataCevir(c) { if(c === 'auth/invalid-credential' || c === 'auth/wrong-password') return "Hatalı bilgi."; if(c === 'auth/email-already-in-use') return "Bu e-posta kullanımda."; return "Bir hata oluştu."; }
 
-    // --- 3. BULUT SENKRONİZASYONU ---
     async function syncFromCloud() {
         try {
             const docRef = await db.collection("users").doc(currentUser.uid).get();
@@ -541,213 +480,95 @@
                 if(data.workoutDays) userWorkoutDays = data.workoutDays;
                 if(data.reminderTime) { notificationTime = data.reminderTime; document.getElementById('reminderTimeInput').value = notificationTime; }
                 const today = new Date().toDateString();
-                if(data.progress && data.lastDate === today) {
-                    localStorage.setItem('userProgress', JSON.stringify(data.progress));
-                    localStorage.setItem('lastSavedDate', data.lastDate);
-                }
+                if(data.progress && data.lastDate === today) { localStorage.setItem('userProgress', JSON.stringify(data.progress)); localStorage.setItem('lastSavedDate', data.lastDate); }
             }
-        } catch(e) { console.log("Buluttan çekilemedi."); }
+        } catch(e) { console.log("Veri çekilemedi."); }
         
         loadSettings(); generateWeightInputs(); checkDateAndLoadProgress(); startNotificationEngine();
-        
-        // Takvimi Ayarla
         if(userWorkoutDays.length !== 3) reopenOnboarding(); else setupTabs();
     }
 
     async function syncToCloud() {
         if(!currentUser) return;
         try {
-            const p = JSON.parse(localStorage.getItem('userProgress')) || {}; const w = JSON.parse(localStorage.getItem('userWeights')) || {}; const d = localStorage.getItem('lastSavedDate') || new Date().toDateString(); const sW = localStorage.getItem('showWarmup') !== 'false';
+            const p = JSON.parse(localStorage.getItem('userProgress')) || {}, w = JSON.parse(localStorage.getItem('userWeights')) || {}, d = localStorage.getItem('lastSavedDate') || new Date().toDateString(), sW = localStorage.getItem('showWarmup') !== 'false';
             await db.collection("users").doc(currentUser.uid).set({ progress: p, weights: w, lastDate: d, showWarmup: sW, workoutDays: userWorkoutDays, reminderTime: notificationTime }, { merge: true });
-        } catch(e) { console.log("Buluta yazılamadı."); }
+        } catch(e) {}
     }
 
-    // --- 4. GÜN SEÇİMİ VE DİNAMİK SEKMELER (KİLİT SİSTEMİ EKLENDİ) ---
-    let tempSelectedDays = [];
-    const dayNamesMap = ["PAZ", "PZT", "SAL", "ÇAR", "PER", "CUM", "CMT"];
-
+    let tempSelectedDays = []; const dayNamesMap = ["PAZ", "PZT", "SAL", "ÇAR", "PER", "CUM", "CMT"];
     function reopenOnboarding() {
         tempSelectedDays = [...userWorkoutDays];
         document.getElementById('settingsModal').classList.remove('settings-open'); setTimeout(() => document.getElementById('settingsModal').style.display='none', 400);
-        document.querySelectorAll('.day-select-btn').forEach(b => {
-            b.classList.remove('selected'); b.disabled = false;
-            if(tempSelectedDays.includes(parseInt(b.dataset.day))) b.classList.add('selected');
-        });
-        updateOnboardingBtn();
-        const modal = document.getElementById('onboardingModal'); modal.style.display = 'flex'; setTimeout(() => modal.style.opacity = '1', 50);
+        document.querySelectorAll('.day-select-btn').forEach(b => { b.classList.remove('selected'); b.disabled = false; if(tempSelectedDays.includes(parseInt(b.dataset.day))) b.classList.add('selected'); });
+        updateOnboardingBtn(); const modal = document.getElementById('onboardingModal'); modal.style.display = 'flex'; setTimeout(() => modal.style.opacity = '1', 50);
     }
-
     function toggleDay(btn) {
         const dayVal = parseInt(btn.dataset.day);
         if(tempSelectedDays.includes(dayVal)) { tempSelectedDays = tempSelectedDays.filter(d => d !== dayVal); btn.classList.remove('selected'); } 
         else { if(tempSelectedDays.length < 3) { tempSelectedDays.push(dayVal); btn.classList.add('selected'); } }
         updateOnboardingBtn();
     }
-
     function updateOnboardingBtn() {
-        const btn = document.getElementById('saveDaysBtn');
-        btn.innerText = `SEÇİMİ TAMAMLA (${tempSelectedDays.length}/3)`;
-        if(tempSelectedDays.length === 3) {
-            btn.disabled = false; btn.style.background = 'var(--primary)'; btn.style.color = '#000'; btn.style.cursor = 'pointer';
-            document.querySelectorAll('.day-select-btn:not(.selected)').forEach(b => b.disabled = true);
-        } else {
-            btn.disabled = true; btn.style.background = 'var(--text-muted)'; btn.style.color = '#fff'; btn.style.cursor = 'not-allowed';
-            document.querySelectorAll('.day-select-btn').forEach(b => b.disabled = false);
-        }
+        const btn = document.getElementById('saveDaysBtn'); btn.innerText = `SEÇİMİ TAMAMLA (${tempSelectedDays.length}/3)`;
+        if(tempSelectedDays.length === 3) { btn.disabled = false; btn.style.background = 'var(--primary)'; btn.style.color = '#000'; btn.style.cursor = 'pointer'; document.querySelectorAll('.day-select-btn:not(.selected)').forEach(b => b.disabled = true); } 
+        else { btn.disabled = true; btn.style.background = 'var(--text-muted)'; btn.style.color = '#fff'; btn.style.cursor = 'not-allowed'; document.querySelectorAll('.day-select-btn').forEach(b => b.disabled = false); }
     }
-
     function saveSelectedDays() {
         userWorkoutDays = tempSelectedDays.sort((a,b) => a-b); syncToCloud();
         const modal = document.getElementById('onboardingModal'); modal.style.opacity = '0';
-        setTimeout(() => { modal.style.display = 'none'; setupTabs(); showToast("Günler başarıyla kaydedildi!"); }, 400);
+        setTimeout(() => { modal.style.display = 'none'; setupTabs(); showToast("Günler kaydedildi!"); }, 400);
     }
 
-    // DINAMIK TAB KILIT SİSTEMİ
     function setupTabs() {
         if(userWorkoutDays.length !== 3) return;
         const todayIdx = new Date().getDay();
-        
-        // Sekmelerin isimlerini güncelle ve Kilitleri ayarla
         for(let i = 0; i < 3; i++) {
-            const btn = document.getElementById(`btn-day${i+1}`);
-            const dayNum = userWorkoutDays[i];
-            btn.innerText = dayNamesMap[dayNum]; 
-            
-            if(dayNum === todayIdx) {
-                // BUGÜNÜN ANTRENMANI (Kilit Açık)
-                btn.classList.remove('locked');
-                btn.onclick = () => openTab(`day${i+1}`);
-            } else {
-                // BAŞKA GÜN (Kilitli)
-                btn.classList.add('locked');
-                btn.onclick = () => showToast(`Sadece bugünün antrenmanına girebilirsin! (${dayNamesMap[dayNum]})`, true);
-            }
+            const btn = document.getElementById(`btn-day${i+1}`); const dayNum = userWorkoutDays[i]; btn.innerText = dayNamesMap[dayNum]; 
+            if(dayNum === todayIdx) { btn.classList.remove('locked'); btn.onclick = () => openTab(`day${i+1}`); } 
+            else { btn.classList.add('locked'); btn.onclick = () => showToast(`Sadece bugünün antrenmanına girebilirsin! (${dayNamesMap[dayNum]})`, true); }
         }
-        
-        // Dinlenme günündeysek her şey kilitlenir
         const wBtn = document.getElementById('btn-warmup');
         if(!userWorkoutDays.includes(todayIdx)) {
-            openTab('restDay');
-            if(wBtn) { wBtn.classList.add('locked'); wBtn.onclick = () => showToast("Bugün dinlenme günün, ısınma yok!", true); }
+            openTab('restDay'); if(wBtn) { wBtn.classList.add('locked'); wBtn.onclick = () => showToast("Bugün dinlenme günün!", true); }
         } else {
-            // Antrenman günündeysek
             if(wBtn) { wBtn.classList.remove('locked'); wBtn.onclick = () => openTab('warmup'); }
-            applyWarmupSetting(); 
-            const activeIndex = userWorkoutDays.indexOf(todayIdx);
-            openTab(`day${activeIndex+1}`);
+            applyWarmupSetting(); const activeIndex = userWorkoutDays.indexOf(todayIdx); openTab(`day${activeIndex+1}`);
         }
     }
 
-    // --- 5. BİLDİRİM SİSTEMİ ---
     let notificationInterval;
-    function requestNotificationPermission() {
-        if (!("Notification" in window)) { showToast("Tarayıcınız bildirimleri desteklemiyor.", true); return; }
-        Notification.requestPermission().then(permission => {
-            if(permission === "granted") showToast("Harika! Artık hatırlatma gönderebiliriz.");
-            else showToast("Bildirim izni reddedildi.", true);
-        });
-    }
-
-    function saveNotificationSetting() {
-        notificationTime = document.getElementById('reminderTimeInput').value; syncToCloud(); showToast("Hatırlatıcı " + notificationTime + " olarak ayarlandı.");
-    }
-
+    function requestNotificationPermission() { if (!("Notification" in window)) { showToast("Tarayıcınız bildirimleri desteklemiyor.", true); return; } Notification.requestPermission().then(permission => { if(permission === "granted") showToast("Harika! Artık hatırlatma gönderebiliriz."); else showToast("Bildirim izni reddedildi.", true); }); }
+    function saveNotificationSetting() { notificationTime = document.getElementById('reminderTimeInput').value; syncToCloud(); showToast("Hatırlatıcı " + notificationTime + " olarak ayarlandı."); }
     function startNotificationEngine() {
         if(notificationInterval) clearInterval(notificationInterval);
         notificationInterval = setInterval(() => {
             if(!notificationTime || Notification.permission !== "granted") return;
             const now = new Date(); const currentH = now.getHours().toString().padStart(2,'0'); const currentM = now.getMinutes().toString().padStart(2,'0'); const currentTime = `${currentH}:${currentM}`;
-            const todayStr = now.getDay();
-            if(!userWorkoutDays.includes(todayStr)) return; 
-
-            if(currentTime === notificationTime && !window.notificationSentToday) {
-                new Notification("Antrenman Vakti!", { body: "Pro Antrenman saatin geldi! Hadi sınırlarını zorla.", icon: "/icon.png" });
-                window.notificationSentToday = true; 
-            }
+            if(!userWorkoutDays.includes(now.getDay())) return; 
+            if(currentTime === notificationTime && !window.notificationSentToday) { new Notification("Antrenman Vakti!", { body: "Hadi sınırlarını zorla.", icon: "/icon.png" }); window.notificationSentToday = true; }
             if(currentTime === "00:00") window.notificationSentToday = false;
         }, 60000); 
     }
 
-    // --- 6. TEMEL AYARLAR VE UI ---
     function handleWarmupToggle() { showWarmupStatus = document.getElementById('toggleWarmupSwitch').checked; localStorage.setItem('showWarmup', showWarmupStatus); applyWarmupSetting(); syncToCloud(); }
-    function applyWarmupSetting() {
-        const wBtn = document.getElementById('btn-warmup');
-        showWarmupStatus = localStorage.getItem('showWarmup') !== 'false'; 
-        document.getElementById('toggleWarmupSwitch').checked = showWarmupStatus;
-        if(wBtn && !wBtn.classList.contains('locked')) { wBtn.style.display = showWarmupStatus ? 'flex' : 'none'; }
-        updateProgressBar();
-    }
+    function applyWarmupSetting() { const wBtn = document.getElementById('btn-warmup'); showWarmupStatus = localStorage.getItem('showWarmup') !== 'false'; document.getElementById('toggleWarmupSwitch').checked = showWarmupStatus; if(wBtn && !wBtn.classList.contains('locked')) { wBtn.style.display = showWarmupStatus ? 'flex' : 'none'; } updateProgressBar(); }
 
     if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Hata:', err)); }
-
-    function checkDateAndLoadProgress() {
-        const today = new Date().toDateString(); const last = localStorage.getItem('lastSavedDate');
-        if (last !== today) { localStorage.removeItem('userProgress'); localStorage.setItem('lastSavedDate', today); updateProgressBar(); syncToCloud(); } else { loadProgress(); }
-    }
-
-    function openTab(id) {
-        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active-content"));
-        document.getElementById("btn-warmup").classList.remove("active");
-        document.querySelectorAll(".sub-menu .tab-btn").forEach(b => b.classList.remove("active"));
-        
-        if(id !== 'restDay') {
-            document.getElementById(id).classList.add("active-content");
-            if(id === 'warmup') document.getElementById("btn-warmup").classList.add("active");
-            else { const btn = document.getElementById("btn-" + id); if(btn) btn.classList.add("active"); }
-        } else { document.getElementById('restDay').classList.add("active-content"); }
-        setTimeout(updateProgressBar, 50);
-    }
-
-    function toggleCheck(id) {
-        const row = document.getElementById(id); const checked = row.querySelector('.check-input').checked;
-        checked ? row.classList.add('completed') : row.classList.remove('completed');
-        let p = JSON.parse(localStorage.getItem('userProgress')) || {}; p[id] = checked;
-        localStorage.setItem('userProgress', JSON.stringify(p)); localStorage.setItem('lastSavedDate', new Date().toDateString());
-        updateProgressBar(); syncToCloud(); 
-    }
-
-    function loadProgress() {
-        let p = JSON.parse(localStorage.getItem('userProgress')) || {};
-        for (const [id, val] of Object.entries(p)) { if(val) { const r = document.getElementById(id); if(r) { r.querySelector('.check-input').checked = true; r.classList.add('completed'); } } }
-        updateProgressBar();
-    }
-
-    function updateProgressBar() {
-        const tab = document.querySelector('.tab-content.active-content'); if(!tab || tab.id === 'restDay') return;
-        const total = tab.querySelectorAll('.check-input').length; const checked = tab.querySelectorAll('.check-input:checked').length;
-        const bar = document.getElementById('progressBar');
-        if(total === 0) bar.style.width = '0%';
-        else { const pct = (checked / total) * 100; bar.style.width = pct + '%'; if(pct === 100) confetti({particleCount: 120, spread: 80, origin: { y: 0.6 }}); }
-    }
-
+    function checkDateAndLoadProgress() { const today = new Date().toDateString(); const last = localStorage.getItem('lastSavedDate'); if (last !== today) { localStorage.removeItem('userProgress'); localStorage.setItem('lastSavedDate', today); updateProgressBar(); syncToCloud(); } else { loadProgress(); } }
+    function openTab(id) { document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active-content")); document.getElementById("btn-warmup").classList.remove("active"); document.querySelectorAll(".sub-menu .tab-btn").forEach(b => b.classList.remove("active")); if(id !== 'restDay') { document.getElementById(id).classList.add("active-content"); if(id === 'warmup') document.getElementById("btn-warmup").classList.add("active"); else { const btn = document.getElementById("btn-" + id); if(btn) btn.classList.add("active"); } } else { document.getElementById('restDay').classList.add("active-content"); } setTimeout(updateProgressBar, 50); }
+    function toggleCheck(id) { const row = document.getElementById(id); const checked = row.querySelector('.check-input').checked; checked ? row.classList.add('completed') : row.classList.remove('completed'); let p = JSON.parse(localStorage.getItem('userProgress')) || {}; p[id] = checked; localStorage.setItem('userProgress', JSON.stringify(p)); localStorage.setItem('lastSavedDate', new Date().toDateString()); updateProgressBar(); syncToCloud(); }
+    function loadProgress() { let p = JSON.parse(localStorage.getItem('userProgress')) || {}; for (const [id, val] of Object.entries(p)) { if(val) { const r = document.getElementById(id); if(r) { r.querySelector('.check-input').checked = true; r.classList.add('completed'); } } } updateProgressBar(); }
+    function updateProgressBar() { const tab = document.querySelector('.tab-content.active-content'); if(!tab || tab.id === 'restDay') return; const total = tab.querySelectorAll('.check-input').length; const checked = tab.querySelectorAll('.check-input:checked').length; const bar = document.getElementById('progressBar'); if(total === 0) bar.style.width = '0%'; else { const pct = (checked / total) * 100; bar.style.width = pct + '%'; if(pct === 100) confetti({particleCount: 120, spread: 80, origin: { y: 0.6 }}); } }
     function resetProgress() { if(confirm("Bugünü sıfırla?")) { localStorage.setItem('userProgress', '{}'); syncToCloud().then(() => location.reload()); } }
     function toggleSettings() { const m = document.getElementById('settingsModal'); if(m.classList.contains('settings-open')) { m.classList.remove('settings-open'); setTimeout(()=>m.style.display='none',400); } else { m.style.display='flex'; setTimeout(()=>m.classList.add('settings-open'),10); } }
     function toggleProfile() { const p = document.getElementById('profileModal'); if(p.classList.contains('profile-open')) { p.classList.remove('profile-open'); setTimeout(()=>p.style.display='none',400); } else { p.style.display='flex'; setTimeout(()=>p.classList.add('profile-open'),10); } }
     function generateWeightInputs() { const c = document.getElementById('weightSettingsContainer'); c.innerHTML = ''; document.querySelectorAll('.weight-badge[id]').forEach(el => { if(el.dataset.unit === 'kg') { let val = el.innerText.replace(/\D/g,''); c.innerHTML += `<div class="weight-input-group"><span>${el.dataset.label}</span><input type="number" id="in_${el.id}" class="weight-input" value="${val}"></div>`; } }); }
     function saveAllSettings() { const w = {}; document.querySelectorAll('.weight-input').forEach(i => { let id = i.id.replace('in_', ''); let val = i.value || "5"; document.getElementById(id).innerText = val + "kg"; w[id] = val + "kg"; }); localStorage.setItem('userWeights', JSON.stringify(w)); syncToCloud(); toggleSettings(); showToast("Ayarlar kaydedildi."); }
-    
-    function setTheme(m) { 
-        document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active')); 
-        if(m === 'light') { document.body.classList.add('light-mode'); localStorage.setItem('themeMode','light'); document.getElementById('btn-light').classList.add('active'); } 
-        else { document.body.classList.remove('light-mode'); localStorage.setItem('themeMode','dark'); document.getElementById('btn-dark').classList.add('active'); } 
-    }
-    
-    function setAccent(c, btnElement) { 
-        document.documentElement.style.setProperty('--primary', c); localStorage.setItem('accentColor', c); 
-        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active')); 
-        if(btnElement) btnElement.classList.add('active'); 
-        else document.querySelectorAll('.color-btn').forEach(b => { if(b.style.background.includes(c) || b.style.backgroundColor === c) b.classList.add('active'); }); 
-    }
-    
-    function loadSettings() { 
-        if(localStorage.getItem('themeMode')==='light') setTheme('light'); else setTheme('dark'); 
-        let savedColor = localStorage.getItem('accentColor'); 
-        if(savedColor) setAccent(savedColor, null); else setAccent('#bb86fc', document.querySelector('.color-btn')); 
-        const w = JSON.parse(localStorage.getItem('userWeights')); 
-        if(w) for(const [k,v] of Object.entries(w)) { const e = document.getElementById(k); if(e) e.innerText = v; } 
-    }
+    function setTheme(m) { document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active')); if(m === 'light') { document.body.classList.add('light-mode'); localStorage.setItem('themeMode','light'); document.getElementById('btn-light').classList.add('active'); } else { document.body.classList.remove('light-mode'); localStorage.setItem('themeMode','dark'); document.getElementById('btn-dark').classList.add('active'); } }
+    function setAccent(c, btnElement) { document.documentElement.style.setProperty('--primary', c); localStorage.setItem('accentColor', c); document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active')); if(btnElement) btnElement.classList.add('active'); else document.querySelectorAll('.color-btn').forEach(b => { if(b.style.background.includes(c) || b.style.backgroundColor === c) b.classList.add('active'); }); }
+    function loadSettings() { if(localStorage.getItem('themeMode')==='light') setTheme('light'); else setTheme('dark'); let savedColor = localStorage.getItem('accentColor'); if(savedColor) setAccent(savedColor, null); else setAccent('#bb86fc', document.querySelector('.color-btn')); const w = JSON.parse(localStorage.getItem('userWeights')); if(w) for(const [k,v] of Object.entries(w)) { const e = document.getElementById(k); if(e) e.innerText = v; } }
 
-    // --- 7. VİDEO VE SAYAÇ ---
     let tInt, sec = 0;
     function openVideo(id) { document.getElementById('videoModal').style.display = 'flex'; document.getElementById('integratedTimerBar').style.display = 'none'; document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; }
     function openTimer(s, id) { document.getElementById('videoModal').style.display = 'flex'; document.getElementById('integratedTimerBar').style.display = 'flex'; sec = s; document.getElementById('integratedTimerDisplay').innerText = fmt(sec); document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; clearInterval(tInt); }
@@ -756,5 +577,6 @@
     function closeVideo() { document.getElementById('videoModal').style.display='none'; document.getElementById('playerContainer').innerHTML=''; clearInterval(tInt); tInt=null; }
     function fmt(s) { return new Date(s*1000).toISOString().substr(14, 5); }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </body>
 </html>
