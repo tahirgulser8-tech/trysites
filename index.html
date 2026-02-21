@@ -16,7 +16,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>Pro Antrenman (Beta v1.4)</title>
+    <title>Pro Antrenman (Beta v1.5)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -29,16 +29,17 @@
         body.light-mode { --bg-body: #f3f4f6; --bg-card: rgba(255, 255, 255, 0.85); --text-main: #1f2937; --text-muted: #6b7280; --border-color: rgba(0, 0, 0, 0.06); }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        /* --- KUSURSUZ HAREKETLİ ARKA PLAN (Siyah Flaş Önlendi) --- */
+        /* --- SİYAH FLAŞI ÖNLEYEN KUSURSUZ ARKA PLAN --- */
         @keyframes auroraBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        
+        /* Body'ye direkt renk veriyoruz, siyah bekleme ekranını yok ediyoruz */
         html, body { 
             color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; 
-            background: linear-gradient(-45deg, #09090b, #1d0f33, #0a1128, #09090b);
+            background: linear-gradient(-45deg, #2b1055, #09090b, #1a0b2e, #09090b);
             background-size: 400% 400%;
-            animation: auroraBG 12s ease infinite;
-            background-color: #09090b; /* Fallback */
+            animation: auroraBG 15s ease infinite;
         }
-        body.light-mode { background: linear-gradient(-45deg, #f3f4f6, #e2e8f0, #d8b4fe, #f3f4f6); background-color: #f3f4f6; }
+        body.light-mode { background: linear-gradient(-45deg, #f3f4f6, #e2e8f0, #d8b4fe, #f3f4f6); }
         
         .container { width: 100%; max-width: 850px; padding: 20px; padding-bottom: 60px; position: relative; z-index: 10; }
         
@@ -48,9 +49,9 @@
         .toast-success { border-left: 4px solid var(--success); }
         .toast-error { border-left: 4px solid var(--danger); }
 
-        /* --- SPLASH EKRANI --- */
-        #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease, visibility 0.5s; }
-        body.light-mode #splashScreen { background: rgba(243, 244, 246, 0.7); }
+        /* --- SPLASH EKRANI (Buzlu Cam - Arkadaki renkleri anında gösterir) --- */
+        #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease, visibility 0.5s; }
+        body.light-mode #splashScreen { background: rgba(255, 255, 255, 0.5); }
         
         /* --- LANDING PAGE --- */
         #landingPage { width: 100%; max-width: 850px; padding: 40px 20px; text-align: center; display: none; animation: fadeIn 0.8s ease-out; }
@@ -98,15 +99,15 @@
         .day-select-btn.selected { background: var(--primary); color: #000; border-color: var(--primary); transform: scale(1.05); box-shadow: 0 5px 15px rgba(187, 134, 252, 0.4); }
         .day-select-btn:disabled:not(.selected) { opacity: 0.3; cursor: not-allowed; }
 
-        /* --- ÜST MENÜ (Aşağı Alındı) --- */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 20px 5px 0; }
+        /* --- ÜST MENÜ (Yazı Aşağı Alındı - Padding Değişti) --- */
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 45px 5px 0; /* 45px ile aşağı itildi */ }
         .menu-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); font-size: 1.3rem; width: 46px; height: 46px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: all 0.3s ease; flex-shrink: 0; }
         .menu-btn:hover { background: var(--primary); color: #000; border-color: var(--primary); transform: scale(1.1); }
         .top-bar header { text-align: center; flex-grow: 1; padding: 0 10px; }
         .main-title { font-size: 2.1rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 5px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; }
         
-        /* --- DİĞER UI ELEMANLARI VE DİNAMİK SEKME KİLİTLERİ --- */
+        /* --- DİĞER UI ELEMANLARI --- */
         .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.3); z-index: 9999; }
         .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 15px var(--success); }
         
@@ -195,11 +196,11 @@
 
 <div id="splashScreen">
     <div class="auth-logo splash-logo">PRO</div>
-    <div style="color: var(--primary); font-weight: 800; letter-spacing: 2px; font-size: 0.9rem; margin-top: 10px;">BETA v1.4</div>
+    <div style="color: #fff; font-weight: 800; letter-spacing: 2px; font-size: 0.9rem; margin-top: 10px;">BETA v1.5</div>
 </div>
 
-<div id="landingPage">
-    <div class="auth-logo" style="margin-top: 20px;">PRO</div>
+<div id="landingPage" class="container" style="padding-top: 50px;">
+    <div class="auth-logo" style="margin: 0 auto 20px;">PRO</div>
     <h1 class="hero-title">Evde<br>Profesyonel<br>Antrenman</h1>
     <p class="hero-subtitle">Kendi vücut ağırlığın ve dambıllarla en iyi forma ulaş. Özel 3 günlük program ve akıllı takip sistemi ile sınırlarını zorla.</p>
     
@@ -397,7 +398,7 @@
         </div>
     </div>
 
-    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN (Beta v1.4)</p></footer>
+    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN (Beta v1.5)</p></footer>
 </div>
 
 <div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">✕</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-btn" style="width:auto; padding:8px 15px;">BAŞLAT</button><button onclick="resetTimer()" class="timer-btn" style="width:auto; padding:8px 15px;">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
@@ -528,7 +529,7 @@
         } catch(e) { console.log("Buluta yazılamadı."); }
     }
 
-    // --- 4. GÜN SEÇİMİ VE DİNAMİK SEKMELER (YENİ) ---
+    // --- 4. GÜN SEÇİMİ VE DİNAMİK SEKMELER (KİLİT SİSTEMİ EKLENDİ) ---
     let tempSelectedDays = [];
     const dayNamesMap = ["PAZ", "PZT", "SAL", "ÇAR", "PER", "CUM", "CMT"];
 
@@ -577,14 +578,14 @@
         for(let i = 0; i < 3; i++) {
             const btn = document.getElementById(`btn-day${i+1}`);
             const dayNum = userWorkoutDays[i];
-            btn.innerText = dayNamesMap[dayNum]; // Örn: PZT yazar
+            btn.innerText = dayNamesMap[dayNum]; 
             
             if(dayNum === todayIdx) {
                 // BUGÜNÜN ANTRENMANI (Kilit Açık)
                 btn.classList.remove('locked');
                 btn.onclick = () => openTab(`day${i+1}`);
             } else {
-                // BAŞKA GÜNÜN ANTRENMANI (Kilitli)
+                // BAŞKA GÜN (Kilitli)
                 btn.classList.add('locked');
                 btn.onclick = () => showToast(`Sadece bugünün antrenmanına girebilirsin! (${dayNamesMap[dayNum]})`, true);
             }
@@ -596,9 +597,9 @@
             openTab('restDay');
             if(wBtn) { wBtn.classList.add('locked'); wBtn.onclick = () => showToast("Bugün dinlenme günün, ısınma yok!", true); }
         } else {
-            // Antrenman günündeysek, mevcut günün sekmesini aç
+            // Antrenman günündeysek
             if(wBtn) { wBtn.classList.remove('locked'); wBtn.onclick = () => openTab('warmup'); }
-            applyWarmupSetting(); // Ayarlardan ısınma kapalıysa gizler
+            applyWarmupSetting(); 
             const activeIndex = userWorkoutDays.indexOf(todayIdx);
             openTab(`day${activeIndex+1}`);
         }
