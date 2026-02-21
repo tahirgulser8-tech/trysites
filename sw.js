@@ -1,4 +1,4 @@
-const CACHE_NAME = "pro-antrenman-dynamic";
+const CACHE_NAME = "beta v1.5";
 const ASSETS = [
   "/",
   "/index.html",
