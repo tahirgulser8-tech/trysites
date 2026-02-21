@@ -16,7 +16,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>Pro Antrenman (Beta v1.1)</title>
+    <title>Pro Antrenman (Beta v1.2)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -28,10 +28,26 @@
         :root { --bg-body: #09090b; --bg-card: rgba(30, 30, 35, 0.6); --text-main: #e0e0e0; --text-muted: #9CA3AF; --border-color: rgba(255, 255, 255, 0.08); --primary: #bb86fc; --secondary: #03dac6; --danger: #ef4444; --success: #10b981; --glass-blur: 16px; --shadow: 0 10px 40px -10px rgba(0,0,0,0.5); --radius: 24px; }
         body.light-mode { --bg-body: #f3f4f6; --bg-card: rgba(255, 255, 255, 0.8); --text-main: #1f2937; --text-muted: #6b7280; --border-color: rgba(0, 0, 0, 0.06); }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-body); background-image: radial-gradient(circle at 10% 10%, var(--primary), transparent 40%), radial-gradient(circle at 90% 90%, var(--secondary), transparent 40%); background-size: 100% 100%; background-attachment: fixed; color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; transition: background 0.5s ease, color 0.3s ease; overflow-x: hidden;}
-        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); opacity: 0.94; z-index: -1; }
+        
+        /* --- HAREKETLİ GÖKKUŞAĞI ARKA PLAN (YENİ) --- */
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        body { 
+            background: linear-gradient(-45deg, var(--bg-body), #1a1a2e, #2d1b4e, var(--bg-body)); 
+            background-size: 400% 400%; 
+            animation: gradientBG 15s ease infinite; 
+            color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden;
+        }
+        body.light-mode { background: linear-gradient(-45deg, #f3f4f6, #e2e8f0, #d8b4fe, #f3f4f6); }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); opacity: 0.85; z-index: -1; }
+        
         .container { width: 100%; max-width: 850px; padding: 20px; padding-bottom: 60px; position: relative; padding-top: 30px; }
         
+        /* --- ŞIK BİLDİRİM (TOAST) SİSTEMİ (YENİ) --- */
+        .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--bg-card); color: var(--text-main); padding: 15px 25px; border-radius: 16px; font-weight: 700; font-size: 0.95rem; z-index: 999999; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); backdrop-filter: blur(10px); border: 1px solid var(--border-color); opacity: 0; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .toast.show { bottom: 40px; opacity: 1; }
+        .toast-success { border-left: 4px solid var(--success); }
+        .toast-error { border-left: 4px solid var(--danger); }
+
         /* --- SPLASH EKRANI --- */
         #splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease, visibility 0.5s; }
         
@@ -63,12 +79,10 @@
         body.light-mode .auth-input { background: rgba(255,255,255,0.5); color: #000; }
         .forgot-pass { text-align: right; margin-top: -5px; margin-bottom: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--primary); }
         .forgot-pass.hide { display: none; }
-        .auth-btn { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; font-size: 1.1rem; margin-bottom: 20px; }
+        .auth-btn { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; font-size: 1.1rem; margin-bottom: 20px; transition: all 0.3s;}
         .auth-btn.register-mode { background: var(--success); box-shadow: 0 5px 20px -5px var(--success); }
         .auth-toggle { color: var(--text-muted); font-size: 0.9rem; cursor: pointer; font-weight: 500; }
         .auth-toggle span { color: var(--secondary); font-weight: 800; border-bottom: 1px dashed var(--secondary); }
-        #authMessage { font-size: 0.85rem; font-weight: 700; margin-bottom: 15px; display: none; border-radius: 8px; padding: 10px; }
-        #authMessage.show { display: block; animation: fadeIn 0.3s; }
 
         /* --- ONBOARDING (GÜN SEÇİM) MODALI --- */
         #onboardingModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); z-index: 15000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.4s; }
@@ -165,9 +179,11 @@
 </head>
 <body>
 
+<div id="toastNotification" class="toast">✨ Başarılı!</div>
+
 <div id="splashScreen">
     <div class="auth-logo splash-logo">PRO</div>
-    <div style="color: var(--primary); font-weight: 800; letter-spacing: 2px; font-size: 0.9rem; margin-top: 10px;">BETA v1.1</div>
+    <div style="color: var(--primary); font-weight: 800; letter-spacing: 2px; font-size: 0.9rem; margin-top: 10px;">BETA v1.2</div>
 </div>
 
 <div id="landingPage">
@@ -187,7 +203,6 @@
         <button class="close-auth-btn" onclick="closeAuthModal()">✕</button>
         <h1 class="auth-title" id="authTitleText">GİRİŞ YAP</h1>
         <p class="auth-subtitle" id="authSubtitleText">Sisteme Hoş Geldin</p>
-        <span id="authMessage"></span>
 
         <div class="expandable-field" id="usernameField"><input type="text" id="authUsername" class="auth-input" placeholder="Kullanıcı Adı Belirle"></div>
         <input type="email" id="authEmail" class="auth-input" placeholder="E-posta Adresi" required>
@@ -362,13 +377,21 @@
         </div>
     </div>
 
-    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN (Beta v1.1)</p></footer>
+    <footer style="text-align:center; margin-top:50px; color:var(--text-muted); font-size:0.75rem; padding-bottom:30px; letter-spacing:1px; opacity:0.6;"><p>PRO ANTRENMAN (Beta v1.2)</p></footer>
 </div>
 
 <div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">✕</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-btn" style="width:auto; padding:8px 15px;">BAŞLAT</button><button onclick="resetTimer()" class="timer-btn" style="width:auto; padding:8px 15px;">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
+    // --- YENİ: ŞIK BİLDİRİM (TOAST) FONKSİYONU ---
+    function showToast(msg, isError = false) {
+        const toast = document.getElementById('toastNotification');
+        toast.innerHTML = isError ? `⚠️ ${msg}` : `✨ ${msg}`;
+        toast.className = `toast show ${isError ? 'toast-error' : 'toast-success'}`;
+        setTimeout(() => { toast.classList.remove('show'); }, 3000);
+    }
+
     // --- 1. FIREBASE BAĞLANTISI ---
     const firebaseConfig = {
       apiKey: "AIzaSyD-Z52hOb0dZHJTk713Vfo9sK9YGNYVpys",
@@ -385,8 +408,8 @@
     let currentUser = null;
     let isRegisterMode = false;
     let showWarmupStatus = true;
-    let userWorkoutDays = []; // Seçilen 3 günün indexleri
-    let notificationTime = ""; // Hatırlatıcı saati
+    let userWorkoutDays = []; 
+    let notificationTime = ""; 
 
     // --- 2. KİMLİK DOĞRULAMA (AUTH) ---
     auth.onAuthStateChanged((user) => {
@@ -413,11 +436,10 @@
             document.getElementById('authUsername').value = '';
             document.getElementById('authEmail').value = '';
             document.getElementById('authPass').value = '';
-            document.getElementById('authMessage').classList.remove('show');
             btnLoading(false); 
             if(isRegisterMode) toggleAuthMode();
             landing.style.display = 'block';
-            clearInterval(notificationInterval); // Çıkış yapınca bildirimi durdur
+            clearInterval(notificationInterval); 
         }
 
         if(splash) { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 500); }
@@ -429,7 +451,6 @@
     function toggleAuthMode() {
         isRegisterMode = !isRegisterMode;
         const title = document.getElementById('authTitleText'), sub = document.getElementById('authSubtitleText'), btn = document.getElementById('authSubmitBtn'), tog = document.getElementById('authToggleText'), usr = document.getElementById('usernameField'), hint = document.getElementById('passHintText'), frg = document.getElementById('forgotPassBtn');
-        document.getElementById('authMessage').classList.remove('show'); 
         if(isRegisterMode) {
             title.innerText = 'KAYIT OL'; sub.innerText = 'Yeni Bir Başlangıç'; btn.innerText = 'YENİ HESAP AÇ'; btn.classList.add('register-mode'); tog.innerText = 'Zaten hesabın var mı? Giriş Yap'; usr.classList.add('show'); hint.classList.add('show'); frg.classList.add('hide');
         } else {
@@ -441,34 +462,28 @@
 
     function handleAuth() {
         const u = document.getElementById('authUsername').value.trim(), e = document.getElementById('authEmail').value.trim(), p = document.getElementById('authPass').value;
-        if(isRegisterMode && !u) { showMessage("Kullanıcı adı belirleyin.", false); return; }
-        if(!e || !p) { showMessage("Boş alan bırakmayın.", false); return; }
-        if(isRegisterMode && !isStrongPassword(p)) { showMessage("Şifre en az 6 hane, harf ve rakam içermeli.", false); return; }
+        if(isRegisterMode && !u) { showToast("Kullanıcı adı belirleyin.", true); return; }
+        if(!e || !p) { showToast("Boş alan bırakmayın.", true); return; }
+        if(isRegisterMode && !isStrongPassword(p)) { showToast("Şifre zayıf! En az 6 hane, harf ve rakam içermeli.", true); return; }
+        
         btnLoading(true);
         if(isRegisterMode) {
-            auth.createUserWithEmailAndPassword(e, p).then((c) => c.user.updateProfile({ displayName: u })).then(() => document.getElementById('userNameDisplay').innerText = u).catch(err => { showMessage(hataCevir(err.code), false); btnLoading(false); });
+            auth.createUserWithEmailAndPassword(e, p).then((c) => c.user.updateProfile({ displayName: u })).then(() => { document.getElementById('userNameDisplay').innerText = u; showToast("Hesap oluşturuldu!"); }).catch(err => { showToast(hataCevir(err.code), true); btnLoading(false); });
         } else {
-            auth.signInWithEmailAndPassword(e, p).catch(err => { showMessage(hataCevir(err.code), false); btnLoading(false); });
+            auth.signInWithEmailAndPassword(e, p).then(()=> showToast("Başarıyla giriş yapıldı!")).catch(err => { showToast(hataCevir(err.code), true); btnLoading(false); });
         }
     }
 
     function resetPassword() {
         const e = document.getElementById('authEmail').value.trim();
-        if(!e) { showMessage("Önce e-posta yazın.", false); return; }
+        if(!e) { showToast("Sıfırlamak için önce e-posta adresinizi yazın.", true); return; }
         btnLoading(true);
-        auth.sendPasswordResetEmail(e).then(() => { showMessage("Bağlantı gönderildi!", true); btnLoading(false); }).catch((err) => { showMessage(hataCevir(err.code), false); btnLoading(false); });
+        auth.sendPasswordResetEmail(e).then(() => { showToast("Sıfırlama bağlantısı e-postanıza gönderildi!"); btnLoading(false); }).catch((err) => { showToast(hataCevir(err.code), true); btnLoading(false); });
     }
 
-    function showMessage(m, s) {
-        const d = document.getElementById('authMessage'); d.innerText = m;
-        d.style.background = s ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
-        d.style.color = s ? 'var(--success)' : 'var(--danger)';
-        d.style.border = s ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)';
-        d.classList.add('show');
-    }
-    function logoutUser() { auth.signOut(); document.getElementById('profileModal').classList.remove('profile-open'); setTimeout(() => document.getElementById('profileModal').style.display = 'none', 400); }
+    function logoutUser() { auth.signOut(); document.getElementById('profileModal').classList.remove('profile-open'); setTimeout(() => document.getElementById('profileModal').style.display = 'none', 400); showToast("Çıkış yapıldı."); }
     function btnLoading(l) { const b = document.getElementById('authSubmitBtn'); b.innerText = l ? "BEKLEYİN..." : document.getElementById('authTitleText').innerText; b.disabled = l; }
-    function hataCevir(c) { if(c === 'auth/invalid-credential' || c === 'auth/wrong-password') return "Hatalı bilgi."; if(c === 'auth/email-already-in-use') return "Zaten kullanımda."; return "Bir hata oluştu."; }
+    function hataCevir(c) { if(c === 'auth/invalid-credential' || c === 'auth/wrong-password') return "Hatalı bilgi."; if(c === 'auth/email-already-in-use') return "Bu e-posta zaten kullanımda."; return "Bir hata oluştu."; }
 
     // --- 3. BULUT SENKRONİZASYONU ---
     async function syncFromCloud() {
@@ -478,12 +493,11 @@
                 const data = docRef.data();
                 if(data.weights) localStorage.setItem('userWeights', JSON.stringify(data.weights));
                 if(data.showWarmup !== undefined) localStorage.setItem('showWarmup', data.showWarmup);
-                if(data.workoutDays) userWorkoutDays = data.workoutDays; // Takvim günlerini al
+                if(data.workoutDays) userWorkoutDays = data.workoutDays;
                 if(data.reminderTime) {
                     notificationTime = data.reminderTime;
                     document.getElementById('reminderTimeInput').value = notificationTime;
                 }
-                
                 const today = new Date().toDateString();
                 if(data.progress && data.lastDate === today) {
                     localStorage.setItem('userProgress', JSON.stringify(data.progress));
@@ -494,13 +508,7 @@
         
         loadSettings(); generateWeightInputs(); checkDateAndLoadProgress(); applyWarmupSetting(); startNotificationEngine();
         
-        // EĞER KULLANICI GÜN SEÇMEMİŞSE ONBOARDING AÇ
-        if(userWorkoutDays.length !== 3) {
-            reopenOnboarding();
-        } else {
-            // Gün seçilmişse, bugünün hangi gün olduğunu bul
-            checkCalendarAndOpenTab();
-        }
+        if(userWorkoutDays.length !== 3) reopenOnboarding(); else checkCalendarAndOpenTab();
     }
 
     async function syncToCloud() {
@@ -510,42 +518,31 @@
             const w = JSON.parse(localStorage.getItem('userWeights')) || {};
             const d = localStorage.getItem('lastSavedDate') || new Date().toDateString();
             const sW = localStorage.getItem('showWarmup') !== 'false';
-            
             await db.collection("users").doc(currentUser.uid).set({ progress: p, weights: w, lastDate: d, showWarmup: sW, workoutDays: userWorkoutDays, reminderTime: notificationTime }, { merge: true });
         } catch(e) { console.log("Buluta yazılamadı."); }
     }
 
-    // --- 4. GÜN SEÇİMİ (ONBOARDING) VE AKILLI TAKVİM ---
+    // --- 4. GÜN SEÇİMİ VE AKILLI TAKVİM ---
     let tempSelectedDays = [];
     function reopenOnboarding() {
-        tempSelectedDays = [...userWorkoutDays]; // Mevcutları geçici diziye al
+        tempSelectedDays = [...userWorkoutDays];
         document.getElementById('settingsModal').classList.remove('settings-open');
         setTimeout(() => document.getElementById('settingsModal').style.display='none', 400);
         
-        // Butonları resetle
         document.querySelectorAll('.day-select-btn').forEach(b => {
-            b.classList.remove('selected');
-            b.disabled = false;
+            b.classList.remove('selected'); b.disabled = false;
             if(tempSelectedDays.includes(parseInt(b.dataset.day))) b.classList.add('selected');
         });
         
         updateOnboardingBtn();
         const modal = document.getElementById('onboardingModal');
-        modal.style.display = 'flex';
-        setTimeout(() => modal.style.opacity = '1', 50);
+        modal.style.display = 'flex'; setTimeout(() => modal.style.opacity = '1', 50);
     }
 
     function toggleDay(btn) {
         const dayVal = parseInt(btn.dataset.day);
-        if(tempSelectedDays.includes(dayVal)) {
-            tempSelectedDays = tempSelectedDays.filter(d => d !== dayVal);
-            btn.classList.remove('selected');
-        } else {
-            if(tempSelectedDays.length < 3) {
-                tempSelectedDays.push(dayVal);
-                btn.classList.add('selected');
-            }
-        }
+        if(tempSelectedDays.includes(dayVal)) { tempSelectedDays = tempSelectedDays.filter(d => d !== dayVal); btn.classList.remove('selected'); } 
+        else { if(tempSelectedDays.length < 3) { tempSelectedDays.push(dayVal); btn.classList.add('selected'); } }
         updateOnboardingBtn();
     }
 
@@ -553,105 +550,66 @@
         const btn = document.getElementById('saveDaysBtn');
         btn.innerText = `SEÇİMİ TAMAMLA (${tempSelectedDays.length}/3)`;
         if(tempSelectedDays.length === 3) {
-            btn.disabled = false;
-            btn.style.background = 'var(--primary)';
-            btn.style.color = '#000';
-            btn.style.cursor = 'pointer';
-            
-            // Diğerlerini kilitle
+            btn.disabled = false; btn.style.background = 'var(--primary)'; btn.style.color = '#000'; btn.style.cursor = 'pointer';
             document.querySelectorAll('.day-select-btn:not(.selected)').forEach(b => b.disabled = true);
         } else {
-            btn.disabled = true;
-            btn.style.background = 'var(--text-muted)';
-            btn.style.color = '#fff';
-            btn.style.cursor = 'not-allowed';
-            
-            // Kilitleri aç
+            btn.disabled = true; btn.style.background = 'var(--text-muted)'; btn.style.color = '#fff'; btn.style.cursor = 'not-allowed';
             document.querySelectorAll('.day-select-btn').forEach(b => b.disabled = false);
         }
     }
 
     function saveSelectedDays() {
-        userWorkoutDays = tempSelectedDays.sort(); // Sırala (Pzt=1, Sal=2 vs)
-        syncToCloud();
-        
+        userWorkoutDays = tempSelectedDays.sort(); syncToCloud();
         const modal = document.getElementById('onboardingModal');
         modal.style.opacity = '0';
-        setTimeout(() => { modal.style.display = 'none'; checkCalendarAndOpenTab(); }, 400);
+        setTimeout(() => { modal.style.display = 'none'; checkCalendarAndOpenTab(); showToast("Günler başarıyla kaydedildi!"); }, 400);
     }
 
     function checkCalendarAndOpenTab() {
-        // userWorkoutDays içinde 0=Paz, 1=Pzt, 2=Sal... var.
-        const todayStr = new Date().getDay(); // JS'de 0 Pazar, 1 Pzt
-        
-        // Menü butonlarını önce deaktif yap
+        const todayStr = new Date().getDay();
         document.getElementById('btn-day1').classList.remove('disabled');
         document.getElementById('btn-day2').classList.remove('disabled');
         document.getElementById('btn-day3').classList.remove('disabled');
 
         if(userWorkoutDays.includes(todayStr)) {
-            // Bugün antrenman günü! Hangi gün olduğuna bak (1., 2. veya 3. mü?)
             const index = userWorkoutDays.indexOf(todayStr); 
-            if(index === 0) openTab('day1');
-            else if(index === 1) openTab('day2');
-            else if(index === 2) openTab('day3');
+            if(index === 0) openTab('day1'); else if(index === 1) openTab('day2'); else if(index === 2) openTab('day3');
         } else {
-            // Bugün Dinlenme Günü!
             openTab('restDay');
-            // Menü butonlarını hafif soluk yap ki dinlenme olduğu anlaşılsın
-            document.getElementById('btn-day1').classList.add('disabled');
-            document.getElementById('btn-day2').classList.add('disabled');
-            document.getElementById('btn-day3').classList.add('disabled');
+            document.getElementById('btn-day1').classList.add('disabled'); document.getElementById('btn-day2').classList.add('disabled'); document.getElementById('btn-day3').classList.add('disabled');
         }
     }
 
-    // --- 5. BİLDİRİM (PUSH NOTIFICATION) SİSTEMİ ---
+    // --- 5. BİLDİRİM SİSTEMİ ---
     let notificationInterval;
-
     function requestNotificationPermission() {
-        if (!("Notification" in window)) {
-            alert("Tarayıcınız bildirimleri desteklemiyor.");
-            return;
-        }
+        if (!("Notification" in window)) { showToast("Tarayıcınız bildirimleri desteklemiyor.", true); return; }
         Notification.requestPermission().then(permission => {
-            if(permission === "granted") alert("Harika! Artık sana hatırlatma gönderebiliriz.");
-            else alert("Bildirim izni reddedildi. Lütfen tarayıcı ayarlarından izin verin.");
+            if(permission === "granted") showToast("Harika! Artık hatırlatma gönderebiliriz.");
+            else showToast("Bildirim izni reddedildi.", true);
         });
     }
 
     function saveNotificationSetting() {
         notificationTime = document.getElementById('reminderTimeInput').value;
         syncToCloud();
-        alert("Hatırlatıcı saati " + notificationTime + " olarak kaydedildi.");
+        showToast("Hatırlatıcı " + notificationTime + " olarak ayarlandı.");
     }
 
     function startNotificationEngine() {
         if(notificationInterval) clearInterval(notificationInterval);
-        
         notificationInterval = setInterval(() => {
             if(!notificationTime || Notification.permission !== "granted") return;
-            
-            const now = new Date();
-            const currentH = now.getHours().toString().padStart(2,'0');
-            const currentM = now.getMinutes().toString().padStart(2,'0');
-            const currentTime = `${currentH}:${currentM}`;
-            
-            // Günü kontrol et (Bugün antrenman günü mü?)
+            const now = new Date(); const currentH = now.getHours().toString().padStart(2,'0'); const currentM = now.getMinutes().toString().padStart(2,'0'); const currentTime = `${currentH}:${currentM}`;
             const todayStr = now.getDay();
-            if(!userWorkoutDays.includes(todayStr)) return; // Dinlenme günüyse bildirim atma
+            if(!userWorkoutDays.includes(todayStr)) return; 
 
             if(currentTime === notificationTime && !window.notificationSentToday) {
-                new Notification("Antrenman Vakti!", { 
-                    body: "Pro Antrenman saatin geldi! Hadi sınırlarını zorla.", 
-                    icon: "/icon.png" 
-                });
+                new Notification("Antrenman Vakti!", { body: "Pro Antrenman saatin geldi! Hadi sınırlarını zorla.", icon: "/icon.png" });
                 window.notificationSentToday = true; 
             }
-            
-            // Gece 12'de bayrağı sıfırla
             if(currentTime === "00:00") window.notificationSentToday = false;
-
-        }, 60000); // Her 60 saniyede bir kontrol et
+        }, 60000); 
     }
 
     // --- 6. TEMEL AYARLAR VE UI ---
@@ -676,14 +634,11 @@
         document.getElementById("btn-warmup").classList.remove("active");
         document.querySelectorAll(".sub-menu .tab-btn").forEach(b => b.classList.remove("active"));
         
-        // Eğer restDay açılıyorsa menüdeki aktifliği sil
         if(id !== 'restDay') {
             document.getElementById(id).classList.add("active-content");
             if(id === 'warmup') document.getElementById("btn-warmup").classList.add("active");
             else { const btn = document.getElementById("btn-" + id); if(btn) btn.classList.add("active"); }
-        } else {
-            document.getElementById('restDay').classList.add("active-content");
-        }
+        } else { document.getElementById('restDay').classList.add("active-content"); }
         setTimeout(updateProgressBar, 50);
     }
 
@@ -713,7 +668,7 @@
     function toggleSettings() { const m = document.getElementById('settingsModal'); if(m.classList.contains('settings-open')) { m.classList.remove('settings-open'); setTimeout(()=>m.style.display='none',400); } else { m.style.display='flex'; setTimeout(()=>m.classList.add('settings-open'),10); } }
     function toggleProfile() { const p = document.getElementById('profileModal'); if(p.classList.contains('profile-open')) { p.classList.remove('profile-open'); setTimeout(()=>p.style.display='none',400); } else { p.style.display='flex'; setTimeout(()=>p.classList.add('profile-open'),10); } }
     function generateWeightInputs() { const c = document.getElementById('weightSettingsContainer'); c.innerHTML = ''; document.querySelectorAll('.weight-badge[id]').forEach(el => { if(el.dataset.unit === 'kg') { let val = el.innerText.replace(/\D/g,''); c.innerHTML += `<div class="weight-input-group"><span>${el.dataset.label}</span><input type="number" id="in_${el.id}" class="weight-input" value="${val}"></div>`; } }); }
-    function saveAllSettings() { const w = {}; document.querySelectorAll('.weight-input').forEach(i => { let id = i.id.replace('in_', ''); let val = i.value || "5"; document.getElementById(id).innerText = val + "kg"; w[id] = val + "kg"; }); localStorage.setItem('userWeights', JSON.stringify(w)); syncToCloud(); toggleSettings(); }
+    function saveAllSettings() { const w = {}; document.querySelectorAll('.weight-input').forEach(i => { let id = i.id.replace('in_', ''); let val = i.value || "5"; document.getElementById(id).innerText = val + "kg"; w[id] = val + "kg"; }); localStorage.setItem('userWeights', JSON.stringify(w)); syncToCloud(); toggleSettings(); showToast("Ayarlar kaydedildi."); }
     function setTheme(m) { document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active')); if(m === 'light') { document.body.classList.add('light-mode'); localStorage.setItem('themeMode','light'); document.getElementById('btn-light').classList.add('active'); } else { document.body.classList.remove('light-mode'); localStorage.setItem('themeMode','dark'); document.getElementById('btn-dark').classList.add('active'); } }
     function setAccent(c, btnElement) { document.documentElement.style.setProperty('--primary', c); localStorage.setItem('accentColor', c); document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active')); if(btnElement) btnElement.classList.add('active'); else document.querySelectorAll('.color-btn').forEach(b => { if(b.style.background.includes(c) || b.style.backgroundColor === c) b.classList.add('active'); }); }
     function loadSettings() { if(localStorage.getItem('themeMode')==='light') setTheme('light'); else setTheme('dark'); let savedColor = localStorage.getItem('accentColor'); if(savedColor) setAccent(savedColor, null); else setAccent('#bb86fc', document.querySelector('.color-btn')); const w = JSON.parse(localStorage.getItem('userWeights')); if(w) for(const [k,v] of Object.entries(w)) { const e = document.getElementById(k); if(e) e.innerText = v; } }
