@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <script>
-        const APP_VERSION = "2.2"; 
+        const APP_VERSION = "2.3"; 
         if (localStorage.getItem('app_version') !== APP_VERSION) {
             localStorage.setItem('app_version', APP_VERSION);
             if ('caches' in window) caches.keys().then(n => n.forEach(c => caches.delete(c)));
@@ -26,7 +26,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>Pro Antrenman (Beta v2.2)</title>
+    <title>Pro Antrenman (Beta v2.3)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -34,13 +34,13 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <style>
-        :root { --bg-body: #09090b; --bg-card: rgba(30, 30, 35, 0.65); --text-main: #e0e0e0; --text-muted: #9CA3AF; --border-color: rgba(255, 255, 255, 0.08); --primary: #bb86fc; --secondary: #03dac6; --danger: #ef4444; --success: #10b981; --glass-blur: 16px; --shadow: 0 10px 40px -10px rgba(0,0,0,0.5); --radius: 24px; }
-        body.light-mode { --bg-body: #f3f4f6; --bg-card: rgba(255, 255, 255, 0.85); --text-main: #1f2937; --text-muted: #6b7280; --border-color: rgba(0, 0, 0, 0.06); }
+        :root { --bg-body: #09090b; --bg-card: rgba(30, 30, 35, 0.4); --text-main: #e0e0e0; --text-muted: #9CA3AF; --border-color: rgba(255, 255, 255, 0.08); --primary: #bb86fc; --secondary: #03dac6; --danger: #ef4444; --success: #10b981; --glass-blur: 20px; --shadow: 0 10px 40px -10px rgba(0,0,0,0.5); --radius: 28px; }
+        body.light-mode { --bg-body: #f3f4f6; --bg-card: rgba(255, 255, 255, 0.5); --text-main: #1f2937; --text-muted: #6b7280; --border-color: rgba(0, 0, 0, 0.06); }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
         /* CANLI VE HAREKETLİ ARKA PLAN */
         @keyframes auroraBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        html, body { color: var(--text-main); font-family: 'Inter', sans-serif; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; background: linear-gradient(-45deg, #09090b, #1a0b2e, #2b1055, #09090b); background-size: 400% 400%; animation: auroraBG 20s ease infinite; background-attachment: fixed; }
+        html, body { color: var(--text-main); font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; background: linear-gradient(-45deg, #09090b, #1a0b2e, #2b1055, #09090b); background-size: 400% 400%; animation: auroraBG 20s ease infinite; background-attachment: fixed; }
         body.light-mode { background: linear-gradient(-45deg, #f3f4f6, #e2e8f0, #d8b4fe, #f3f4f6); }
         
         /* GİRİŞ ANİMASYONU (INTRO) */
@@ -48,9 +48,12 @@
         #introScreen.hide { opacity: 0; transform: scale(1.05); pointer-events: none; }
         .intro-title { font-size: 3.5rem; font-weight: 900; line-height: 1.1; margin-top: 20px; text-align: center; background: linear-gradient(135deg, #fff 20%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -2px; }
 
-        .container { width: 100%; max-width: 850px; padding: 20px; padding-bottom: 100px; position: relative; z-index: 10; }
-        #mainContainer, #landingPage { transition: opacity 0.4s ease-in-out; }
-        #mainContainer { opacity: 0; }
+        .container { width: 100%; max-width: 850px; padding: 20px; padding-bottom: 100px; margin: 0 auto; position: relative; z-index: 10; }
+        
+        /* MAIN VIEW (SEKME SİSTEMİ) */
+        .main-view { display: none; animation: fadeIn 0.4s ease-out; }
+        .active-view { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--bg-card); color: var(--text-main); padding: 15px 25px; border-radius: 16px; font-weight: 700; font-size: 0.95rem; z-index: 999999; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); backdrop-filter: blur(10px); border: 1px solid var(--border-color); opacity: 0; transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .toast.show { bottom: 100px; opacity: 1; }
@@ -70,12 +73,9 @@
         #authModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.4s ease; }
         .auth-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 40px 30px; border-radius: 30px; width: 100%; max-width: 380px; text-align: center; position: relative; }
         .close-auth-btn { position: absolute; top: 15px; right: 20px; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
-        
-        /* LOGO STİLLERİ DÜZELTİLDİ */
         .auth-logo { width: 60px; height: 60px; background: var(--primary); color: #000; margin: 0 auto 15px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; font-weight: 900; transform: rotate(-5deg); box-shadow: 0 10px 25px rgba(187, 134, 252, 0.4); }
         .splash-logo { animation: pulse-glow-logo 2s infinite; transform: rotate(-5deg) scale(1.5); margin-bottom: 25px; width: 80px; height: 80px; font-size: 2.2rem; }
         @keyframes pulse-glow-logo { 0% { box-shadow: 0 0 0 0 rgba(187, 134, 252, 0.4); } 70% { box-shadow: 0 0 0 20px rgba(187, 134, 252, 0); } 100% { box-shadow: 0 0 0 0 rgba(187, 134, 252, 0); } }
-        
         .auth-title { font-size: 2rem; font-weight: 900; color: var(--text-main); margin-bottom: 5px; }
         .auth-subtitle { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
         .expandable-field { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.3s ease; transform: translateY(-5px); margin-bottom: 0; }
@@ -94,24 +94,23 @@
 
         #onboardingModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); z-index: 15000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.4s; }
         .onb-card { background: var(--bg-card); border: 1px solid var(--border-color); padding: 40px 30px; border-radius: 30px; width: 100%; max-width: 400px; text-align: center; }
-        
         .day-select-group { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; margin-bottom: 25px; text-align: left; }
         .day-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 12px 15px; border-radius: 14px; border: 1px solid var(--border-color); }
         .day-row span { font-weight: 800; color: var(--primary); font-size: 0.95rem; }
         .day-row select { background: transparent; color: var(--text-main); border: none; font-size: 1rem; font-weight: 600; outline: none; cursor: pointer; text-align: right; }
         .day-row select option { background: var(--bg-body); color: var(--text-main); }
 
-        /* YENİ ALT MENÜ (TAB BAR) TASARIMI */
-        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: rgba(15, 15, 20, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--border-color); height: 75px; border-radius: 40px; display: none; justify-content: space-around; align-items: center; z-index: 2000; box-shadow: 0 20px 40px rgba(0,0,0,0.6); padding: 0 10px; }
-        body.light-mode .bottom-nav { background: rgba(255, 255, 255, 0.7); }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; width: 60px; }
-        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; font-style: normal; transition: transform 0.3s; }
+        /* İNCE, ŞIK VE SVG'Lİ ALT MENÜ */
+        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 400px; background: rgba(20, 20, 25, 0.75); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); height: 65px; border-radius: 25px; display: none; justify-content: space-around; align-items: center; z-index: 5000; box-shadow: 0 15px 30px rgba(0,0,0,0.5); padding: 0 10px; }
+        body.light-mode .bottom-nav { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0,0,0,0.05); }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease; width: 65px; background: transparent; border: none; outline: none; }
+        .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; stroke: currentColor; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .nav-item.active { color: var(--primary); }
-        .nav-item.active i { transform: translateY(-3px) scale(1.1); }
+        .nav-item.active svg { transform: translateY(-3px) scale(1.15); stroke-width: 2.5px; }
 
-        header { text-align: center; margin-top: 30px; margin-bottom: 30px; }
-        .main-title { font-size: 2.3rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
-        .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; }
+        header { text-align: center; margin-top: 30px; margin-bottom: 30px; height: 50px; display: flex; flex-direction: column; justify-content: center; align-items: center;}
+        .main-title { font-size: 2.3rem; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--text-main) 30%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; transition: opacity 0.6s ease;}
+        .header-line { width: 40px; height: 4px; background: var(--primary); margin: 0 auto; border-radius: 10px; transition: opacity 0.6s ease; }
         
         .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 6px; background: rgba(0,0,0,0.3); z-index: 9999; }
         .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); box-shadow: 0 0 15px var(--success); }
@@ -128,7 +127,6 @@
         body.light-mode .sub-menu { background: rgba(0,0,0,0.05); } body.light-mode .tab-btn.active { color: #fff; }
         
         .tab-content { display: none; animation: fadeIn 0.3s ease-out; } .tab-content.active-content { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         #restDayContent { text-align: center; padding: 40px 20px; background: var(--bg-card); backdrop-filter: blur(var(--glass-blur)); border-radius: 24px; border: 1px dashed var(--border-color); }
         .rest-icon { font-size: 4rem; margin-bottom: 20px; display: inline-block; animation: float 4s infinite; }
@@ -158,16 +156,11 @@
         .check-input:checked ~ .checkmark:after { display: block; }
         tr.completed .workout-name { text-decoration: line-through; opacity: 0.4; }
 
-        /* MODALLAR */
-        .settings-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; display: none; backdrop-filter: blur(10px); }
-        .settings-panel { width: 100%; max-width: 360px; height: 100%; background: var(--bg-body); display: flex; flex-direction: column; transition: transform 0.3s; }
-        .settings-right { position: absolute; right: 0; border-left: 1px solid var(--border-color); transform: translateX(100%); } .settings-open .settings-right { transform: translateX(0); }
-        .settings-left { position: absolute; left: 0; border-right: 1px solid var(--border-color); transform: translateX(-100%); } .profile-open .settings-left { transform: translateX(0); }
-        .settings-header { padding: 30px 25px 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .settings-content { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 20px; }
+        /* YENİ AYARLAR VE PROFİL SAYFALARI (Modaldan View'a Dönüştü) */
+        .settings-content { display: flex; flex-direction: column; gap: 20px; }
         .section-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; margin-bottom: 10px; }
         
-        .toggle-container { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 15px 20px; border-radius: 14px; border: 1px solid var(--border-color); margin-bottom: 10px; }
+        .toggle-container { display: flex; justify-content: space-between; align-items: center; background: var(--bg-card); padding: 15px 20px; border-radius: 14px; border: 1px solid var(--border-color); margin-bottom: 10px; }
         .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); border-radius: 34px; border: 1px solid var(--border-color); }
@@ -175,10 +168,10 @@
         input:checked + .slider { background-color: var(--primary); border-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(22px); background-color: #000; }
 
-        .theme-toggle-group { display: flex; background: rgba(255,255,255,0.08); border-radius: 14px; padding: 5px; border: 1px solid var(--border-color); }
+        .theme-toggle-group { display: flex; background: var(--bg-card); border-radius: 14px; padding: 5px; border: 1px solid var(--border-color); }
         .theme-btn { flex: 1; padding: 12px; border: none; background: transparent; color: var(--text-muted); border-radius: 10px; font-weight: 700; }
         .theme-btn.active { background: var(--primary); color: #000; }
-        .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+        .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; background: var(--bg-card); padding: 15px; border-radius: 14px; border: 1px solid var(--border-color); }
         .color-btn { width: 100%; aspect-ratio: 1; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
         .color-btn.active { transform: scale(1.15); border-color: #fff; box-shadow: 0 0 10px currentColor; }
         
@@ -186,9 +179,17 @@
         .weight-input { width: 70px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px; border-radius: 10px; text-align: center; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
         .weight-input:focus { border-color: var(--primary); outline: none; }
         
-        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; }
+        .btn-save { width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; font-weight: 900; border-radius: 16px; cursor: pointer; margin-top: 10px;}
         .reset-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; border-radius: 14px; cursor: pointer; }
-        .logout-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; border-radius: 14px; margin-top: auto; margin-bottom: 20px;}
+        .logout-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; border-radius: 14px; margin-top: 10px;}
+
+        /* PROFİL EKRANI KARTLARI */
+        .streak-card { background: linear-gradient(135deg, rgba(30,30,35,0.8), rgba(0,0,0,0.5)); border: 1px solid var(--primary); border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 10px 30px rgba(187, 134, 252, 0.15); margin-bottom: 25px;}
+        .streak-icon { font-size: 3.5rem; margin-bottom: 10px; display: inline-block; animation: pulse-glow-logo 2s infinite; }
+        .streak-title { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px;}
+        .streak-count { font-size: 2.5rem; font-weight: 900; color: var(--primary); }
+        
+        .profile-input-group { background: var(--bg-card); padding: 20px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 15px; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 4000; }
         .modal-content { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
@@ -273,165 +274,202 @@
 </div>
 
 <div class="bottom-nav" id="bottomNav">
-    <div class="nav-item" id="navProfile" onclick="toggleProfile()"><i>👤</i><span>Profil</span></div>
-    <div class="nav-item active" id="navHome" onclick="closeAllModals()"><i>🏠</i><span>Ana Sayfa</span></div>
-    <div class="nav-item" id="navSettings" onclick="toggleSettings()"><i>⚙️</i><span>Ayarlar</span></div>
+    <button class="nav-item" id="navProfile" onclick="switchMainView('profileView', 'navProfile')">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Profil</span>
+    </button>
+    <button class="nav-item active" id="navHome" onclick="switchMainView('homeView', 'navHome')">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Ana Sayfa</span>
+    </button>
+    <button class="nav-item" id="navSettings" onclick="switchMainView('settingsView', 'navSettings')">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Ayarlar</span>
+    </button>
 </div>
 
 <div class="container" id="mainContainer">
     <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
     
     <header>
-        <h1 class="main-title">Pro Antrenman</h1>
-        <div class="header-line"></div>
+        <h1 class="main-title" id="topHeaderTitle">Pro Antrenman</h1>
+        <div class="header-line" id="topHeaderLine"></div>
     </header>
 
-    <div class="navigation-wrapper">
-        <button id="btn-warmup" class="warmup-hero-btn"><span>🔥</span> ISINMA</button>
-        <div class="sub-menu">
-            <button id="btn-day1" class="tab-btn">GÜN 1</button>
-            <button id="btn-day2" class="tab-btn">GÜN 2</button>
-            <button id="btn-day3" class="tab-btn">GÜN 3</button>
-        </div>
-    </div>
-
-    <div id="profileModal" class="settings-modal" style="justify-content: flex-start;" onclick="toggleProfile()">
-        <div class="settings-panel settings-left" onclick="event.stopPropagation()">
-            <div class="settings-header"><h3>Profilim</h3><button class="close-auth-btn" style="position:static;" onclick="toggleProfile()">✕</button></div>
-            <div class="settings-content" style="align-items: center; text-align: center; padding-top: 40px;">
-                <div style="font-size: 5rem; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 50%; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary);">👤</div>
-                <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Kullanıcı Adı</div>
-                <div id="userNameDisplay" style="font-weight: 900; color: var(--primary); font-size: 1.5rem; margin-bottom: 15px;">Bilinmiyor</div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Bağlı E-posta</div>
-                <div id="userEmailDisplay" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 30px; opacity: 0.8;">bekleniyor...</div>
-                <button class="logout-btn" onclick="logoutUser()">ÇIKIŞ YAP</button>
+    <div id="homeView" class="main-view active-view">
+        <div class="navigation-wrapper">
+            <button id="btn-warmup" class="warmup-hero-btn"><span>🔥</span> ISINMA</button>
+            <div class="sub-menu">
+                <button id="btn-day1" class="tab-btn">GÜN 1</button>
+                <button id="btn-day2" class="tab-btn">GÜN 2</button>
+                <button id="btn-day3" class="tab-btn">GÜN 3</button>
             </div>
         </div>
-    </div>
 
-    <div id="settingsModal" class="settings-modal" style="justify-content: flex-end;" onclick="toggleSettings()">
-        <div class="settings-panel settings-right" onclick="event.stopPropagation()">
-            <div class="settings-header"><h3>Ayarlar</h3><button class="close-auth-btn" style="position:static;" onclick="toggleSettings()">✕</button></div>
-            <div class="settings-content">
-                <div>
-                    <div class="section-label">Özellikler & Bildirim</div>
-                    <div class="toggle-container">
-                        <span class="toggle-label">Isınma Adımını Göster</span>
-                        <label class="switch"><input type="checkbox" id="toggleWarmupSwitch" onchange="handleWarmupToggle()"><span class="slider"></span></label>
-                    </div>
-                    <div class="toggle-container" style="flex-direction: column; align-items: flex-start;">
-                        <span class="toggle-label" style="margin-bottom: 10px;">Antrenman Hatırlatıcı</span>
-                        <div style="display: flex; width: 100%; gap: 10px;">
-                            <input type="time" id="reminderTimeInput" class="auth-input" style="margin-bottom: 0; padding: 10px;" onchange="saveNotificationSetting()">
-                            <button onclick="requestNotificationPermission()" class="video-btn" style="width: auto; padding: 0 15px;">İzin Ver</button>
-                        </div>
-                    </div>
-                    <button onclick="reopenOnboarding()" class="video-btn" style="margin-top: 10px;">📅 Antrenman Günlerini Değiştir</button>
-                </div>
-                <div>
-                    <div class="section-label">Görünüm Modu</div>
-                    <div class="theme-toggle-group">
-                        <button onclick="setTheme('dark')" class="theme-btn active" id="btn-dark">🌙 Koyu</button>
-                        <button onclick="setTheme('light')" class="theme-btn" id="btn-light">☀️ Açık</button>
-                    </div>
-                </div>
-                <div>
-                    <div class="section-label">Vurgu Rengi</div>
-                    <div class="color-grid">
-                        <button onclick="setAccent('#bb86fc', this)" class="color-btn active" style="background:#bb86fc"></button>
-                        <button onclick="setAccent('#3b82f6', this)" class="color-btn" style="background:#3b82f6"></button>
-                        <button onclick="setAccent('#f59e0b', this)" class="color-btn" style="background:#f59e0b"></button>
-                        <button onclick="setAccent('#10b981', this)" class="color-btn" style="background:#10b981"></button>
-                        <button onclick="setAccent('#ec4899', this)" class="color-btn" style="background:#ec4899"></button>
-                    </div>
-                </div>
-                <div><div class="section-label">Ağırlıklar (Kg)</div><div id="weightSettingsContainer"></div></div>
-                <button onclick="resetProgress()" class="reset-btn" style="margin-bottom: 20px;">İLERLEMEYİ SIFIRLA</button>
+        <div id="restDay" class="tab-content active-content">
+            <div id="restDayContent">
+                <span class="rest-icon">🛋️</span>
+                <h2 style="font-size: 1.8rem; margin-bottom: 10px; color: var(--primary);">Dinlenme Günü</h2>
+                <p style="color: var(--text-muted); line-height: 1.5;">Bugün takviminde antrenman görünmüyor. Yukarıdaki sekmelerden diğer günleri inceleyebilirsin.</p>
             </div>
-            <div style="padding:25px; border-top:1px solid var(--border-color); background: var(--bg-card);"><button class="btn-save" onclick="saveAllSettings()">KAYDET & KAPAT</button></div>
         </div>
-    </div>
 
-    <div id="restDay" class="tab-content active-content">
-        <div id="restDayContent">
-            <span class="rest-icon">🛋️</span>
-            <h2 style="font-size: 1.8rem; margin-bottom: 10px; color: var(--primary);">Dinlenme Günü</h2>
-            <p style="color: var(--text-muted); line-height: 1.5;">Bugün takviminde antrenman görünmüyor. Yukarıdaki sekmelerden diğer günleri inceleyebilirsin.</p>
+        <div id="warmup" class="tab-content">
+            <div class="day-card h-red">
+                <div class="day-header" style="border-left: 4px solid var(--danger);"><h2>ISINMA</h2><button class="video-btn" style="width:auto; background:var(--danger); color:#fff;" onclick="openVideo('')">▶ İzle</button></div>
+                <table class="workout-table"><tbody><tr id="row_warmup"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_warmup')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Genel Isınma</span></td><td class="col-stats"><span class="weight-badge">5 Dk</span></td><td class="col-actions"></td></tr></tbody></table>
+            </div>
         </div>
-    </div>
 
-    <div id="warmup" class="tab-content">
-        <div class="day-card h-red">
-            <div class="day-header" style="border-left: 4px solid var(--danger);"><h2>ISINMA</h2><button class="video-btn" style="width:auto; background:var(--danger); color:#fff;" onclick="openVideo('')">▶ İzle</button></div>
-            <table class="workout-table"><tbody><tr id="row_warmup"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_warmup')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Genel Isınma</span></td><td class="col-stats"><span class="weight-badge">5 Dk</span></td><td class="col-actions"></td></tr></tbody></table>
+        <div id="day1" class="tab-content">
+            <div class="day-card h-purple" id="card_day1">
+                <div class="faded-notice">Bu senin bugünkü programın değil. Sadece inceleyebilirsin.</div>
+                <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>1. GÜN: ÇEKME (POSTÜR)</h2></div>
+                <table class="workout-table">
+                    <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
+                    <tbody>
+                        <tr id="row_d1_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Scapular Pull</span><span class="workout-note">Postür/Sırt</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d1_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">One Arm Row</span><span class="workout-note">Sırt</span></td><td class="col-stats"><span id="w_d1_2" class="weight-badge" data-label="Row" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d1_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">DB Rev. Fly</span><span class="workout-note">Arka Omuz</span></td><td class="col-stats"><span id="w_d1_3" class="weight-badge" data-label="Rev Fly" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d1_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Bicep Curl</span><span class="workout-note">Pazu</span></td><td class="col-stats"><span id="w_d1_4" class="weight-badge" data-label="Curl" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d1_5"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_5')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Dead Hang</span><span class="workout-note">Esneme</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="timer-btn" onclick="openTimer(60, '')">⏱️</button></td></tr>
+                        <tr id="row_d1_6"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_6')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Plank</span><span class="workout-note">Karın</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="timer-btn" onclick="openTimer(60, '')">⏱️</button></td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <div id="day1" class="tab-content">
-        <div class="day-card h-purple" id="card_day1">
-            <div class="faded-notice">Bu senin bugünkü programın değil. Sadece inceleyebilirsin.</div>
-            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>1. GÜN: ÇEKME (POSTÜR)</h2></div>
-            <table class="workout-table">
-                <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
-                <tbody>
-                    <tr id="row_d1_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Scapular Pull</span><span class="workout-note">Postür/Sırt</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                    <tr id="row_d1_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">One Arm Row</span><span class="workout-note">Sırt</span></td><td class="col-stats"><span id="w_d1_2" class="weight-badge" data-label="Row" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                    <tr id="row_d1_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">DB Rev. Fly</span><span class="workout-note">Arka Omuz</span></td><td class="col-stats"><span id="w_d1_3" class="weight-badge" data-label="Rev Fly" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                    <tr id="row_d1_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Bicep Curl</span><span class="workout-note">Pazu</span></td><td class="col-stats"><span id="w_d1_4" class="weight-badge" data-label="Curl" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                    <tr id="row_d1_5"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_5')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Dead Hang</span><span class="workout-note">Esneme</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="timer-btn" onclick="openTimer(60, '')">⏱️</button></td></tr>
-                    <tr id="row_d1_6"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_6')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Plank</span><span class="workout-note">Karın</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="timer-btn" onclick="openTimer(60, '')">⏱️</button></td></tr>
-                </tbody>
-            </table>
+        <div id="day2" class="tab-content">
+            <div class="day-card h-purple" id="card_day2">
+                <div class="faded-notice">Bu senin bugünkü programın değil. Sadece inceleyebilirsin.</div>
+                <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>2. GÜN: İTME</h2></div>
+                <table class="workout-table">
+                    <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
+                    <tbody>
+                        <tr id="row_d2_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Floor Press</span><span class="workout-note">Göğüs</span></td><td class="col-stats"><span id="w_d2_1" class="weight-badge" data-label="Press" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d2_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Shoulder Pr.</span><span class="workout-note">Omuz</span></td><td class="col-stats"><span id="w_d2_2" class="weight-badge" data-label="Sh. Press" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d2_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Lat. Raise</span><span class="workout-note">Yan Omuz</span></td><td class="col-stats"><span id="w_d2_3" class="weight-badge" data-label="Lat. R" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d2_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Overhead Ext.</span><span class="workout-note">Arka Kol</span></td><td class="col-stats"><span id="w_d2_4" class="weight-badge" data-label="Triceps" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d2_5"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_5')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Push-up</span><span class="workout-note">Şınav</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <div id="day2" class="tab-content">
-        <div class="day-card h-purple" id="card_day2">
-            <div class="faded-notice">Bu senin bugünkü programın değil. Sadece inceleyebilirsin.</div>
-            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>2. GÜN: İTME</h2></div>
-            <table class="workout-table">
-                <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
-                <tbody>
-                    <tr id="row_d2_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Floor Press</span><span class="workout-note">Göğüs</span></td><td class="col-stats"><span id="w_d2_1" class="weight-badge" data-label="Press" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                    <tr id="row_d2_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Shoulder Pr.</span><span class="workout-note">Omuz</span></td><td class="col-stats"><span id="w_d2_2" class="weight-badge" data-label="Sh. Press" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                    <tr id="row_d2_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Lat. Raise</span><span class="workout-note">Yan Omuz</span></td><td class="col-stats"><span id="w_d2_3" class="weight-badge" data-label="Lat. R" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                    <tr id="row_d2_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Overhead Ext.</span><span class="workout-note">Arka Kol</span></td><td class="col-stats"><span id="w_d2_4" class="weight-badge" data-label="Triceps" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                    <tr id="row_d2_5"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_5')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Push-up</span><span class="workout-note">Şınav</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                </tbody>
-            </table>
+        <div id="day3" class="tab-content">
+            <div class="day-card h-purple" id="card_day3">
+                <div class="faded-notice">Bu senin bugünkü programın değil. Sadece inceleyebilirsin.</div>
+                <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>3. GÜN: BACAK</h2></div>
+                <table class="workout-table">
+                    <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
+                    <tbody>
+                        <tr id="row_d3_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Goblet Squat</span><span class="workout-note">Bacak</span></td><td class="col-stats"><span id="w_d3_1" class="weight-badge" data-label="Squat" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d3_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Lunges</span><span class="workout-note">Adım</span></td><td class="col-stats"><span id="w_d3_2" class="weight-badge" data-label="Lunge" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d3_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">RDL</span><span class="workout-note">Arka Bacak</span></td><td class="col-stats"><span id="w_d3_3" class="weight-badge" data-label="RDL" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d3_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Calf Raise</span><span class="workout-note">Kalf</span></td><td class="col-stats"><span id="w_d3_4" class="weight-badge" data-label="Calf" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-
-    <div id="day3" class="tab-content">
-        <div class="day-card h-purple" id="card_day3">
-            <div class="faded-notice">Bu senin bugünkü programın değil. Sadece inceleyebilirsin.</div>
-            <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>3. GÜN: BACAK</h2></div>
-            <table class="workout-table">
-                <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
-                <tbody>
-                    <tr id="row_d3_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Goblet Squat</span><span class="workout-note">Bacak</span></td><td class="col-stats"><span id="w_d3_1" class="weight-badge" data-label="Squat" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                    <tr id="row_d3_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Lunges</span><span class="workout-note">Adım</span></td><td class="col-stats"><span id="w_d3_2" class="weight-badge" data-label="Lunge" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                    <tr id="row_d3_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">RDL</span><span class="workout-note">Arka Bacak</span></td><td class="col-stats"><span id="w_d3_3" class="weight-badge" data-label="RDL" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                    <tr id="row_d3_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Calf Raise</span><span class="workout-note">Kalf</span></td><td class="col-stats"><span id="w_d3_4" class="weight-badge" data-label="Calf" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                </tbody>
-            </table>
+    </div> <div id="profileView" class="main-view">
+        <div class="streak-card">
+            <span class="streak-icon">🔥</span>
+            <div class="streak-title">Spor Serin</div>
+            <div class="streak-count"><span id="streakCountDisplay">0</span> Gün</div>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:5px;">Programı %100 tamamladığında serin artar.</p>
         </div>
-    </div>
-</div>
 
-<div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">✕</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-btn" style="width:auto; padding:8px 15px;">BAŞLAT</button><button onclick="resetTimer()" class="timer-btn" style="width:auto; padding:8px 15px;">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
+        <div class="profile-input-group">
+            <div class="section-label">Hesap Bilgileri</div>
+            <p id="userEmailDisplay" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 15px; color: var(--primary);">bekleniyor...</p>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="newUsernameInput" class="auth-input" style="margin-bottom:0;" placeholder="Yeni Kullanıcı Adı">
+                <button onclick="updateProfileName()" class="video-btn" style="width: auto; padding: 0 20px; background:var(--primary); color:#000;">Kaydet</button>
+            </div>
+        </div>
+
+        <button class="logout-btn" onclick="logoutUser()">ÇIKIŞ YAP</button>
+    </div> <div id="settingsView" class="main-view">
+        <div class="settings-content">
+            <div style="background:var(--bg-card); padding:20px; border-radius:20px; border:1px solid var(--border-color);">
+                <div class="section-label">Özellikler & Bildirim</div>
+                <div class="toggle-container" style="background:rgba(0,0,0,0.2);">
+                    <span class="toggle-label" style="font-weight:700;">Isınma Adımını Göster</span>
+                    <label class="switch"><input type="checkbox" id="toggleWarmupSwitch" onchange="handleWarmupToggle()"><span class="slider"></span></label>
+                </div>
+                <div class="toggle-container" style="flex-direction: column; align-items: flex-start; background:rgba(0,0,0,0.2);">
+                    <span class="toggle-label" style="margin-bottom: 10px; font-weight:700;">Antrenman Hatırlatıcı</span>
+                    <div style="display: flex; width: 100%; gap: 10px;">
+                        <input type="time" id="reminderTimeInput" class="auth-input" style="margin-bottom: 0; padding: 10px;" onchange="saveNotificationSetting()">
+                        <button onclick="requestNotificationPermission()" class="video-btn" style="width: auto; padding: 0 15px;">İzin Ver</button>
+                    </div>
+                </div>
+                <button onclick="reopenOnboarding()" class="video-btn" style="margin-top: 10px; padding:15px;">📅 Antrenman Günlerini Değiştir</button>
+            </div>
+
+            <div style="background:var(--bg-card); padding:20px; border-radius:20px; border:1px solid var(--border-color);">
+                <div class="section-label">Görünüm Modu</div>
+                <div class="theme-toggle-group" style="background:rgba(0,0,0,0.2);">
+                    <button onclick="setTheme('dark')" class="theme-btn active" id="btn-dark">🌙 Koyu</button>
+                    <button onclick="setTheme('light')" class="theme-btn" id="btn-light">☀️ Açık</button>
+                </div>
+            </div>
+
+            <div style="background:var(--bg-card); padding:20px; border-radius:20px; border:1px solid var(--border-color);">
+                <div class="section-label">Vurgu Rengi</div>
+                <div class="color-grid" style="background:rgba(0,0,0,0.2);">
+                    <button onclick="setAccent('#bb86fc', this)" class="color-btn active" style="background:#bb86fc"></button>
+                    <button onclick="setAccent('#3b82f6', this)" class="color-btn" style="background:#3b82f6"></button>
+                    <button onclick="setAccent('#f59e0b', this)" class="color-btn" style="background:#f59e0b"></button>
+                    <button onclick="setAccent('#10b981', this)" class="color-btn" style="background:#10b981"></button>
+                    <button onclick="setAccent('#ec4899', this)" class="color-btn" style="background:#ec4899"></button>
+                </div>
+            </div>
+
+            <div style="background:var(--bg-card); padding:20px; border-radius:20px; border:1px solid var(--border-color);">
+                <div class="section-label">Ağırlıklar (Kg)</div>
+                <div id="weightSettingsContainer"></div>
+                <button class="btn-save" onclick="saveAllSettings()">AĞIRLIKLARI KAYDET</button>
+            </div>
+            
+            <button onclick="resetProgress()" class="reset-btn" style="margin-bottom: 20px;">İLERLEMEYİ SIFIRLA</button>
+        </div>
+    </div> </div> <div class="modal-overlay" id="videoModal" onclick="closeVideo()"><div class="modal-content" onclick="event.stopPropagation()"><button class="floating-close-btn" onclick="closeVideo()">✕</button><div id="integratedTimerBar" class="integrated-timer-bar"><span id="integratedTimerDisplay">00:00</span><div style="display:flex; gap:10px;"><button onclick="toggleTimer()" id="btnTimerToggle" class="timer-btn" style="width:auto; padding:8px 15px;">BAŞLAT</button><button onclick="resetTimer()" class="timer-btn" style="width:auto; padding:8px 15px;">↺</button></div></div><div id="playerContainer" class="video-wrapper"></div></div></div>
 
 <script>
-    /* GİRİŞ EKRANI ANİMASYON KONTROLÜ */
+    /* GİRİŞ EKRANI VE BAŞLIK DEĞİŞİMİ ANİMASYON KONTROLÜ */
     document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => {
             const intro = document.getElementById('introScreen');
-            if(intro) {
-                intro.classList.add('hide');
-                setTimeout(() => intro.style.display = 'none', 800);
+            if(intro) { intro.classList.add('hide'); setTimeout(() => intro.style.display = 'none', 800); }
+        }, 2500); 
+
+        // 3.5 saniye sonra üstteki başlık "Programım" olarak değişir
+        setTimeout(() => {
+            const topTitle = document.getElementById('topHeaderTitle');
+            if(topTitle) {
+                topTitle.style.opacity = 0;
+                setTimeout(() => {
+                    topTitle.innerText = "Programım";
+                    topTitle.style.opacity = 1;
+                }, 400); 
             }
-        }, 2500); // 2.5 saniye sonra animasyonla kaybolur
+        }, 3500);
     });
+
+    /* VIEW (SEKME) DEĞİŞTİRME FONKSİYONU */
+    function switchMainView(viewId, navId) {
+        document.querySelectorAll('.main-view').forEach(v => v.classList.remove('active-view'));
+        document.getElementById(viewId).classList.add('active-view');
+        
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById(navId).classList.add('active');
+
+        const topTitle = document.getElementById('topHeaderTitle');
+        if(viewId === 'homeView') topTitle.innerText = "Programım";
+        if(viewId === 'profileView') topTitle.innerText = "Profilim";
+        if(viewId === 'settingsView') topTitle.innerText = "Ayarlar";
+    }
 
     function showToast(msg, isError = false) {
         const toast = document.getElementById('toastNotification');
@@ -449,20 +487,21 @@
       appId: "1:202303332802:web:c6fb1121941630b685b65b"
     };
     if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+    const auth = firebase.auth(); const db = firebase.firestore();
     
-    // ÇİFT KİLİT SİSTEMİ İÇİN LOCALSTORAGE'DAN GÜNLERİ OKUMA
     let localSavedDays = localStorage.getItem('userWorkoutDays');
     let userWorkoutDays = localSavedDays ? JSON.parse(localSavedDays) : []; 
     
     let currentUser = null, isRegisterMode = false, showWarmupStatus = true, notificationTime = ""; 
+    let userStreak = parseInt(localStorage.getItem('userStreak')) || 0;
+    document.getElementById('streakCountDisplay').innerText = userStreak;
 
     auth.onAuthStateChanged((user) => {
         const landing = document.getElementById('landingPage'), mainCon = document.getElementById('mainContainer'), authMod = document.getElementById('authModal'), bNav = document.getElementById('bottomNav');
         if (user) {
             currentUser = user; btnLoading(false);
-            document.getElementById('userEmailDisplay').innerText = user.email; document.getElementById('userNameDisplay').innerText = user.displayName || "Sporcu";
+            document.getElementById('userEmailDisplay').innerText = user.email; 
+            document.getElementById('newUsernameInput').value = user.displayName || "";
             
             authMod.style.opacity = '0'; landing.style.opacity = '0';
             setTimeout(() => { 
@@ -471,7 +510,6 @@
                 requestAnimationFrame(() => mainCon.style.opacity = '1');
                 syncFromCloud(); 
             }, 400);
-
         } else {
             currentUser = null; 
             mainCon.style.opacity = '0'; bNav.style.display = 'none'; setTimeout(() => mainCon.style.display = 'none', 400);
@@ -511,17 +549,23 @@
         }
         btnLoading(true);
         if(isRegisterMode) {
-            auth.createUserWithEmailAndPassword(e, p).then((c) => c.user.updateProfile({ displayName: u })).then(() => { document.getElementById('userNameDisplay').innerText = u; showToast("Hesap oluşturuldu!"); }).catch(err => { showToast(hataCevir(err.code), true); btnLoading(false); });
+            auth.createUserWithEmailAndPassword(e, p).then((c) => c.user.updateProfile({ displayName: u })).then(() => { showToast("Hesap oluşturuldu!"); }).catch(err => { showToast(hataCevir(err.code), true); btnLoading(false); });
         } else { auth.signInWithEmailAndPassword(e, p).then(()=> showToast("Başarıyla giriş yapıldı!")).catch(err => { showToast(hataCevir(err.code), true); btnLoading(false); }); }
+    }
+
+    function updateProfileName() {
+        const newName = document.getElementById('newUsernameInput').value.trim();
+        if(!newName) return showToast("Geçerli bir ad girin.", true);
+        auth.currentUser.updateProfile({displayName: newName}).then(() => { showToast("Kullanıcı adı güncellendi!"); }).catch(e => showToast("Bir hata oluştu.", true));
     }
 
     function resetPassword() {
         const e = document.getElementById('authEmail').value.trim();
         if(!e) { showToast("Sıfırlamak için önce e-posta adresinizi yazın.", true); return; }
-        btnLoading(true); auth.sendPasswordResetEmail(e).then(() => { showToast("Sıfırlama bağlantısı e-postanıza gönderildi!"); btnLoading(false); }).catch((err) => { showToast(hataCevir(err.code), true); btnLoading(false); });
+        btnLoading(true); auth.sendPasswordResetEmail(e).then(() => { showToast("Sıfırlama bağlantısı gönderildi!"); btnLoading(false); }).catch((err) => { showToast(hataCevir(err.code), true); btnLoading(false); });
     }
 
-    function logoutUser() { auth.signOut(); document.getElementById('profileModal').classList.remove('profile-open'); setTimeout(() => document.getElementById('profileModal').style.display = 'none', 400); showToast("Çıkış yapıldı."); }
+    function logoutUser() { switchMainView('homeView', 'navHome'); auth.signOut(); showToast("Çıkış yapıldı."); }
     function btnLoading(l) { const b = document.getElementById('authSubmitBtn'); b.innerText = l ? "BEKLEYİN..." : document.getElementById('authTitleText').innerText; b.disabled = l; }
     function hataCevir(c) { if(c === 'auth/invalid-credential' || c === 'auth/wrong-password') return "Hatalı bilgi."; if(c === 'auth/email-already-in-use') return "Bu e-posta kullanımda."; return "Bir hata oluştu."; }
 
@@ -533,10 +577,10 @@
                 if(data.weights) localStorage.setItem('userWeights', JSON.stringify(data.weights));
                 if(data.showWarmup !== undefined) localStorage.setItem('showWarmup', data.showWarmup);
                 if(data.reminderTime) { notificationTime = data.reminderTime; document.getElementById('reminderTimeInput').value = notificationTime; }
+                if(data.streak !== undefined) { userStreak = data.streak; localStorage.setItem('userStreak', userStreak); document.getElementById('streakCountDisplay').innerText = userStreak; }
                 
                 if(data.workoutDays && data.workoutDays.length === 3) { 
-                    userWorkoutDays = data.workoutDays; 
-                    localStorage.setItem('userWorkoutDays', JSON.stringify(userWorkoutDays));
+                    userWorkoutDays = data.workoutDays; localStorage.setItem('userWorkoutDays', JSON.stringify(userWorkoutDays));
                 }
 
                 const today = new Date().toDateString();
@@ -553,54 +597,36 @@
         if(!currentUser) return;
         try {
             const p = JSON.parse(localStorage.getItem('userProgress')) || {}, w = JSON.parse(localStorage.getItem('userWeights')) || {}, d = localStorage.getItem('lastSavedDate') || new Date().toDateString(), sW = localStorage.getItem('showWarmup') !== 'false';
-            await db.collection("users").doc(currentUser.uid).set({ progress: p, weights: w, lastDate: d, showWarmup: sW, workoutDays: userWorkoutDays, reminderTime: notificationTime }, { merge: true });
+            await db.collection("users").doc(currentUser.uid).set({ progress: p, weights: w, lastDate: d, showWarmup: sW, workoutDays: userWorkoutDays, reminderTime: notificationTime, streak: userStreak }, { merge: true });
         } catch(e) {}
     }
 
     const dayNamesMap = ["PAZ", "PZT", "SAL", "ÇAR", "PER", "CUM", "CMT"];
     
     function reopenOnboarding() {
-        document.getElementById('settingsModal').classList.remove('settings-open'); 
-        setTimeout(() => document.getElementById('settingsModal').style.display='none', 400);
-        
+        switchMainView('homeView', 'navHome');
         if(userWorkoutDays && userWorkoutDays.length === 3) {
-            document.getElementById('selDay1').value = userWorkoutDays[0];
-            document.getElementById('selDay2').value = userWorkoutDays[1];
-            document.getElementById('selDay3').value = userWorkoutDays[2];
+            document.getElementById('selDay1').value = userWorkoutDays[0]; document.getElementById('selDay2').value = userWorkoutDays[1]; document.getElementById('selDay3').value = userWorkoutDays[2];
         }
-        
-        const modal = document.getElementById('onboardingModal'); 
-        modal.style.display = 'flex'; 
-        setTimeout(() => modal.style.opacity = '1', 50);
+        const modal = document.getElementById('onboardingModal'); modal.style.display = 'flex'; setTimeout(() => modal.style.opacity = '1', 50);
     }
 
     function saveSelectedDays() {
-        const d1 = parseInt(document.getElementById('selDay1').value);
-        const d2 = parseInt(document.getElementById('selDay2').value);
-        const d3 = parseInt(document.getElementById('selDay3').value);
-        
+        const d1 = parseInt(document.getElementById('selDay1').value), d2 = parseInt(document.getElementById('selDay2').value), d3 = parseInt(document.getElementById('selDay3').value);
         if(d1 === d2 || d1 === d3 || d2 === d3) { showToast("Aynı günü birden fazla seçemezsin!", true); return; }
-
-        userWorkoutDays = [d1, d2, d3]; 
-        localStorage.setItem('userWorkoutDays', JSON.stringify(userWorkoutDays));
-        syncToCloud();
+        userWorkoutDays = [d1, d2, d3]; localStorage.setItem('userWorkoutDays', JSON.stringify(userWorkoutDays)); syncToCloud();
         
-        const modal = document.getElementById('onboardingModal'); 
-        modal.style.opacity = '0';
+        const modal = document.getElementById('onboardingModal'); modal.style.opacity = '0';
         setTimeout(() => { modal.style.display = 'none'; setupTabs(); showToast("Günler başarıyla kaydedildi!"); }, 400);
     }
 
     function setupTabs() {
         if(!userWorkoutDays || userWorkoutDays.length !== 3) return;
-        
-        const todayIdx = new Date().getDay();
-        let isActiveDay = false;
-        let activeTabToOpen = 'restDay';
+        const todayIdx = new Date().getDay(); let isActiveDay = false; let activeTabToOpen = 'restDay';
 
         for(let i = 0; i < 3; i++) {
             const btn = document.getElementById(`btn-day${i+1}`); const card = document.getElementById(`card_day${i+1}`);
             const dayNum = parseInt(userWorkoutDays[i]); 
-            
             if(btn) btn.innerText = dayNamesMap[dayNum]; 
             
             if(dayNum === todayIdx) {
@@ -614,13 +640,8 @@
         }
         
         const wBtn = document.getElementById('btn-warmup');
-        if(!isActiveDay) {
-            openTab('restDay'); 
-            if(wBtn) { wBtn.classList.add('locked'); wBtn.onclick = () => showToast("Bugün dinlenme günün!", true); }
-        } else {
-            if(wBtn) { wBtn.classList.remove('locked'); wBtn.onclick = () => openTab('warmup'); }
-            applyWarmupSetting(); openTab(activeTabToOpen);
-        }
+        if(!isActiveDay) { openTab('restDay'); if(wBtn) { wBtn.classList.add('locked'); wBtn.onclick = () => showToast("Bugün dinlenme günün!", true); } } 
+        else { if(wBtn) { wBtn.classList.remove('locked'); wBtn.onclick = () => openTab('warmup'); } applyWarmupSetting(); openTab(activeTabToOpen); }
     }
 
     let notificationInterval;
@@ -630,15 +651,11 @@
         if(notificationInterval) clearInterval(notificationInterval);
         notificationInterval = setInterval(() => {
             if(!notificationTime || Notification.permission !== "granted" || !userWorkoutDays) return;
-            const now = new Date(); 
-            const currentH = now.getHours().toString().padStart(2,'0'); const currentM = now.getMinutes().toString().padStart(2,'0'); 
+            const now = new Date(); const currentH = now.getHours().toString().padStart(2,'0'); const currentM = now.getMinutes().toString().padStart(2,'0'); 
             const currentTime = `${currentH}:${currentM}`; const todayStr = now.toDateString();
 
             if(userWorkoutDays.includes(now.getDay()) && currentTime === notificationTime) {
-                if(localStorage.getItem('lastNotifDate') !== todayStr) {
-                    new Notification("Pro Antrenman", { body: "Antrenman vakti geldi! Hadi sınırlarını zorla.", icon: "/icon.png" }); 
-                    localStorage.setItem('lastNotifDate', todayStr);
-                }
+                if(localStorage.getItem('lastNotifDate') !== todayStr) { new Notification("Pro Antrenman", { body: "Antrenman vakti geldi! Hadi sınırlarını zorla.", icon: "/icon.png" }); localStorage.setItem('lastNotifDate', todayStr); }
             }
         }, 30000); 
     }
@@ -653,34 +670,29 @@
     
     function toggleCheck(id) { const row = document.getElementById(id); const checked = row.querySelector('.check-input').checked; checked ? row.classList.add('completed') : row.classList.remove('completed'); let p = JSON.parse(localStorage.getItem('userProgress')) || {}; p[id] = checked; localStorage.setItem('userProgress', JSON.stringify(p)); localStorage.setItem('lastSavedDate', new Date().toDateString()); updateProgressBar(); syncToCloud(); }
     function loadProgress() { let p = JSON.parse(localStorage.getItem('userProgress')) || {}; for (const [id, val] of Object.entries(p)) { if(val) { const r = document.getElementById(id); if(r) { r.querySelector('.check-input').checked = true; r.classList.add('completed'); } } } updateProgressBar(); }
-    function updateProgressBar() { const tab = document.querySelector('.tab-content.active-content'); if(!tab || tab.id === 'restDay') return; const total = tab.querySelectorAll('.check-input').length; const checked = tab.querySelectorAll('.check-input:checked').length; const bar = document.getElementById('progressBar'); if(total === 0) bar.style.width = '0%'; else { const pct = (checked / total) * 100; bar.style.width = pct + '%'; if(pct === 100) confetti({particleCount: 120, spread: 80, origin: { y: 0.6 }}); } }
-    function resetProgress() { if(confirm("Bugünü sıfırla?")) { localStorage.setItem('userProgress', '{}'); syncToCloud().then(() => location.reload()); } }
     
-    /* ALT MENÜ YÖNETİMİ */
-    function closeAllModals() {
-        const sm = document.getElementById('settingsModal'); if(sm.classList.contains('settings-open')) { sm.classList.remove('settings-open'); setTimeout(()=>sm.style.display='none',400); }
-        const pm = document.getElementById('profileModal'); if(pm.classList.contains('profile-open')) { pm.classList.remove('profile-open'); setTimeout(()=>pm.style.display='none',400); }
-        updateNavState('navHome');
+    function updateProgressBar() { 
+        const tab = document.querySelector('.tab-content.active-content'); if(!tab || tab.id === 'restDay') return; 
+        const total = tab.querySelectorAll('.check-input').length; const checked = tab.querySelectorAll('.check-input:checked').length; const bar = document.getElementById('progressBar'); 
+        if(total === 0) bar.style.width = '0%'; 
+        else { 
+            const pct = (checked / total) * 100; bar.style.width = pct + '%'; 
+            if(pct === 100) {
+                confetti({particleCount: 120, spread: 80, origin: { y: 0.6 }}); 
+                // SERİ (STREAK) KONTROLÜ
+                const todayStr = new Date().toDateString();
+                if(localStorage.getItem('lastStreakDate') !== todayStr) {
+                    userStreak++; localStorage.setItem('userStreak', userStreak); localStorage.setItem('lastStreakDate', todayStr);
+                    document.getElementById('streakCountDisplay').innerText = userStreak; syncToCloud();
+                }
+            } 
+        } 
     }
-    function toggleSettings() { 
-        const m = document.getElementById('settingsModal'); const p = document.getElementById('profileModal');
-        if(p.classList.contains('profile-open')) { p.classList.remove('profile-open'); setTimeout(()=>p.style.display='none',400); }
-        if(m.classList.contains('settings-open')) { m.classList.remove('settings-open'); setTimeout(()=>m.style.display='none',400); updateNavState('navHome'); } 
-        else { m.style.display='flex'; setTimeout(()=>m.classList.add('settings-open'),10); updateNavState('navSettings'); } 
-    }
-    function toggleProfile() { 
-        const p = document.getElementById('profileModal'); const m = document.getElementById('settingsModal');
-        if(m.classList.contains('settings-open')) { m.classList.remove('settings-open'); setTimeout(()=>m.style.display='none',400); }
-        if(p.classList.contains('profile-open')) { p.classList.remove('profile-open'); setTimeout(()=>p.style.display='none',400); updateNavState('navHome');} 
-        else { p.style.display='flex'; setTimeout(()=>p.classList.add('profile-open'),10); updateNavState('navProfile');} 
-    }
-    function updateNavState(activeId) {
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.getElementById(activeId).classList.add('active');
-    }
+    
+    function resetProgress() { if(confirm("Bugünü sıfırla?")) { localStorage.setItem('userProgress', '{}'); syncToCloud().then(() => location.reload()); } }
 
     function generateWeightInputs() { const c = document.getElementById('weightSettingsContainer'); c.innerHTML = ''; document.querySelectorAll('.weight-badge[id]').forEach(el => { if(el.dataset.unit === 'kg') { let val = el.innerText.replace(/\D/g,''); c.innerHTML += `<div class="weight-input-group"><span>${el.dataset.label}</span><input type="number" id="in_${el.id}" class="weight-input" value="${val}"></div>`; } }); }
-    function saveAllSettings() { const w = {}; document.querySelectorAll('.weight-input').forEach(i => { let id = i.id.replace('in_', ''); let val = i.value || "5"; document.getElementById(id).innerText = val + "kg"; w[id] = val + "kg"; }); localStorage.setItem('userWeights', JSON.stringify(w)); syncToCloud(); closeAllModals(); showToast("Ayarlar kaydedildi."); }
+    function saveAllSettings() { const w = {}; document.querySelectorAll('.weight-input').forEach(i => { let id = i.id.replace('in_', ''); let val = i.value || "5"; document.getElementById(id).innerText = val + "kg"; w[id] = val + "kg"; }); localStorage.setItem('userWeights', JSON.stringify(w)); syncToCloud(); switchMainView('homeView', 'navHome'); showToast("Ayarlar kaydedildi."); }
     function setTheme(m) { document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active')); if(m === 'light') { document.body.classList.add('light-mode'); localStorage.setItem('themeMode','light'); document.getElementById('btn-light').classList.add('active'); } else { document.body.classList.remove('light-mode'); localStorage.setItem('themeMode','dark'); document.getElementById('btn-dark').classList.add('active'); } }
     function setAccent(c, btnElement) { document.documentElement.style.setProperty('--primary', c); localStorage.setItem('accentColor', c); document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active')); if(btnElement) btnElement.classList.add('active'); else document.querySelectorAll('.color-btn').forEach(b => { if(b.style.background.includes(c) || b.style.backgroundColor === c) b.classList.add('active'); }); }
     function loadSettings() { if(localStorage.getItem('themeMode')==='light') setTheme('light'); else setTheme('dark'); let savedColor = localStorage.getItem('accentColor'); if(savedColor) setAccent(savedColor, null); else setAccent('#bb86fc', document.querySelector('.color-btn')); const w = JSON.parse(localStorage.getItem('userWeights')); if(w) for(const [k,v] of Object.entries(w)) { const e = document.getElementById(k); if(e) e.innerText = v; } }
