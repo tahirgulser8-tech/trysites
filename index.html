@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <script>
-        const APP_VERSION = "2.3"; 
+        const APP_VERSION = "2.4"; 
         if (localStorage.getItem('app_version') !== APP_VERSION) {
             localStorage.setItem('app_version', APP_VERSION);
             if ('caches' in window) caches.keys().then(n => n.forEach(c => caches.delete(c)));
@@ -26,7 +26,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>Pro Antrenman (Beta v2.3)</title>
+    <title>Pro Antrenman (Beta v2.4)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -183,15 +183,15 @@
         .reset-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; border-radius: 14px; cursor: pointer; }
         .logout-btn { width: 100%; padding: 15px; background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); font-weight: 800; border-radius: 14px; margin-top: 10px;}
 
-        /* PROFİL EKRANI KARTLARI */
-        .streak-card { background: linear-gradient(135deg, rgba(30,30,35,0.8), rgba(0,0,0,0.5)); border: 1px solid var(--primary); border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 10px 30px rgba(187, 134, 252, 0.15); margin-bottom: 25px;}
+        /* PROFİL EKRANI KARTLARI (YENİLENMİŞ) */
+        .streak-card { background: linear-gradient(135deg, rgba(30,30,35,0.8), rgba(0,0,0,0.5)); border: 1px solid var(--primary); border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 10px 30px rgba(187, 134, 252, 0.15); margin-bottom: 20px;}
         .streak-icon { font-size: 3.5rem; margin-bottom: 10px; display: inline-block; animation: pulse-glow-logo 2s infinite; }
         .streak-title { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; margin-bottom: 5px;}
         .streak-count { font-size: 2.5rem; font-weight: 900; color: var(--primary); }
         
         .profile-input-group { background: var(--bg-card); padding: 20px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 15px; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 4000; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 10000; } /* Z-index artırıldı */
         .modal-content { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
         .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); z-index:4100; cursor: pointer; }
         .integrated-timer-bar { width: 100%; height: 80px; background: #09090b; display: none; align-items: center; justify-content: space-between; padding: 0 20px; padding-right: 80px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 4005; }
@@ -379,10 +379,29 @@
             <p style="font-size:0.75rem; color:var(--text-muted); margin-top:5px;">Programı %100 tamamladığında serin artar.</p>
         </div>
 
-        <div class="profile-input-group">
-            <div class="section-label">Hesap Bilgileri</div>
-            <p id="userEmailDisplay" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 15px; color: var(--primary);">bekleniyor...</p>
-            <div style="display:flex; gap:10px;">
+        <div class="streak-card" style="text-align: left; padding: 25px;">
+            <div style="display:flex; align-items:center; margin-bottom: 20px; gap: 15px;">
+                <div style="font-size: 2.5rem; background: rgba(255,255,255,0.05); border-radius: 50%; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--primary);">👤</div>
+                <div>
+                    <h2 style="font-size: 1.4rem; color: var(--text-main); font-weight: 900; margin-bottom:2px;">Profilim</h2>
+                    <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">Hesap Özeti</span>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Mevcut Kullanıcı Adı</span>
+                <div id="userNameDisplay" style="font-weight: 900; color: var(--text-main); font-size: 1.2rem; margin-top: 3px;">Bilinmiyor</div>
+            </div>
+            
+            <div>
+                <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Bağlı E-posta Adresi</span>
+                <div id="userEmailDisplay" style="font-weight: 600; color: var(--text-main); font-size: 1rem; margin-top: 3px;">bekleniyor...</div>
+            </div>
+        </div>
+
+        <div class="profile-input-group" style="background: transparent; border: 1px dashed var(--border-color); margin-top: 25px;">
+            <div class="section-label">Kullanıcı Adını Güncelle</div>
+            <div style="display:flex; gap:10px; margin-top: 15px;">
                 <input type="text" id="newUsernameInput" class="auth-input" style="margin-bottom:0;" placeholder="Yeni Kullanıcı Adı">
                 <button onclick="updateProfileName()" class="video-btn" style="width: auto; padding: 0 20px; background:var(--primary); color:#000;">Kaydet</button>
             </div>
@@ -501,6 +520,7 @@
         if (user) {
             currentUser = user; btnLoading(false);
             document.getElementById('userEmailDisplay').innerText = user.email; 
+            document.getElementById('userNameDisplay').innerText = user.displayName || "Sporcu";
             document.getElementById('newUsernameInput').value = user.displayName || "";
             
             authMod.style.opacity = '0'; landing.style.opacity = '0';
@@ -556,7 +576,10 @@
     function updateProfileName() {
         const newName = document.getElementById('newUsernameInput').value.trim();
         if(!newName) return showToast("Geçerli bir ad girin.", true);
-        auth.currentUser.updateProfile({displayName: newName}).then(() => { showToast("Kullanıcı adı güncellendi!"); }).catch(e => showToast("Bir hata oluştu.", true));
+        auth.currentUser.updateProfile({displayName: newName}).then(() => { 
+            document.getElementById('userNameDisplay').innerText = newName;
+            showToast("Kullanıcı adı güncellendi!"); 
+        }).catch(e => showToast("Bir hata oluştu.", true));
     }
 
     function resetPassword() {
@@ -679,7 +702,6 @@
             const pct = (checked / total) * 100; bar.style.width = pct + '%'; 
             if(pct === 100) {
                 confetti({particleCount: 120, spread: 80, origin: { y: 0.6 }}); 
-                // SERİ (STREAK) KONTROLÜ
                 const todayStr = new Date().toDateString();
                 if(localStorage.getItem('lastStreakDate') !== todayStr) {
                     userStreak++; localStorage.setItem('userStreak', userStreak); localStorage.setItem('lastStreakDate', todayStr);
@@ -698,11 +720,35 @@
     function loadSettings() { if(localStorage.getItem('themeMode')==='light') setTheme('light'); else setTheme('dark'); let savedColor = localStorage.getItem('accentColor'); if(savedColor) setAccent(savedColor, null); else setAccent('#bb86fc', document.querySelector('.color-btn')); const w = JSON.parse(localStorage.getItem('userWeights')); if(w) for(const [k,v] of Object.entries(w)) { const e = document.getElementById(k); if(e) e.innerText = v; } }
 
     let tInt, sec = 0;
-    function openVideo(id) { document.getElementById('videoModal').style.display = 'flex'; document.getElementById('integratedTimerBar').style.display = 'none'; document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; }
-    function openTimer(s, id) { document.getElementById('videoModal').style.display = 'flex'; document.getElementById('integratedTimerBar').style.display = 'flex'; sec = s; document.getElementById('integratedTimerDisplay').innerText = fmt(sec); document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; clearInterval(tInt); }
+    
+    /* VİDEO AÇILINCA ALT MENÜYÜ GİZLEME FONKSİYONLARI */
+    function openVideo(id) { 
+        document.getElementById('videoModal').style.display = 'flex'; 
+        document.getElementById('bottomNav').style.display = 'none'; /* BURASI EKLENDİ */
+        document.getElementById('integratedTimerBar').style.display = 'none'; 
+        document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; 
+    }
+    
+    function openTimer(s, id) { 
+        document.getElementById('videoModal').style.display = 'flex'; 
+        document.getElementById('bottomNav').style.display = 'none'; /* BURASI EKLENDİ */
+        document.getElementById('integratedTimerBar').style.display = 'flex'; 
+        sec = s; 
+        document.getElementById('integratedTimerDisplay').innerText = fmt(sec); 
+        document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; 
+        clearInterval(tInt); 
+    }
+    
     function toggleTimer() { const btn = document.getElementById('btnTimerToggle'); if(tInt) { clearInterval(tInt); tInt=null; btn.innerText = "DEVAM"; } else { btn.innerText = "DURAKLAT"; tInt = setInterval(() => { sec--; document.getElementById('integratedTimerDisplay').innerText = fmt(sec); if(sec<=0) { clearInterval(tInt); tInt=null; document.getElementById('integratedTimerDisplay').style.color='red'; btn.innerText="BİTTİ"; } }, 1000); } }
     function resetTimer() { clearInterval(tInt); tInt=null; sec=60; document.getElementById('integratedTimerDisplay').innerText = "01:00"; document.getElementById('btnTimerToggle').innerText="BAŞLAT"; document.getElementById('integratedTimerDisplay').style.color='#fff'; }
-    function closeVideo() { document.getElementById('videoModal').style.display='none'; document.getElementById('playerContainer').innerHTML=''; clearInterval(tInt); tInt=null; }
+    
+    function closeVideo() { 
+        document.getElementById('videoModal').style.display='none'; 
+        document.getElementById('bottomNav').style.display = 'flex'; /* BURASI EKLENDİ */
+        document.getElementById('playerContainer').innerHTML=''; 
+        clearInterval(tInt); tInt=null; 
+    }
+    
     function fmt(s) { return new Date(s*1000).toISOString().substr(14, 5); }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
