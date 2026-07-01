@@ -422,6 +422,7 @@
                         <input type="time" id="reminderTimeInput" class="auth-input" style="margin-bottom: 0; padding: 10px;" onchange="saveNotificationSetting()">
                         <button onclick="requestNotificationPermission()" class="video-btn" style="width: auto; padding: 0 15px;">İzin Ver</button>
                     </div>
+                    <span id="notifPermHint" style="font-size:0.72rem; color:var(--text-muted); margin-top:8px;"></span>
                 </div>
                 <button onclick="reopenOnboarding()" class="video-btn" style="margin-top: 10px; padding:15px;">📅 Antrenman Günlerini Değiştir</button>
             </div>
@@ -437,11 +438,11 @@
             <div style="background:var(--bg-card); padding:20px; border-radius:20px; border:1px solid var(--border-color);">
                 <div class="section-label">Vurgu Rengi</div>
                 <div class="color-grid" style="background:rgba(0,0,0,0.2);">
-                    <button onclick="setAccent('#bb86fc', this)" class="color-btn active" style="background:#bb86fc"></button>
-                    <button onclick="setAccent('#3b82f6', this)" class="color-btn" style="background:#3b82f6"></button>
-                    <button onclick="setAccent('#f59e0b', this)" class="color-btn" style="background:#f59e0b"></button>
-                    <button onclick="setAccent('#10b981', this)" class="color-btn" style="background:#10b981"></button>
-                    <button onclick="setAccent('#ec4899', this)" class="color-btn" style="background:#ec4899"></button>
+                    <button onclick="setAccent('#bb86fc', this)" class="color-btn active" data-color="#bb86fc" style="background:#bb86fc"></button>
+                    <button onclick="setAccent('#3b82f6', this)" class="color-btn" data-color="#3b82f6" style="background:#3b82f6"></button>
+                    <button onclick="setAccent('#f59e0b', this)" class="color-btn" data-color="#f59e0b" style="background:#f59e0b"></button>
+                    <button onclick="setAccent('#10b981', this)" class="color-btn" data-color="#10b981" style="background:#10b981"></button>
+                    <button onclick="setAccent('#ec4899', this)" class="color-btn" data-color="#ec4899" style="background:#ec4899"></button>
                 </div>
             </div>
 
@@ -474,6 +475,8 @@
                 }, 400); 
             }
         }, 3500);
+
+        if("Notification" in window) updateNotifPermHint();
     });
 
     /* VIEW (SEKME) DEĞİŞTİRME FONKSİYONU */
@@ -487,7 +490,7 @@
         const topTitle = document.getElementById('topHeaderTitle');
         if(viewId === 'homeView') topTitle.innerText = "Programım";
         if(viewId === 'profileView') topTitle.innerText = "Profilim";
-        if(viewId === 'settingsView') topTitle.innerText = "Ayarlar";
+        if(viewId === 'settingsView') { topTitle.innerText = "Ayarlar"; updateNotifPermHint(); }
     }
 
     function showToast(msg, isError = false) {
@@ -612,6 +615,8 @@
         } catch(e) { console.log("Veri çekilemedi, yerel hafıza kullanılacak."); }
         
         loadSettings(); generateWeightInputs(); checkDateAndLoadProgress(); startNotificationEngine();
+        // Isınma anahtarını her zaman (dinlenme günü olsa bile) doğru senkronize et
+        applyWarmupSetting();
         
         if(!userWorkoutDays || userWorkoutDays.length !== 3) reopenOnboarding(); else setupTabs();
     }
@@ -668,8 +673,31 @@
     }
 
     let notificationInterval;
-    function requestNotificationPermission() { if (!("Notification" in window)) { showToast("Tarayıcınız bildirimleri desteklemiyor.", true); return; } Notification.requestPermission().then(permission => { if(permission === "granted") showToast("Harika! Artık hatırlatma gönderebiliriz."); else showToast("Bildirim izni reddedildi.", true); }); }
-    function saveNotificationSetting() { notificationTime = document.getElementById('reminderTimeInput').value; syncToCloud(); showToast("Hatırlatıcı " + notificationTime + " olarak ayarlandı."); }
+    function requestNotificationPermission() {
+        if (!("Notification" in window)) { showToast("Tarayıcınız bildirimleri desteklemiyor.", true); return; }
+        Notification.requestPermission().then(permission => {
+            if(permission === "granted") showToast("Harika! Artık hatırlatma gönderebiliriz.");
+            else showToast("Bildirim izni reddedildi.", true);
+            updateNotifPermHint();
+        });
+    }
+    function updateNotifPermHint() {
+        const hintEl = document.getElementById('notifPermHint');
+        if(!hintEl) return;
+        if(!("Notification" in window)) { hintEl.innerText = ""; return; }
+        if(Notification.permission === "granted") hintEl.innerText = "✅ Bildirim izni verildi, hatırlatıcı çalışacak.";
+        else if(Notification.permission === "denied") hintEl.innerText = "⚠️ Bildirimler tarayıcı ayarlarından engellenmiş, hatırlatıcı çalışmaz.";
+        else hintEl.innerText = "⚠️ Saati kaydetmen yetmez, hatırlatmaların gelmesi için 'İzin Ver' butonuna da basmalısın.";
+    }
+    function saveNotificationSetting() {
+        notificationTime = document.getElementById('reminderTimeInput').value; syncToCloud();
+        if("Notification" in window && Notification.permission !== "granted") {
+            showToast("Saat kaydedildi, ama bildirim izni de vermen gerekiyor.", true);
+        } else {
+            showToast("Hatırlatıcı " + notificationTime + " olarak ayarlandı.");
+        }
+        updateNotifPermHint();
+    }
     function startNotificationEngine() {
         if(notificationInterval) clearInterval(notificationInterval);
         notificationInterval = setInterval(() => {
@@ -716,10 +744,23 @@
     function generateWeightInputs() { const c = document.getElementById('weightSettingsContainer'); c.innerHTML = ''; document.querySelectorAll('.weight-badge[id]').forEach(el => { if(el.dataset.unit === 'kg') { let val = el.innerText.replace(/\D/g,''); c.innerHTML += `<div class="weight-input-group"><span>${el.dataset.label}</span><input type="number" id="in_${el.id}" class="weight-input" value="${val}"></div>`; } }); }
     function saveAllSettings() { const w = {}; document.querySelectorAll('.weight-input').forEach(i => { let id = i.id.replace('in_', ''); let val = i.value || "5"; document.getElementById(id).innerText = val + "kg"; w[id] = val + "kg"; }); localStorage.setItem('userWeights', JSON.stringify(w)); syncToCloud(); switchMainView('homeView', 'navHome'); showToast("Ayarlar kaydedildi."); }
     function setTheme(m) { document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active')); if(m === 'light') { document.body.classList.add('light-mode'); localStorage.setItem('themeMode','light'); document.getElementById('btn-light').classList.add('active'); } else { document.body.classList.remove('light-mode'); localStorage.setItem('themeMode','dark'); document.getElementById('btn-dark').classList.add('active'); } }
-    function setAccent(c, btnElement) { document.documentElement.style.setProperty('--primary', c); localStorage.setItem('accentColor', c); document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active')); if(btnElement) btnElement.classList.add('active'); else document.querySelectorAll('.color-btn').forEach(b => { if(b.style.background.includes(c) || b.style.backgroundColor === c) b.classList.add('active'); }); }
+    function setAccent(c, btnElement) {
+        document.documentElement.style.setProperty('--primary', c);
+        localStorage.setItem('accentColor', c);
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+        if(btnElement) {
+            btnElement.classList.add('active');
+        } else {
+            // rgb/hex uyumsuzluğu yerine data-color özniteliğiyle eşleştir (tarayıcı stilleri rgb'ye çevirdiği için string.includes hex ile çalışmıyordu)
+            const target = c.toLowerCase();
+            document.querySelectorAll('.color-btn').forEach(b => {
+                if((b.dataset.color || "").toLowerCase() === target) b.classList.add('active');
+            });
+        }
+    }
     function loadSettings() { if(localStorage.getItem('themeMode')==='light') setTheme('light'); else setTheme('dark'); let savedColor = localStorage.getItem('accentColor'); if(savedColor) setAccent(savedColor, null); else setAccent('#bb86fc', document.querySelector('.color-btn')); const w = JSON.parse(localStorage.getItem('userWeights')); if(w) for(const [k,v] of Object.entries(w)) { const e = document.getElementById(k); if(e) e.innerText = v; } }
 
-    let tInt, sec = 0;
+    let tInt, sec = 0, currentTimerDuration = 60;
     
     /* VİDEO AÇILINCA ALT MENÜYÜ GİZLEME FONKSİYONLARI */
     function openVideo(id) { 
@@ -733,14 +774,14 @@
         document.getElementById('videoModal').style.display = 'flex'; 
         document.getElementById('bottomNav').style.display = 'none'; /* BURASI EKLENDİ */
         document.getElementById('integratedTimerBar').style.display = 'flex'; 
-        sec = s; 
+        sec = s; currentTimerDuration = s;
         document.getElementById('integratedTimerDisplay').innerText = fmt(sec); 
         document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; 
         clearInterval(tInt); 
     }
     
     function toggleTimer() { const btn = document.getElementById('btnTimerToggle'); if(tInt) { clearInterval(tInt); tInt=null; btn.innerText = "DEVAM"; } else { btn.innerText = "DURAKLAT"; tInt = setInterval(() => { sec--; document.getElementById('integratedTimerDisplay').innerText = fmt(sec); if(sec<=0) { clearInterval(tInt); tInt=null; document.getElementById('integratedTimerDisplay').style.color='red'; btn.innerText="BİTTİ"; } }, 1000); } }
-    function resetTimer() { clearInterval(tInt); tInt=null; sec=60; document.getElementById('integratedTimerDisplay').innerText = "01:00"; document.getElementById('btnTimerToggle').innerText="BAŞLAT"; document.getElementById('integratedTimerDisplay').style.color='#fff'; }
+    function resetTimer() { clearInterval(tInt); tInt=null; sec=currentTimerDuration; document.getElementById('integratedTimerDisplay').innerText = fmt(sec); document.getElementById('btnTimerToggle').innerText="BAŞLAT"; document.getElementById('integratedTimerDisplay').style.color='#fff'; }
     
     function closeVideo() { 
         document.getElementById('videoModal').style.display='none'; 
