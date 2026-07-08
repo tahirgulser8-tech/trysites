@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <script>
-        const APP_VERSION = "2.4"; 
+        const APP_VERSION = "2.5"; 
         if (localStorage.getItem('app_version') !== APP_VERSION) {
             localStorage.setItem('app_version', APP_VERSION);
             if ('caches' in window) caches.keys().then(n => n.forEach(c => caches.delete(c)));
@@ -26,7 +26,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
 
-    <title>Pro Antrenman (Beta v2.4)</title>
+    <title>Pro Antrenman (Beta v2.5)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -142,11 +142,11 @@
         .h-purple h2 { color: var(--primary); } .h-red h2 { color: var(--danger); }
         .workout-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
         .workout-table td, .workout-table th { padding: 20px 15px; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
-        .col-check { width: 12%; text-align: center; } .col-name { width: 43%; } .col-stats { width: 20%; } .col-actions { width: 25%; }
+        .col-check { width: 12%; text-align: center; } .col-name { width: 43%; } .col-stats { width: 18%; } .col-actions { width: 27%; }
         .workout-name { font-weight: 700; color: var(--text-main); font-size: 1rem; display: block; margin-bottom: 4px; }
         .workout-note { display: block; font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
         .weight-badge { display: inline-block; color: var(--primary); font-weight: 800; font-size: 0.85rem; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-color); padding: 4px 10px; border-radius: 8px; }
-        .video-btn, .timer-btn { padding: 10px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; border: none; font-weight: 700; width: 100%; }
+        .video-btn, .timer-btn { padding: 10px; border-radius: 12px; cursor: pointer; font-size: 0.75rem; border: none; font-weight: 700; width: 100%; display: flex; justify-content: center; align-items: center; gap: 4px;}
         .video-btn { background: rgba(255,255,255,0.1); color: var(--text-main); } .timer-btn { background: rgba(255, 152, 0, 0.15); color: #fbbf24; }
         .check-container { display: flex; justify-content: center; align-items: center; cursor: pointer; position: relative; width: 26px; height: 26px; }
         .check-input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
@@ -191,7 +191,7 @@
         
         .profile-input-group { background: var(--bg-card); padding: 20px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 15px; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 10000; } /* Z-index artırıldı */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; justify-content: center; align-items: center; z-index: 10000; } 
         .modal-content { width: 100%; height: 100%; display: flex; flex-direction: column; position: relative; }
         .floating-close-btn { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: #fff; width: 50px; height: 50px; border-radius: 50%; font-size: 2rem; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.2); z-index:4100; cursor: pointer; }
         .integrated-timer-bar { width: 100%; height: 80px; background: #09090b; display: none; align-items: center; justify-content: space-between; padding: 0 20px; padding-right: 80px; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 700; z-index: 4005; }
@@ -247,21 +247,21 @@
         
         <div class="day-select-group">
             <div class="day-row">
-                <span>1. Gün (Çekme)</span>
+                <span>1. Gün (Üst Vücut)</span>
                 <select id="selDay1">
                     <option value="1">Pazartesi</option><option value="2">Salı</option><option value="3">Çarşamba</option>
                     <option value="4">Perşembe</option><option value="5">Cuma</option><option value="6">Cumartesi</option><option value="0">Pazar</option>
                 </select>
             </div>
             <div class="day-row">
-                <span>2. Gün (İtme)</span>
+                <span>2. Gün (Alt Vücut)</span>
                 <select id="selDay2">
                     <option value="1">Pazartesi</option><option value="2">Salı</option><option value="3">Çarşamba</option>
                     <option value="4">Perşembe</option><option value="5">Cuma</option><option value="6">Cumartesi</option><option value="0">Pazar</option>
                 </select>
             </div>
             <div class="day-row">
-                <span>3. Gün (Bacak)</span>
+                <span>3. Gün (Tam Vücut)</span>
                 <select id="selDay3">
                     <option value="1">Pazartesi</option><option value="2">Salı</option><option value="3">Çarşamba</option>
                     <option value="4">Perşembe</option><option value="5">Cuma</option><option value="6">Cumartesi</option><option value="0">Pazar</option>
@@ -270,6 +270,16 @@
         </div>
         
         <button id="saveDaysBtn" class="auth-btn" onclick="saveSelectedDays()">SEÇİMİ TAMAMLA</button>
+    </div>
+</div>
+
+<div id="noteModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 10500; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease;" onclick="closeNote()">
+    <div class="auth-card" style="text-align: left; position: relative;" onclick="event.stopPropagation()">
+        <button class="close-auth-btn" onclick="closeNote()">✕</button>
+        <h2 id="noteTitle" class="auth-title" style="font-size: 1.4rem; color: var(--primary); margin-bottom: 15px;">Hareket Notu</h2>
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);">
+            <p id="noteText" style="color: var(--text-main); line-height: 1.6; font-size: 0.95rem;"></p>
+        </div>
     </div>
 </div>
 
@@ -316,24 +326,84 @@
 
         <div id="warmup" class="tab-content">
             <div class="day-card h-red">
-                <div class="day-header" style="border-left: 4px solid var(--danger);"><h2>ISINMA</h2><button class="video-btn" style="width:auto; background:var(--danger); color:#fff;" onclick="openVideo('')">▶ İzle</button></div>
-                <table class="workout-table"><tbody><tr id="row_warmup"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_warmup')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Genel Isınma</span></td><td class="col-stats"><span class="weight-badge">5 Dk</span></td><td class="col-actions"></td></tr></tbody></table>
+                <div class="day-header" style="border-left: 4px solid var(--danger);"><h2>DURUŞ & ISINMA</h2></div>
+                <table class="workout-table">
+                    <tbody>
+                        <tr id="row_w_1">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_w_1')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Göğüs Esnetme</span><span class="workout-note">Kapı Eşiğinde</span></td>
+                            <td class="col-stats"><span class="weight-badge" style="color:var(--danger); border-color:var(--danger);">30 Sn</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(239, 68, 68, 0.15); color: var(--danger);" onclick="openNote('Göğüs Esnetme', 'Bir kapı eşiğinde kollarınızı iki yana açarak göğsünüzü 30-45 saniye boyunca öne doğru esnetin.')">📝 Not</button>
+                            </td>
+                        </tr>
+                        <tr id="row_w_2">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_w_2')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Y-T-W Raises</span><span class="workout-note">Yüzüstü</span></td>
+                            <td class="col-stats"><span class="weight-badge" style="color:var(--danger); border-color:var(--danger);">10 Tkr</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(239, 68, 68, 0.15); color: var(--danger);" onclick="openNote('Y-T-W Raises', 'Yüzüstü yere yatın. Kollarınızla sırasıyla Y, T ve W harflerini oluşturarak kollarınızı yukarı kaldırıp sırtınızı sıkıştırın.')">📝 Not</button>
+                            </td>
+                        </tr>
+                        <tr id="row_w_3">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_w_3')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Cat-Cow</span><span class="workout-note">Omurga</span></td>
+                            <td class="col-stats"><span class="weight-badge" style="color:var(--danger); border-color:var(--danger);">10 Tkr</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(239, 68, 68, 0.15); color: var(--danger);" onclick="openNote('Cat-Cow Stretch', 'Eller ve dizler üzerinde sırtınızı kedi gibi kamburlaştırın, ardından esneterek çukurlaştırın.')">📝 Not</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <div id="day1" class="tab-content">
             <div class="day-card h-purple" id="card_day1">
                 <div class="faded-notice">Bu senin bugünkü programın değil. Sadece inceleyebilirsin.</div>
-                <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>1. GÜN: ÇEKME (POSTÜR)</h2></div>
+                <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>1. GÜN: ÜST VÜCUT VE DURUŞ</h2></div>
                 <table class="workout-table">
                     <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
                     <tbody>
-                        <tr id="row_d1_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Scapular Pull</span><span class="workout-note">Postür/Sırt</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                        <tr id="row_d1_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">One Arm Row</span><span class="workout-note">Sırt</span></td><td class="col-stats"><span id="w_d1_2" class="weight-badge" data-label="Row" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                        <tr id="row_d1_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">DB Rev. Fly</span><span class="workout-note">Arka Omuz</span></td><td class="col-stats"><span id="w_d1_3" class="weight-badge" data-label="Rev Fly" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                        <tr id="row_d1_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Bicep Curl</span><span class="workout-note">Pazu</span></td><td class="col-stats"><span id="w_d1_4" class="weight-badge" data-label="Curl" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                        <tr id="row_d1_5"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_5')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Dead Hang</span><span class="workout-note">Esneme</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="timer-btn" onclick="openTimer(60, '')">⏱️</button></td></tr>
-                        <tr id="row_d1_6"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_6')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Plank</span><span class="workout-note">Karın</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="timer-btn" onclick="openTimer(60, '')">⏱️</button></td></tr>
+                        <tr id="row_d1_1">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_1')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Floor Press</span><span class="workout-note">Göğüs</span></td>
+                            <td class="col-stats"><span id="w_d1_1" class="weight-badge" data-label="Press" data-unit="kg">5kg</span><br><span class="sets-text">2x12</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Floor Press', 'Sırtüstü yere yat, dizlerini büküp ayak tabanlarını yere bas. Dambılları göğüs hizasından yukarı it. Dirseklerini aşağı indirirken yere yavaşça dokunmasına dikkat et, zemine çarptırma. Yere dokunduğu an göğsünü sıkarak yukarı it.')">📝 Not</button>
+                            </td>
+                        </tr>
+                        <tr id="row_d1_2">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_2')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Bent-Over Row</span><span class="workout-note">Sırt & Postür</span></td>
+                            <td class="col-stats"><span id="w_d1_2" class="weight-badge" data-label="Row" data-unit="kg">5kg</span><br><span class="sets-text">2x12</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Bent-Over Row', 'Ayaktayken dizleri hafif kır, kalçanı geriye iterek gövdeni 45 derece öne eğ. Belin tamamen düz olmalı. Dambılları göbek deliğine doğru çek. Tepe noktasında kürek kemiklerini birbirine iyice sıkıştır.')">📝 Not</button>
+                            </td>
+                        </tr>
+                        <tr id="row_d1_3">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_3')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Reverse Fly</span><span class="workout-note">Arka Omuz</span></td>
+                            <td class="col-stats"><span id="w_d1_3" class="weight-badge" data-label="Rev Fly" data-unit="kg">2kg</span><br><span class="sets-text">2x15</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Reverse Fly', 'Row pozisyonundaki gibi öne eğil. Hafif kilolu dambılları tutarak kollarını iki yana kuş kanadı gibi açarak kaldır. Omuzlarını öne düşmekten kurtaracak ana hareket budur. Hareketi savurmadan kas gücüyle yap.')">📝 Not</button>
+                            </td>
+                        </tr>
+                        <tr id="row_d1_4">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d1_4')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Biceps Curl</span><span class="workout-note">Pazı</span></td>
+                            <td class="col-stats"><span id="w_d1_4" class="weight-badge" data-label="Curl" data-unit="kg">4kg</span><br><span class="sets-text">2x15</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Biceps Curl', 'Ayakta dik dur. Dirseklerini gövdenin yanına yapıştır ve sabitle. Sadece ön kolunu hareket ettirerek dambılları omuzlarına doğru kaldır ve çok kontrollü bir şekilde geri indir.')">📝 Not</button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -342,15 +412,46 @@
         <div id="day2" class="tab-content">
             <div class="day-card h-purple" id="card_day2">
                 <div class="faded-notice">Bu senin bugünkü programın değil. Sadece inceleyebilirsin.</div>
-                <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>2. GÜN: İTME</h2></div>
+                <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>2. GÜN: ALT VÜCUT VE MERKEZ</h2></div>
                 <table class="workout-table">
                     <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
                     <tbody>
-                        <tr id="row_d2_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Floor Press</span><span class="workout-note">Göğüs</span></td><td class="col-stats"><span id="w_d2_1" class="weight-badge" data-label="Press" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                        <tr id="row_d2_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Shoulder Pr.</span><span class="workout-note">Omuz</span></td><td class="col-stats"><span id="w_d2_2" class="weight-badge" data-label="Sh. Press" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                        <tr id="row_d2_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Lat. Raise</span><span class="workout-note">Yan Omuz</span></td><td class="col-stats"><span id="w_d2_3" class="weight-badge" data-label="Lat. R" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                        <tr id="row_d2_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Overhead Ext.</span><span class="workout-note">Arka Kol</span></td><td class="col-stats"><span id="w_d2_4" class="weight-badge" data-label="Triceps" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                        <tr id="row_d2_5"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_5')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Push-up</span><span class="workout-note">Şınav</span></td><td class="col-stats"><span class="weight-badge">Maks</span><br><span class="sets-text">3 Set</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d2_1">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_1')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Goblet Squat</span><span class="workout-note">Bacak & Kalça</span></td>
+                            <td class="col-stats"><span id="w_d2_1" class="weight-badge" data-label="Squat" data-unit="kg">5kg</span><br><span class="sets-text">2x12</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Goblet Squat', 'Tek bir dambılı iki elinle dik bir şekilde göğsüne yaslayarak tut. Ayaklarını omuz genişliğinde aç. Sırtını dik tutarak hayali bir sandalyeye oturur gibi çömel. Topuklarından güç alarak kalk.')">📝 Not</button>
+                            </td>
+                        </tr>
+                        <tr id="row_d2_2">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_2')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Romanian DL</span><span class="workout-note">Arka Bacak</span></td>
+                            <td class="col-stats"><span id="w_d2_2" class="weight-badge" data-label="RDL" data-unit="kg">5kg</span><br><span class="sets-text">2x12</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Romanian Deadlift (RDL)', 'Ayakta iki dambılı bacaklarının önünde tut. Dizlerini çok hafif kır. Belini bükmeden kalçanı geriye iterek dambılları bacaklarına sürterek aşağı indir. Arka bacağında gerilme hissedince kalçanı sıkarak doğrul.')">📝 Not</button>
+                            </td>
+                        </tr>
+                        <tr id="row_d2_3">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_3')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Plank</span><span class="workout-note">Karın</span></td>
+                            <td class="col-stats"><span class="weight-badge" style="background:transparent; border-color:transparent;">Maks</span><br><span class="sets-text">2 Set</span></td>
+                            <td class="col-actions">
+                                <button class="timer-btn" onclick="openTimer(60, '')">⏱️ Başla</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Plank', 'Dirseklerin ve ayak parmak uçların üzerinde dur. Vücudun başından topuklarına kadar dümdüz bir çizgi halinde olmalı. Belini aşağı düşürme veya kalçanı havaya kaldırma.')">📝 Not</button>
+                            </td>
+                        </tr>
+                        <tr id="row_d2_4">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d2_4')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Side Plank</span><span class="workout-note">Yan Karın</span></td>
+                            <td class="col-stats"><span class="weight-badge" style="background:transparent; border-color:transparent;">30 Sn</span><br><span class="sets-text">2 Set</span></td>
+                            <td class="col-actions">
+                                <button class="timer-btn" onclick="openTimer(30, '')">⏱️ Başla</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Yan Plank (Side Plank)', 'Yan yat, tek dirseğinin üzerinde yüksel. Vücudun yine düz bir çizgi olmalı. Omurganın dengeli durmasını doğrudan destekler. İki taraf için de yap.')">📝 Not</button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -359,14 +460,46 @@
         <div id="day3" class="tab-content">
             <div class="day-card h-purple" id="card_day3">
                 <div class="faded-notice">Bu senin bugünkü programın değil. Sadece inceleyebilirsin.</div>
-                <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>3. GÜN: BACAK</h2></div>
+                <div class="day-header" style="border-left: 4px solid var(--primary);"><h2>3. GÜN: TAM VÜCUT KARMA</h2></div>
                 <table class="workout-table">
                     <thead><tr><th>✓</th><th>Hareket</th><th>Set</th><th>Video</th></tr></thead>
                     <tbody>
-                        <tr id="row_d3_1"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_1')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Goblet Squat</span><span class="workout-note">Bacak</span></td><td class="col-stats"><span id="w_d3_1" class="weight-badge" data-label="Squat" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                        <tr id="row_d3_2"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_2')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Lunges</span><span class="workout-note">Adım</span></td><td class="col-stats"><span id="w_d3_2" class="weight-badge" data-label="Lunge" data-unit="kg">5kg</span><br><span class="sets-text">3x10</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                        <tr id="row_d3_3"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_3')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">RDL</span><span class="workout-note">Arka Bacak</span></td><td class="col-stats"><span id="w_d3_3" class="weight-badge" data-label="RDL" data-unit="kg">5kg</span><br><span class="sets-text">3x12</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
-                        <tr id="row_d3_4"><td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_4')"><span class="checkmark"></span></label></td><td class="col-name"><span class="workout-name">Calf Raise</span><span class="workout-note">Kalf</span></td><td class="col-stats"><span id="w_d3_4" class="weight-badge" data-label="Calf" data-unit="kg">5kg</span><br><span class="sets-text">3x15</span></td><td class="col-actions"><button class="video-btn" onclick="openVideo('')">▶ İzle</button></td></tr>
+                        <tr id="row_d3_1">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_1')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Push-up</span><span class="workout-note">Şınav (Göğüs)</span></td>
+                            <td class="col-stats"><span class="weight-badge" style="background:transparent; border-color:transparent;">Vücut</span><br><span class="sets-text">2x Maks</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Şınav (Push-up)', 'Ellerini omuz genişliğinden biraz daha fazla aç. Gövdeni düz tutarak göğsünü yere yaklaştır ve kendini yukarı it. Hareketi bozmadan tam nizami yapmaya odaklan. Çok zorlanıyorsan dizlerin yerde yap.')">📝 Not</button>
+                            </td>
+                        </tr>
+                        <tr id="row_d3_2">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_2')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">One Arm Row</span><span class="workout-note">Sırt Dengesi</span></td>
+                            <td class="col-stats"><span id="w_d3_2" class="weight-badge" data-label="Row" data-unit="kg">5kg</span><br><span class="sets-text">2x12</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Tek Kol Dambıl Row', 'Bir sandalyeye veya yatağa bir dizini ve aynı taraftaki elini daya. Sırtın yere paralel olsun. Diğer elindeki dambılı karnının yan tarafına doğru çek. Bu hareket sağ-sol kuvvet eşitsizliğini giderir.')">📝 Not</button>
+                            </td>
+                        </tr>
+                        <tr id="row_d3_3">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_3')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Seated OH Press</span><span class="workout-note">Omuz</span></td>
+                            <td class="col-stats"><span id="w_d3_3" class="weight-badge" data-label="OH Press" data-unit="kg">4kg</span><br><span class="sets-text">2x12</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Oturarak Dambıl Overhead Press', 'Dik sırtlı bir sandalyeye otur. Dambılları kulak hizasında tut ve başının üzerine doğru dümdüz yukarı it. Hareketi oturarak yapmak beline binen yükü sıfırlar, sadece omuza odaklandırır.')">📝 Not</button>
+                            </td>
+                        </tr>
+                        <tr id="row_d3_4">
+                            <td class="col-check"><label class="check-container"><input type="checkbox" class="check-input" onchange="toggleCheck('row_d3_4')"><span class="checkmark"></span></label></td>
+                            <td class="col-name"><span class="workout-name">Dambıl Lunge</span><span class="workout-note">Bacak & Denge</span></td>
+                            <td class="col-stats"><span id="w_d3_4" class="weight-badge" data-label="Lunge" data-unit="kg">4kg</span><br><span class="sets-text">2x12</span></td>
+                            <td class="col-actions">
+                                <button class="video-btn" onclick="openVideo('')">▶ İzle</button>
+                                <button class="video-btn" style="margin-top:6px; background: rgba(187, 134, 252, 0.15); color: var(--primary);" onclick="openNote('Dambıl Lunge', 'Ayakta dururken ellerinde dambılları sarkıtarak tut. Bir bacağınla ileri doğru geniş bir adım at ve arkada kalan dizini yere doğru bükerek yaklaştır (yere değdirmeden). Tekrar başlangıç pozisyonuna it.')">📝 Not</button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -478,6 +611,21 @@
 
         if("Notification" in window) updateNotifPermHint();
     });
+
+    /* YENİ: NOT AÇILIR PENCERESİ (MODAL) FONKSİYONLARI */
+    function openNote(title, text) {
+        document.getElementById('noteTitle').innerText = title;
+        document.getElementById('noteText').innerText = text;
+        const modal = document.getElementById('noteModal');
+        modal.style.display = 'flex';
+        setTimeout(() => modal.style.opacity = '1', 10);
+    }
+    
+    function closeNote() {
+        const modal = document.getElementById('noteModal');
+        modal.style.opacity = '0';
+        setTimeout(() => modal.style.display = 'none', 300);
+    }
 
     /* VIEW (SEKME) DEĞİŞTİRME FONKSİYONU */
     function switchMainView(viewId, navId) {
@@ -751,7 +899,6 @@
         if(btnElement) {
             btnElement.classList.add('active');
         } else {
-            // rgb/hex uyumsuzluğu yerine data-color özniteliğiyle eşleştir (tarayıcı stilleri rgb'ye çevirdiği için string.includes hex ile çalışmıyordu)
             const target = c.toLowerCase();
             document.querySelectorAll('.color-btn').forEach(b => {
                 if((b.dataset.color || "").toLowerCase() === target) b.classList.add('active');
@@ -765,14 +912,14 @@
     /* VİDEO AÇILINCA ALT MENÜYÜ GİZLEME FONKSİYONLARI */
     function openVideo(id) { 
         document.getElementById('videoModal').style.display = 'flex'; 
-        document.getElementById('bottomNav').style.display = 'none'; /* BURASI EKLENDİ */
+        document.getElementById('bottomNav').style.display = 'none'; 
         document.getElementById('integratedTimerBar').style.display = 'none'; 
         document.getElementById('playerContainer').innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}&controls=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`; 
     }
     
     function openTimer(s, id) { 
         document.getElementById('videoModal').style.display = 'flex'; 
-        document.getElementById('bottomNav').style.display = 'none'; /* BURASI EKLENDİ */
+        document.getElementById('bottomNav').style.display = 'none'; 
         document.getElementById('integratedTimerBar').style.display = 'flex'; 
         sec = s; currentTimerDuration = s;
         document.getElementById('integratedTimerDisplay').innerText = fmt(sec); 
@@ -785,7 +932,7 @@
     
     function closeVideo() { 
         document.getElementById('videoModal').style.display='none'; 
-        document.getElementById('bottomNav').style.display = 'flex'; /* BURASI EKLENDİ */
+        document.getElementById('bottomNav').style.display = 'flex'; 
         document.getElementById('playerContainer').innerHTML=''; 
         clearInterval(tInt); tInt=null; 
     }
